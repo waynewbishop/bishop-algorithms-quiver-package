@@ -28,6 +28,7 @@ public extension Array where Element == Double {
 }
 
 // MARK: - Angle Calculations for Float
+
 public extension Array where Element == Float {
     /// Returns the angle between two vectors in radians
     func angle(with other: [Float]) -> Float {

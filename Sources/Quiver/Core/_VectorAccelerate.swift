@@ -80,6 +80,25 @@ extension _Vector where Element == Double {
         vDSP_vsmulD(elements, 1, &scale, &result, 1, vDSP_Length(elements.count))
         return _Vector(elements: result)
     }
+    
+    /// Optimized vector projection of this vector onto another vector
+    func vectorProjection(onto other: _Vector<Double>) -> _Vector<Double> {
+        let dotProduct = _Vector.dot(self, other)
+        let otherDotProduct = _Vector.dot(other, other)
+        
+        precondition(otherDotProduct > 0, "Cannot project onto a zero vector")
+        
+        // Calculate the scalar multiple
+        let scalar = dotProduct / otherDotProduct
+        
+        // Scale the target vector using Accelerate
+        var result = [Double](repeating: 0.0, count: other.elements.count)
+        var scale = scalar
+        vDSP_vsmulD(other.elements, 1, &scale, &result, 1, vDSP_Length(other.elements.count))
+        
+        return _Vector(elements: result)
+    }
+    
 }
 
 // Similar optimizations for Float arrays
@@ -102,3 +121,4 @@ extension _Vector where Element == Float {
     
     // Add similar optimized implementations for other Float operations
 }
+

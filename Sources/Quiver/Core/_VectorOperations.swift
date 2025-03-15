@@ -49,6 +49,8 @@ extension _Vector where Element: Numeric {
         return _Vector(elements: result)
     }
     
+    //TODO: Provide element-
+    
     /// Calculates the dot product of two vectors
     static func dot(_ lhs: _Vector<Element>, _ rhs: _Vector<Element>) -> Element {
         precondition(lhs.elements.count == rhs.elements.count, "Vectors must have the same dimension")
@@ -62,6 +64,7 @@ extension _Vector where Element: Numeric {
 }
 
 // MARK: - Floating Point Operations
+
 extension _Vector where Element: FloatingPoint {
     /// Element-wise division of two vectors
     static func divide(_ lhs: _Vector<Element>, _ rhs: _Vector<Element>) -> _Vector<Element> {
@@ -94,5 +97,33 @@ extension _Vector where Element: FloatingPoint {
             normalizedElements.append(element / mag)
         }
         return _Vector(elements: normalizedElements)
+    }
+
+    /// Calculates the scalar projection of this vector onto another vector
+    func scalarProjection(onto other: _Vector<Element>) -> Element {
+        let dotProduct = _Vector.dot(self, other)
+        let magnitude = other.magnitude()
+        
+        precondition(magnitude > 0, "Cannot project onto a zero vector")
+        return dotProduct / magnitude
+    }
+    
+    /// Calculates the vector projection of this vector onto another vector
+    func vectorProjection(onto other: _Vector<Element>) -> _Vector<Element> {
+        let dotProduct = _Vector.dot(self, other)
+        let otherDotProduct = _Vector.dot(other, other)
+        
+        precondition(otherDotProduct > 0, "Cannot project onto a zero vector")
+        
+        // Calculate the scalar multiple
+        let scalar = dotProduct / otherDotProduct
+        
+        // Create a new vector by scaling each component
+        var projectedElements = [Element]()
+        for element in other.elements {
+            projectedElements.append(element * scalar)
+        }
+        
+        return _Vector(elements: projectedElements)
     }
 }
