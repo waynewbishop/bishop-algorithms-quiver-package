@@ -12,7 +12,7 @@ Quiver is a Swift package that provides powerful **vector operations** for Swift
 ## Usage Examples
 Quiver extends Swift's native Array type, providing seamless integration with your existing code.
 
-```
+```swift
 import Quiver
 
 // Basic vector operations
@@ -36,7 +36,7 @@ Linear algebra forms the mathematical foundation for many technologies that powe
 
 ### Calculating Distance Between Points
 
-```
+```swift
 import Quiver
 
 // Player and target positions in a 2D game
