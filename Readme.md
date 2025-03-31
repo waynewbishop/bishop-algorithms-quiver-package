@@ -31,6 +31,32 @@ let magnitude = v1.magnitude       // 3.74 (√14)
 let angle = v1.angleInDegrees(with: v2)  // 14.42°
 ```
 
+## Linear Algebra for iOS Developers
+Linear algebra forms the mathematical foundation for many technologies that power modern apps. As an iOS developer, understanding these concepts unlocks powerful capabilities in graphics rendering, machine learning, data visualization, and animation. At its core, linear algebra deals with vectors (directions and magnitudes) and matrices (transformations and systems of equations), providing elegant solutions to complex programming challenges. With Quiver, you can leverage these mathematical tools without deep theoretical knowledge, handling tasks like calculating distances between points, detecting collisions in games, or preparing data for ML models. Rather than writing complex, error-prone calculations manually, Quiver offers a familiar Swift syntax that mirrors how you already work with Arrays, making linear algebra accessible and practical for everyday iOS development.
+
+### Calculating Distance Between Points
+
+```
+import Quiver
+
+// Player and target positions in a 2D game
+let playerPosition = [42.5, 67.3]
+let targetPosition = [56.2, 89.7]
+
+// Calculate the displacement vector
+let displacement = targetPosition - playerPosition  // [13.7, 22.4]
+
+// Calculate the Euclidean distance
+let distance = displacement.magnitude  // 26.24
+
+// Determine if the target is within interaction range
+let interactionRange = 30.0
+if distance < interactionRange {
+    // Allow player to interact with the target
+    print("Target within range: \(distance) units")
+}
+```
+
 ## Additional Benefits
 
 ### Enhanced Swift Charts Visualization
