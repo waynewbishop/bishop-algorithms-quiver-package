@@ -75,6 +75,30 @@ extension _Vector where Element: Numeric {
         return _Vector(elements: resultElements)
     }
     
+    /// Returns the transpose of a matrix
+    static func transpose(_ matrix: [[Element]]) -> [[Element]] {
+        guard !matrix.isEmpty, !matrix[0].isEmpty else { return [] }
+        
+        let rows = matrix.count
+        let cols = matrix[0].count
+        
+        // Create an empty result matrix with swapped dimensions
+        var result = [[Element]]()
+        for _ in 0..<cols {
+            result.append([Element](repeating: .zero, count: rows))
+        }
+        
+        // Fill the transposed matrix
+        for i in 0..<rows {
+            for j in 0..<cols {
+                result[j][i] = matrix[i][j]
+            }
+        }
+        
+        return result
+    }
+    
+    
 }
 
 // MARK: - Floating Point Operations

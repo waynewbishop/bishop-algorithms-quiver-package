@@ -10,7 +10,7 @@ Quiver is a Swift package that provides powerful **vector operations** for Swift
 * Shape and dimension information
 
 ## Usage Examples
-Quiver extends Swift's native Array type, providing seamless integration with your existing code.
+Quiver extends Swift's native `Array` type, providing seamless integration with your existing code.
 
 ```swift
 import Quiver
@@ -74,7 +74,7 @@ Quiver adopts conventions similar to NumPy, making it easier to:
 
 ## Audience
 Quiver is designed for:
-* iOS/macOS developers working with numerical data
+* iOS/MacOS developers working with numerical data
 * Data scientists exploring Swift as an alternative to Python
 * Educational settings teaching vector mathematics
 * Developers building data visualization applications

@@ -38,5 +38,21 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(v.magnitude, 5.0)
     }
     
-    // Add more tests as needed
+    func testTranspose() {
+        let matrix = [[1.0, 2.0, 3.0],
+                      [4.0, 5.0, 6.0]] as [[Double]]
+        
+        let transposed = matrix.transpose()
+        
+        let expected = [[1.0, 4.0],
+                        [2.0, 5.0],
+                        [3.0, 6.0]] as [[Double]]
+        
+        XCTAssertEqual(transposed.count, expected.count)
+        
+        for i in 0..<transposed.count {
+            XCTAssertEqual(transposed[i], expected[i])
+        }
+        
+    }
 }

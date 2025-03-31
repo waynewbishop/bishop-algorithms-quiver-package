@@ -78,8 +78,24 @@ public extension Array where Element: Numeric {
         let result = _Vector.matrixVectorTransform(matrix, vectorObj)
         return result.elements
     }
-    
 }
+
+extension Array where Element: Collection, Element.Element: Numeric {
+    /// Returns the transpose of a matrix
+    /// - Returns: A new matrix where rows become columns and columns become rows
+    func transpose() -> [[Element.Element]] {
+        guard !self.isEmpty, !self[0].isEmpty else { return [] }
+        
+        // Convert to array of arrays for internal implementation
+        let matrixArray = self.map { row -> [Element.Element] in
+            return row.map { $0 }
+        }
+        
+        // Call the internal implementation from _Vector
+        return _Vector.transpose(matrixArray)
+    }
+}
+
 
 // MARK: - FloatingPoint Vector Operations
 
