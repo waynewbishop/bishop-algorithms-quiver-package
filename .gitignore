@@ -1,8 +1,27 @@
+# Build products
+build/
+.build/
+
+# Package manager files
+Package.resolved
+
+# Editor files
+.vscode/
+*.xcodeproj
+*.xcworkspace
+.idea/
+
+# Swift Package Manager
+.swiftpm/
+
+# Test files
 .DS_Store
-/.build
-/Packages
-xcuserdata/
-DerivedData/
-.swiftpm/configuration/registries.json
-.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
-.netrc
+*.xcuserstate
+
+# Documentation
+docs/build/
+
+# Temp files
+*.swp
+*~
+.*.sw*
