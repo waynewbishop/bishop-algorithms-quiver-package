@@ -13,15 +13,72 @@
 
 import Foundation
 
-// MARK: - Vector Operations
+// MARK: - Standard Numeric Vector Operations
 
 public extension Array where Element: Numeric {
+    
+    /// Returns the shape of the array (NumPy-like)
+    /// For vectors: (length, 0)
+    /// For matrices: (rows, columns)
+    var shape: (rows: Int, columns: Int) {
+        // Check if this is a matrix (2D array)
+        if let matrix = self as? [[Any]], !matrix.isEmpty {
+            let rowCount = matrix.count
+            let columnCount = matrix[0].count
+            return (rowCount, columnCount)
+        }
+        
+        // Otherwise, treat as a vector
+        return (self.count, 0)
+    }
+    
+   /// Returns true if this array represents a valid matrix (2D array with consistent row lengths)
+   var isMatrix: Bool {
+       guard let firstRow = self.first as? [Element] else { return false }
+       return self.allSatisfy { row in
+           guard let row = row as? [Element] else { return false }
+           return row.count == firstRow.count
+       }
+   }
+   
+   /// Returns the dimensions of the matrix as (rows, columns) if this is a valid matrix
+   var matrixDimensions: (rows: Int, columns: Int)? {
+       guard isMatrix, let firstRow = self.first as? [Element] else { return nil }
+       return (self.count, firstRow.count)
+   }
+    
     /// Calculates the dot product of two vectors
     func dot(_ other: [Element]) -> Element {
         let v1 = _Vector(elements: self)
         let v2 = _Vector(elements: other)
         return _Vector.dot(v1, v2)
     }
+    
+    /// Transform this vector using a matrix (matrix-vector multiplication)
+    /// - Parameter matrix: The matrix to transform this vector with
+    /// - Returns: The transformed vector
+    func transformedBy(_ matrix: [[Element]]) -> [Element] {
+        // Check if the matrix dimensions are compatible with this vector
+        guard !matrix.isEmpty,
+              let firstRow = matrix.first,
+              firstRow.count == self.count else {
+            preconditionFailure("Invalid matrix dimensions or vector length")
+        }
+        
+        // Ensure all rows have the same length
+        for row in matrix {
+            guard row.count == firstRow.count else {
+                preconditionFailure("All matrix rows must have the same length")
+            }
+        }
+        
+        // Convert to internal _Vector and use the internal implementation
+        let vectorObj = _Vector(elements: self)
+        
+        let result = _Vector.matrixVectorTransform(matrix, vectorObj)
+        return result.elements
+    }
+    
 }
 
 // MARK: - FloatingPoint Vector Operations
@@ -40,7 +97,7 @@ public extension Array where Element: FloatingPoint {
     }
     
     /// Returns the cosine of the angle between two vectors
-    func cosineAngle(with other: [Element]) -> Element {
+    func cosineOfAngle(with other: [Element]) -> Element {
         let dotProduct = self.dot(other)
         let magnitudeProduct = self.magnitude * other.magnitude
         

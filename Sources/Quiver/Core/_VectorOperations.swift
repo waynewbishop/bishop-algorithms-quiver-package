@@ -16,6 +16,7 @@ import Foundation
 // MARK: - Basic Element-wise Operations
 
 extension _Vector where Element: Numeric {
+    
     /// Element-wise addition of two vectors
     static func add(_ lhs: _Vector<Element>, _ rhs: _Vector<Element>) -> _Vector<Element> {
         precondition(lhs.elements.count == rhs.elements.count, "Vectors must have the same dimension")
@@ -49,7 +50,6 @@ extension _Vector where Element: Numeric {
         return _Vector(elements: result)
     }
     
-    //TODO: Provide element-
     
     /// Calculates the dot product of two vectors
     static func dot(_ lhs: _Vector<Element>, _ rhs: _Vector<Element>) -> Element {
@@ -61,6 +61,20 @@ extension _Vector where Element: Numeric {
         }
         return result
     }
+    
+    /// Matrix-vector multiplication
+    static func matrixVectorTransform(_ matrix: [[Element]], _ vector: _Vector<Element>) -> _Vector<Element> {
+        precondition(matrix.first?.count == vector.elements.count, "Matrix columns must match vector length")
+        
+        var resultElements = [Element]()
+        for row in matrix {
+            let rowVector = _Vector(elements: row)
+            resultElements.append(_Vector.dot(rowVector, vector))
+        }
+        
+        return _Vector(elements: resultElements)
+    }
+    
 }
 
 // MARK: - Floating Point Operations

@@ -18,11 +18,11 @@ import Foundation
 public extension Array where Element == Double {
     /// Returns the angle between two vectors in radians
     func angle(with other: [Double]) -> Double {
-        return acos(self.cosineAngle(with: other))
+        return acos(self.cosineOfAngle(with: other))
     }
     
     /// Returns the angle between two vectors in degrees
-    func angleDegrees(with other: [Double]) -> Double {
+    func angleInDegrees(with other: [Double]) -> Double {
         return angle(with: other) * 180 / .pi
     }
 }
@@ -32,11 +32,11 @@ public extension Array where Element == Double {
 public extension Array where Element == Float {
     /// Returns the angle between two vectors in radians
     func angle(with other: [Float]) -> Float {
-        return acos(self.cosineAngle(with: other))
+        return acos(self.cosineOfAngle(with: other))
     }
     
     /// Returns the angle between two vectors in degrees
-    func angleDegrees(with other: [Float]) -> Float {
+    func angleInDegrees(with other: [Float]) -> Float {
         return angle(with: other) * 180 / .pi
     }
 }

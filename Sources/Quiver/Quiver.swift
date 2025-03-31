@@ -22,7 +22,7 @@ import Foundation
 /// 
 /// // Angle calculations
 /// let angle = a.angle(with: b)
-/// let degrees = a.angleDegrees(with: b)
+/// let degrees = a.angleInDegrees(with: b)
 /// ```
 public enum Quiver {
     /// Library version
