@@ -9,15 +9,6 @@ Quiver is a Swift package that provides powerful vector operations for Swift app
 * Matrix-vector transformations
 * Shape and dimension information
 
-### Installation
-Add Quiver to your project by adding the following dependency in your `Package.swift` file:
-
-```
-dependencies: [
-    .package(url: "https://github.com/waynewbishop/Quiver.git", from: "1.0.0")
-]
-```
-
 ## Usage Examples
 Quiver extends Swift's native `Array` type, providing seamless integration with your existing code. If you're familiar with working with Arrays in Swift, you'll feel right at home with Quiver.
 
@@ -36,12 +27,6 @@ let sum = v1 + v2  // [6.0, 12.0, 18.0]
 
 // Element-wise subtraction
 let difference = v2 - v1  // [2.0, 4.0, 6.0]
-
-// Element-wise multiplication
-let product = v1 * v2  // [8.0, 32.0, 72.0]
-
-// Element-wise division
-let quotient = v2 / v1  // [2.0, 2.0, 2.0]
 ```
 
 ### Vector Operations
@@ -70,24 +55,6 @@ let projected = a.vectorProjection(onto: b)  // [3.0, 0.0]
 
 // Scalar projection
 let scalarProjection = a.scalarProjection(onto: b)  // 3.0
-
-// Orthogonal component
-let orthogonal = a.orthogonalComponent(to: b)  // [0.0, 4.0]
-```
-
-### Matrix Operations
-Transform vectors using matrices:
-
-```
-// Create a matrix
-let matrix = [
-    [1.0, 2.0],
-    [3.0, 4.0]
-]
-
-// Transform vector using matrix
-let vector = [2.0, 3.0]
-let transformed = vector.transformedBy(matrix)  // [8.0, 18.0]
 ```
 
 ## Benefits Beyond Vector Operations
