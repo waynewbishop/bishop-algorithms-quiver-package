@@ -82,6 +82,15 @@ public extension Array where Element: Numeric {
 
 extension Array where Element: Collection, Element.Element: Numeric {
     /// Returns the transpose of a matrix
+    ///
+    /// This method is only available on 2D arrays (arrays of collections) where the inner elements
+    /// are numeric types. For example, it works with [[1, 2], [3, 4]] or [[1.0, 2.0], [3.0, 4.0]],
+    /// but not with [1, 2, 3, 4] or [["a", "b"], ["c", "d"]].
+    ///
+    /// The transpose operation converts rows into columns and columns into rows:
+    /// - For a matrix with dimensions m×n, the result will have dimensions n×m
+    /// - Each element at position (i,j) in the original matrix will be at position (j,i) in the transposed matrix
+    ///
     /// - Returns: A new matrix where rows become columns and columns become rows
     func transpose() -> [[Element.Element]] {
         guard !self.isEmpty, !self[0].isEmpty else { return [] }

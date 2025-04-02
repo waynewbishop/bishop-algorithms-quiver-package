@@ -38,6 +38,16 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(v.magnitude, 5.0)
     }
     
+    func testTransform() {
+        //the special identity matrix, although a transform, does not alter vector space
+        let matrix = [[0.5, 0.0],
+                       [-1.0, 0.75]]
+        let v1: [Double] = [3.0, 2.0]
+        let results = v1.transformedBy(matrix)
+        print(results)
+    }
+    
+    
     func testTranspose() {
         let matrix = [[1.0, 2.0, 3.0],
                       [4.0, 5.0, 6.0]] as [[Double]]
