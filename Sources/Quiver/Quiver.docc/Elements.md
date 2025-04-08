@@ -63,3 +63,17 @@ This approach offers several advantages:
 - Compatible with existing Swift code that works with arrays
 - Familiar Swift syntax and behavior
 - Full support for Swift's type system and generics
+
+## Topics
+
+### Basic Operations
+
+- ``Swift/Array/+(_:_:)``
+- ``Swift/Array/-(_:_:)``
+- ``Swift/Array/*(_:_:)``
+- ``Swift/Array//(_:_:)``
+
+### Related Articles
+
+- <doc:Operations>
+- <doc:Statistics>

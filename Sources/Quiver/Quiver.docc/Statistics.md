@@ -168,3 +168,28 @@ Quiver implements statistical functions as extensions to the `Array` type with a
 - Advanced statistics like `mean()` and `variance()` require `FloatingPoint` elements
 
 This approach provides a natural and intuitive API that works directly with Swift's native arrays.
+
+## Topics
+
+### Basic Aggregations
+- ``Swift/Array/sum()``
+- ``Swift/Array/product()``
+- ``Swift/Array/min()``
+- ``Swift/Array/max()``
+- ``Swift/Array/argmin()``
+- ``Swift/Array/argmax()``
+
+### Central Tendency
+- ``Swift/Array/mean()``
+- ``Swift/Array/median()``
+
+### Dispersion Measures
+- ``Swift/Array/variance(ddof:)``
+- ``Swift/Array/std(ddof:)``
+
+### Cumulative Statistics
+- ``Swift/Array/cumulativeSum()``
+- ``Swift/Array/cumulativeProduct()``
+
+### Related Articles
+- <doc:Boolean>

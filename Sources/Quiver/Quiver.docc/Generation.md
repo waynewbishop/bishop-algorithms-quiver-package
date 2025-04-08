@@ -108,3 +108,25 @@ transform[0][3] = 10.0  // Add translation
 The array generation functions in Quiver are implemented as static methods on Array extensions with appropriate type constraints. For example, sequence generation functions like `linspace` are only available on floating-point arrays, while basic creation functions like `zeros` are available for any numeric type.
 
 > Warning: When creating large arrays, be mindful of memory usage. These functions allocate memory for the entire array at once.
+
+## Topics
+
+### Basic Array Creation
+- ``Swift/Array/zeros(_:)``
+- ``Swift/Array/ones(_:)``
+- ``Swift/Array/full(_:value:)``
+
+### Sequence Generation
+- ``Swift/Array/linspace(_:_:num:)``
+- ``Swift/Array/arange(_:_:step:)-8fjm5``
+
+### Matrix Creation
+- ``Swift/Array/zeros(_:_:)``
+- ``Swift/Array/ones(_:_:)``
+- ``Swift/Array/full(_:_:value:)``
+- ``Swift/Array/identity(_:)``
+- ``Swift/Array/diag(_:)``
+
+### Related Articles
+- <doc:Operations>
+- <doc:Elements>

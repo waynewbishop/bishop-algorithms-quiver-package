@@ -18,7 +18,7 @@ This design choice means you can easily chain native Swift operations with Quive
 let filtered = someArray.filter { $0 > 0 }.normalized
 ```
 
-## Type Safety
+### Type Safety
 
 Quiver embraces Swift's strong type system to ensure correctness while maintaining flexibility:
 
@@ -29,7 +29,7 @@ Quiver embraces Swift's strong type system to ensure correctness while maintaini
 
 For example, division operations are only available for arrays with floating-point elements, preventing unexpected integer division behavior.
 
-## Error Handling
+### Error Handling
 
 Mathematical operations sometimes require specific conditions to be valid. Quiver handles error conditions clearly:
 
@@ -47,7 +47,7 @@ let b = [4, 5]
 let sum = a + b // ❌ Different dimensions
 ```
 
-## Performance Considerations
+### Performance Considerations
 
 Quiver balances readability and performance to create a library that's both easy to use and efficient:
 
@@ -58,7 +58,7 @@ Quiver balances readability and performance to create a library that's both easy
 
 While Quiver prioritizes clean API design over maximum performance, it's still efficient for most use cases. For extremely performance-critical applications, specialized libraries like Accelerate might be more appropriate, but Quiver offers a better balance of usability and performance.
 
-## Educational Focus
+### Educational Focus
 
 Quiver was designed with an educational component in mind:
 
@@ -69,7 +69,7 @@ Quiver was designed with an educational component in mind:
 
 This educational focus makes Quiver an excellent tool for learning about vector mathematics and numerical computing in Swift.
 
-## Swift-first API Design
+### Swift-first API Design
 
 Unlike libraries that are ports from other languages, Quiver was designed from the ground up for Swift:
 
@@ -80,7 +80,7 @@ Unlike libraries that are ports from other languages, Quiver was designed from t
 
 This Swift-first approach means that Quiver feels like a natural extension of the language rather than a foreign library.
 
-## Modular Architecture
+### Modular Architecture
 
 Quiver's implementation uses a modular approach:
 
@@ -90,7 +90,7 @@ Quiver's implementation uses a modular approach:
 
 This architecture keeps the public API clean while allowing for complex internal implementations that don't leak implementation details.
 
-## NumPy Inspiration
+### NumPy Inspiration
 
 While Quiver is Swift-first, it takes inspiration from NumPy's powerful and expressive API:
 

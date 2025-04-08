@@ -93,3 +93,25 @@ Boolean operations and masks are particularly useful for:
 Comparison operations in Quiver are implemented as extensions to the `Array` type with elements that conform to `Comparable`. Boolean operations are implemented as extensions to `Array` where the element type is `Bool`.
 
 This approach provides a natural and intuitive API for working with comparisons and boolean operations.
+
+## Topics
+
+### Comparison Operations
+- ``Swift/Array/isEqual(to:)``
+- ``Swift/Array/isGreaterThan(_:)``
+- ``Swift/Array/isLessThan(_:)``
+- ``Swift/Array/isGreaterThanOrEqual(_:)``
+- ``Swift/Array/isLessThanOrEqual(_:)``
+
+### Boolean Operations
+- ``Swift/Array/and(_:)``
+- ``Swift/Array/or(_:)``
+- ``Swift/Array/not``
+- ``Swift/Array/trueIndices``
+
+### Selection and Filtering
+- ``Swift/Array/masked(by:)``
+- ``Swift/Array/choose(where:otherwise:)``
+
+### Related Articles
+- <doc:Operations>

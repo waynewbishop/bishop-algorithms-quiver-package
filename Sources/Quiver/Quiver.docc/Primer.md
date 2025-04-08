@@ -192,4 +192,3 @@ This primer covers fundamental concepts, but linear algebra goes much deeper. As
 - Principal component analysis (PCA)
 
 > Tip: The best way to learn is by applying these concepts in real projects. Start small and build intuition through practice.
-

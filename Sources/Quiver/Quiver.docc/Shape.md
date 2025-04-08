@@ -77,3 +77,14 @@ Shape operations in Quiver are designed to be intuitive and familiar to users of
 - Reshape operations create new arrays (they don't modify the original)
 
 > Note: Unlike NumPy, Quiver works with Swift's nested arrays for multi-dimensional data. A matrix is represented as an array of arrays, not a specialized matrix type.
+
+## Topics
+
+### Shape Properties
+- ``Swift/Array/shape``
+- ``Swift/Array/isMatrix``
+- ``Swift/Array/matrixDimensions``
+
+### Related Articles
+- <doc:Elements>
+- <doc:Operations>

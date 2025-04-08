@@ -99,3 +99,26 @@ Vector operations in Quiver are implemented as extensions to the `Array` type wi
 - Angle calculations use the mathematical relationship between dot product and vector magnitudes
 
 This approach means you can use these operations directly on standard Swift arrays without conversion to special types.
+
+## Topics
+
+### Vector Properties
+- ``Swift/Array/magnitude``
+- ``Swift/Array/normalized``
+
+### Vector Relationships 
+- ``Swift/Array/dot(_:)``
+- ``Swift/Array/angle(with:)-piry``
+- ``Swift/Array/angleInDegrees(with:)-7n2tx``
+- ``Swift/Array/cosineOfAngle(with:)``
+
+### Vector Projections
+- ``Swift/Array/scalarProjection(onto:)``
+- ``Swift/Array/vectorProjection(onto:)``
+- ``Swift/Array/orthogonalComponent(to:)``
+
+### Matrix Operations
+- ``Swift/Array/transformedBy(_:)``
+
+### Related Articles
+- <doc:Primer>
