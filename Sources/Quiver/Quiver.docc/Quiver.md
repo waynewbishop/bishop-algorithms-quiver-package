@@ -30,4 +30,5 @@ As Swift continues to expand beyond app development into domains like server-sid
 
 ### Data Creation and Manipulation
 - <doc:Generation>
+- <doc:Random>
 - <doc:Shape>

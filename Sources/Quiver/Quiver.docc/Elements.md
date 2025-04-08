@@ -7,7 +7,7 @@ Perform mathematical calculations on arrays where each element is processed inde
 ## Overview
 
 Quiver extends Swift's `Array` type to support element-wise arithmetic operations for numeric arrays. This means you can add, subtract, multiply, and divide arrays without writing loops or complex logic.
-Element-wise operations are fundamental to numerical computing and allow you to express mathematicalSwift.Array transformations clearly and concisely.
+Element-wise operations are fundamental to numerical computing and allow you to express `Array` transformations clearly and concisely.
 
 ### Basic Arithmetic
 Quiver adds support for the standard arithmetic operators (+, -, *, /) to work between arrays or between arrays and scalar values.
@@ -31,7 +31,7 @@ let quotient = x / y  // [2.0, 2.0, 2.0]
 ```
 
 ### How It Works
-Quiver implements these operations by extending Swift's `Array` type where the elements conform to the Numeric protocol. This means the operations work on arrays of `Int`, `Double`, `Float`, and other numeric types.
+Quiver implements these operations by extending Swift's `Array` type where the elements conform to the **Numeric** protocol. This means the operations work on arrays of `Int`, `Double`, `Float`, and other numeric types.
 For example, the addition operator is implemented like this:
 
 ```swift
@@ -75,5 +75,4 @@ This approach offers several advantages:
 
 ### Related Articles
 
-- <doc:Operations>
 - <doc:Statistics>

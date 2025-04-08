@@ -41,22 +41,6 @@ invalidMatrix.isMatrix  // false - rows have different lengths
 
 > Warning: Many matrix operations require valid matrices with consistent row lengths. Use `isMatrix` to validate before performing such operations.
 
-### Reshaping Arrays
-
-Reshape operations let you transform an array into a new shape while preserving its elements:
-
-```swift
-let data = [1, 2, 3, 4, 5, 6]
-
-// Reshape to a 2×3 matrix
-let reshaped = data.reshape(2, 3)  // [[1, 2, 3], [4, 5, 6]]
-
-// Reshape to a 3×2 matrix
-let transposed = data.reshape(3, 2)  // [[1, 2], [3, 4], [5, 6]]
-```
-
-> Important: When reshaping, the total number of elements must remain the same. For example, you can reshape a 12-element array into shapes like 3×4, 4×3, 2×6, etc., but not into a 3×5 shape.
-
 ### Transposing Matrices
 
 Transposing is a special reshape operation that flips a matrix over its diagonal:
