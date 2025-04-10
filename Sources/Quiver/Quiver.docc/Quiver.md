@@ -8,7 +8,7 @@ A Swift package that provides vector mathematics, numerical computing, and stati
 
 This lightweight, functional and educational framework enables developers to perform element-wise operations, vector calculations, and matrix transformations with simple, readable syntax.
 
-Quiver expands the Swift ecosystem with a native, Swift-first approach to numerical computing and vector mathematics. By building directly on Swift's powerful type system and syntax, Quiver creates an intuitive bridge between traditional array operations and advanced mathematical concepts. The framework embraces Swift's emphasis on readability and expressiveness, offering mathematical operations that feel natural to iOS and macOS developers. This Swift-idiomatic approach allows developers to write clean, concise code for complex vector operations, making mathematical algorithms more accessible and maintainable within Apple's platforms.
+Quiver expands the Swift ecosystem with a native, Swift-first approach to numerical computing and vector mathematics. By building directly on Swift's powerful type system and syntax, Quiver creates an intuitive bridge between traditional array operations and advanced mathematical concepts. Built as an extension on the standard `Array` type, The framework embraces Swift's emphasis on readability and expressiveness, offering mathematical operations that feel natural to iOS and macOS developers. This Swift-idiomatic approach allows developers to write clean, concise code for complex vector operations, making mathematical algorithms more accessible and maintainable within Apple's platforms.
 
 ### Data Science in Swift
 
@@ -23,6 +23,7 @@ As Swift continues to expand beyond app development into domains like server-sid
 ### Core Operations
 - <doc:Elements>
 - <doc:Operations>
+- <doc:Inspection>
 
 ### Data Analysis
 - <doc:Statistics>

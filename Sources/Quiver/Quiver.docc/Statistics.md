@@ -8,9 +8,33 @@ Quiver extends Swift arrays with powerful statistical functions that let you cal
 
 Statistical functions form the foundation of data analysis and are essential for understanding the characteristics of your numerical data.
 
+### Quick Data Overview
+
+For a comprehensive overview of your data including both shape information and key statistics, use the `info()` method:
+
+```swift
+let data = [12.5, 18.3, 9.8, 15.2, 13.7, 10.1, 19.4]
+print(data.info())
+// Output:
+// Array Information:
+// Count: 7
+// Shape: (7, 0)
+// Type: Double.Type
+// Mean: 14.14
+// Min: 9.8
+// Max: 19.4
+//
+// First 5 items:
+// [0]: 12.5
+// [1]: 18.3
+// [2]: 9.8
+// [3]: 15.2
+// [4]: 13.7
+```
+
 ### Aggregation Functions
 
-Quiver provides functions to calculate basic aggregations on arrays:
+Quiver also provides functions to calculate basic aggregations on arrays:
 
 ```swift
 let data = [4.0, 7.0, 2.0, 9.0, 3.0]
@@ -102,26 +126,6 @@ let mean = doubles.mean()  // 3.0
 
 ## Common Use Cases
 
-### Descriptive Statistics
-
-Generate a statistical summary of your data:
-
-```swift
-let data = [12.5, 18.3, 9.8, 15.2, 13.7, 10.1, 19.4]
-
-let stats = """
-    Count: \(data.count)
-    Sum: \(data.sum())
-    Mean: \(data.mean()!)
-    Median: \(data.median()!)
-    Min: \(data.min()!)
-    Max: \(data.max()!)
-    Range: \(data.max()! - data.min()!)
-    Variance: \(data.variance()!)
-    Std Dev: \(data.std()!)
-    """
-```
-
 ### Data Normalization
 
 Normalize data to have specific statistical properties:
@@ -190,6 +194,3 @@ This approach provides a natural and intuitive API that works directly with Swif
 ### Cumulative Statistics
 - ``Swift/Array/cumulativeSum()``
 - ``Swift/Array/cumulativeProduct()``
-
-### Related Articles
-- <doc:Boolean>

@@ -54,6 +54,30 @@ When using element-wise operations, the arrays must have the same dimensions. If
 
 Division operations are only available for arrays with floating-point elements (`Double`, `Float`), as division on integer types can lead to loss of precision.
 
+### Information and Inspection
+
+Quiver provides a convenient way to inspect arrays with the `info()` method:
+
+```swift
+let values = [1.0, 2.5, 3.7, 4.2, 5.0]
+print(values.info())
+// Output:
+// Array Information:
+// Count: 5
+// Shape: (5, 0)
+// Type: Double.Type
+// Mean: 3.28
+// Min: 1.0
+// Max: 5.0
+//
+// First 5 items:
+// [0]: 1.0
+// [1]: 2.5
+// [2]: 3.7
+// [3]: 4.2
+// [4]: 5.0
+```
+
 ### Integration with Swift's Standard Library
 
 A key design principle of Quiver is seamless integration with Swift's standard library. These element-wise operations work directly on Swift's `Array` type - there's no need to convert to a special vector or matrix class first.
