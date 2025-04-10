@@ -1,4 +1,5 @@
 # Quiver: Swift Vector Operations Framework
+
 Quiver is a Swift package that provides powerful **vector operations** for Swift applications, inspired by NumPy's functionality in Python. This lightweight, functional and educational framework enables developers to perform element-wise operations, vector calculations, and matrix transformations with simple, readable syntax.
 
 ## Features

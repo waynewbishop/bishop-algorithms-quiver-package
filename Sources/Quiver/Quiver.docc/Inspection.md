@@ -18,7 +18,7 @@ let matrix = [[1, 2, 3], [4, 5, 6]]
 print(matrix.shape)  // (2, 3)
 ```
 
-For vectors (1D arrays), the second dimension is 0, which distinguishes them from 1-row matrices. For matrices (2D arrays), the shape represents (rows, columns).
+> Note: For vectors (1D arrays), the second dimension is 0, which distinguishes them from 1-row matrices. For matrices (2D arrays), the shape represents (rows, columns).
 
 You can also check if an array represents a valid matrix:
 

@@ -19,6 +19,7 @@ As Swift continues to expand beyond app development into domains like server-sid
 ### Getting Started
 - <doc:Design>
 - <doc:Primer>
+- <doc:Charts>
 
 ### Core Operations
 - <doc:Elements>
