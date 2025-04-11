@@ -58,6 +58,8 @@ Quiver balances readability and performance to create a library that's both easy
 
 While Quiver prioritizes clean API design over maximum performance, it's still efficient for most use cases. For extremely performance-critical applications, specialized libraries like Accelerate might be more appropriate, but Quiver offers a better balance of usability and performance.
 
+I understand your preference to keep the wording more generic. Here's a revised version that avoids specifically mentioning swift-numerics or Apple while still positioning Quiver within the larger Swift numerical computing ecosystem:
+
 ### Educational Focus
 
 Quiver was designed with an educational component in mind:
@@ -78,7 +80,7 @@ Unlike libraries that are ports from other languages, Quiver was designed from t
 - **Apple platform integration**: The library works well with other Apple frameworks and Swift libraries.
 - **SwiftUI compatibility**: Array operations can be easily used in SwiftUI data flows.
 
-This Swift-first approach means that Quiver feels like a natural extension of the language rather than a foreign library.
+While some libraries in the Swift ecosystem focus on providing foundational mathematical primitives and low-level numeric types, Quiver takes a different approach by extending Swift's built-in Array type with higher-level vector and matrix operations. This Swift-first approach means that Quiver feels like a natural extension of the language rather than a foreign library.
 
 ### Modular Architecture
 
@@ -92,7 +94,7 @@ This architecture keeps the public API clean while allowing for complex internal
 
 ### NumPy Inspiration
 
-While Quiver is Swift-first, it takes inspiration from NumPy's powerful and expressive API:
+While Quiver is Swift-first, it takes inspiration from NumPy's powerful and expressive API. The framework is designed to feel familiar to developers coming from Python's numerical ecosystem while remaining true to Swift's syntax and type system. Rather than reimplementing low-level numeric operations, Quiver focuses on making array manipulation, statistical analysis, and vector mathematics accessible and intuitive.
 
 - **Familiar operations**: Developers coming from Python/NumPy will recognize many operations.
 - **Similar naming**: Where it makes sense, Quiver adopts similar naming conventions to NumPy.
