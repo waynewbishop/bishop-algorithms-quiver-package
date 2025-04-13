@@ -1,4 +1,4 @@
-# Quiver - Swift Vector Mathematics and Numerical Computing
+# Quiver: Swift Vector Mathematics and Numerical Computing
 
 Quiver is a Swift package that provides powerful numerical computing capabilities for Swift applications, inspired by NumPy's functionality in Python. This lightweight, functional and educational framework extends Swift's native `Array` type with vector operations, statistical functions, and array manipulation tools.
 
@@ -90,4 +90,3 @@ Quiver is available under the Apache License, Version 2.0. See the LICENSE file 
 ## Questions
 
 Have a question? Feel free to contact me on [LinkedIn](https://www.linkedin.com/in/waynebishop).
-```
