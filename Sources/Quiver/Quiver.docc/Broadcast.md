@@ -134,7 +134,4 @@ The broadcasting implementations verify dimension compatibility at runtime, prov
 - ``Swift/Array/broadcast(withRowVector:operation:)``
 - ``Swift/Array/broadcast(withColumnVector:operation:)``
 
-### Related Articles
-- <doc:Elements>
-- <doc:Operations>
 ```
