@@ -154,5 +154,5 @@ struct FilteredAreaChart: View {
 ## Related Articles
 - <doc:Operations> - Learn more about the vector operations used in these charts
 - <doc:Statistics> - Explore the statistical functions used in the Bar Chart example
-- <doc:Boolean> - Understand the boolean filtering used in the Area Chart example
+- <doc:Comparison> - Understand the boolean filtering used in the Area Chart example
 - <doc:Generation> - Discover more about generating sequences and random values

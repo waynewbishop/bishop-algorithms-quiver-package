@@ -1,4 +1,4 @@
-# Basic Statistics
+# Statistical Operations
 
 Calculate common statistical measures from arrays of numerical data.
 
@@ -128,21 +128,37 @@ let mean = doubles.mean()  // 3.0
 
 ### Data Normalization
 
-Normalize data to have specific statistical properties:
+Normalize data with simple transformations:
 
 ```swift
-let data = [4.0, 7.0, 2.0, 9.0, 3.0]
+let temperatures = [72.0, 68.0, 73.0, 70.0, 75.0]
 
-// Z-score normalization (mean = 0, std = 1)
-let mean = data.mean()!
-let std = data.std()!
-let zScores = data.map { ($0 - mean) / std }
+// Convert Fahrenheit to Celsius: (F - 32) * 5/9
+// Using map
+let celsiusMap = temperatures.map { ($0 - 32.0) * 5.0/9.0 }
 
-// Min-max scaling (range 0 to 1)
-let min = data.min()!
-let max = data.max()!
-let scaled = data.map { ($0 - min) / (max - min) }
+// Using broadcasting for cleaner code
+let celsius = temperatures.broadcast(subtracting: 32.0).broadcast(multiplyingBy: 5.0/9.0)
+// [22.2, 20.0, 22.8, 21.1, 23.9]
+
+// Using a custom broadcasting operation with closure
+let celsiusCustom = temperatures.broadcast(with: 0.0) { fahrenheit, _ in
+    (fahrenheit - 32.0) * 5.0/9.0
+}
+// [22.2, 20.0, 22.8, 21.1, 23.9]
+
+// Add 10% to each value
+// Using map
+let increasedMap = temperatures.map { $0 * 1.1 }
+
+// Using broadcasting
+let increased = temperatures.broadcast(multiplyingBy: 1.1)
+// [79.2, 74.8, 80.3, 77.0, 82.5]
 ```
+
+> Tip: Custom broadcasting with closures is particularly useful for complex transformations that combine multiple operations or include conditional logic.
+
+> Note: The second parameter in the custom broadcasting closure is a placeholder in this example (hence the `_`), but you can use it for operations that require a specific value.
 
 ### Anomaly Detection
 
@@ -194,3 +210,6 @@ This approach provides a natural and intuitive API that works directly with Swif
 ### Cumulative Statistics
 - ``Swift/Array/cumulativeSum()``
 - ``Swift/Array/cumulativeProduct()``
+
+### Related Articles
+- <doc:Broadcast>

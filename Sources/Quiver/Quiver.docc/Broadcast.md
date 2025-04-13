@@ -6,8 +6,6 @@ Apply operations between arrays and scalars or between arrays of different dimen
 
 Quiver provides broadcasting capabilities that let you perform operations between arrays and scalars, or between arrays of different shapes. Broadcasting allows you to write cleaner, more expressive code by eliminating explicit loops for common element-wise operations.
 
-Broadcasting in Quiver follows principles similar to NumPy, making operations between arrays of different shapes intuitive and concise.
-
 ### Scalar Broadcasting
 
 The simplest form of broadcasting applies a scalar operation to every element in an array:
@@ -71,24 +69,31 @@ For more flexibility, Quiver provides custom broadcasting operations with closur
 ```swift
 let vector = [1, 2, 3, 4]
 
-// Apply a custom operation with a scalar
-let powered = vector.broadcast(with: 2) { base, exponent in
-    Int(pow(Double(base), Double(exponent)))
+// Apply a custom operation with a scalar (raising each element to the power of 2)
+let powered = vector.broadcast(with: 2) { element, exponent in
+    Int(pow(Double(element), Double(exponent)))
 }  // [1, 4, 9, 16]
+
+// Multiply each element by 3
+let tripled = vector.broadcast(with: 3) { element, multiplier in
+    element * multiplier
+} // [3, 6, 9, 12]
 
 // Custom matrix-vector operations
 let matrix = [[1, 2, 3], [4, 5, 6]]
 let rowVector = [10, 100, 1000]
 
 // Apply a custom operation between rows and a vector
-let customRowOperation = matrix.broadcast(withRowVector: rowVector) { a, b in
-    a * b + a  // a * (b + 1)
+let customRowOperation = matrix.broadcast(withRowVector: rowVector) { matrixElement, vectorElement in
+    matrixElement * vectorElement + matrixElement  // matrixElement * (vectorElement + 1)
 }
 // [[11, 202, 3003], 
 //  [44, 505, 6006]]
 ```
 
-These custom operations provide maximum flexibility while still benefiting from the clean syntax of broadcasting.
+> Important: In the closure, the first parameter always represents the element from the array/matrix, and the second parameter represents the scalar value or the corresponding element from the vector you're broadcasting with.
+
+> Tip: Choose descriptive parameter names in your closure that reflect the specific operation you're performing, rather than using generic names like "a" and "b".
 
 ### Use Cases
 

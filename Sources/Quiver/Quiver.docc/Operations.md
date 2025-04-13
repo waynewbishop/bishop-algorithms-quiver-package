@@ -90,6 +90,20 @@ Vector operations in Quiver are based on well-established mathematical principle
 
 > Note: Quiver follows standard mathematical conventions for vector operations, making it easier to translate mathematical formulas directly into code.
 
+#### Broadcasting: Simplifying Operations
+
+Broadcasting allows operations between arrays of different shapes:
+
+```swift
+let matrix = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+let rowVector = [10.0, 20.0, 30.0]
+
+// Add the row vector to each row in the matrix
+let result = matrix.broadcast(addingToEachRow: rowVector)
+// [[11.0, 22.0, 33.0], [14.0, 25.0, 36.0]]
+```
+> Tip: Broadcasting eliminates the need for explicit loops when operating between arrays of compatible shapes.
+
 ### Implementation Details
 
 Vector operations in Quiver are implemented as extensions to the `Array` type with appropriate type constraints:
