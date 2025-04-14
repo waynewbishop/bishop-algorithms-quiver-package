@@ -26,12 +26,27 @@ As Swift continues to expand beyond app development into domains like server-sid
 - <doc:Operations>
 - <doc:Broadcast>
 - <doc:Inspection>
+- ``Swift/Array/+(_:_:)``
+- ``Swift/Array/-(_:_:)``
+- ``Swift/Array/*(_:_:)``
+- ``Swift/Array/dot(_:)``
+- ``Swift/Array/magnitude``
+- ``Swift/Array/normalized``
 
 ### Data Analysis
 - <doc:Statistics>
 - <doc:Comparison>
+- ``Swift/Array/mean()``
+- ``Swift/Array/variance(ddof:)``
+- ``Swift/Array/std(ddof:)``
+- ``Swift/Array/isGreaterThan(_:)``
+- ``Swift/Array/masked(by:)``
 
 ### Data Creation and Manipulation
 - <doc:Generation>
 - <doc:Shape>
 - <doc:Random>
+- ``Swift/Array/zeros(_:)``
+- ``Swift/Array/linspace(_:_:num:)``
+- ``Swift/Array/random(_:)-6ulik``
+- ``Swift/Array/transformedBy(_:)``

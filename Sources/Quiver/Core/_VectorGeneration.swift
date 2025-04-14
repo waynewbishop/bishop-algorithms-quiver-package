@@ -22,7 +22,8 @@ extension _Vector where Element: Numeric {
     /// Creates a vector filled with ones
     static func ones(_ count: Int) -> _Vector<Element> {
         precondition(count >= 0, "Count must be non-negative")
-        guard let one = (1 as? Element) else {
+        
+        guard let one = Element(exactly: 1) else {
             fatalError("Could not convert literal 1 to the specified Element type")
         }
         return _Vector(elements: [Element](repeating: one, count: count))
@@ -62,13 +63,18 @@ extension _Vector where Element: Numeric {
     static func identity(_ n: Int) -> [[Element]] {
         precondition(n > 0, "Matrix dimension must be positive")
         
-        guard let one = (1 as? Element) else {
-            fatalError("Could not convert literal 1 to the specified Element type")
-        }
-        
+        // Create matrix of zeros
         var result = zeros2D(n, n)
+        
+        // Set diagonal elements to one
         for i in 0..<n {
-            result[i][i] = one
+            if let one = (1 as? Element) {
+                result[i][i] = one
+            } else {
+                // Handle types that can't convert from Int
+                // This could be more sophisticated for complex numeric types
+                fatalError("Could not convert literal 1 to the specified Element type")
+            }
         }
         
         return result

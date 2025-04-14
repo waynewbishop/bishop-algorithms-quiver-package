@@ -14,55 +14,58 @@
 import XCTest
 @testable import Quiver
 
-//TODO: These are just basic tests. Organize new tests based on functional areas
-//keep the tests as simple (but correct) as possible for educational purposes.
-
 final class VectorOperationsTests: XCTestCase {
     
-    func testAddition() {
-        let v1: [Double] = [1.0, 2.0, 3.0]
-        let v2: [Double] = [4.0, 5.0, 6.0]
-        let result = v1 + v2
-        XCTAssertEqual(result, [5.0, 7.0, 9.0])
-    }
-    
     func testDotProduct() {
-        let v1: [Double] = [1.0, 2.0, 3.0]
-        let v2: [Double] = [4.0, 5.0, 6.0]
-        let result = v1.dot(v2)
-        XCTAssertEqual(result, 32.0) // 1*4 + 2*5 + 3*6 = 32
+        let a = [1.0, 2.0, 3.0]
+        let b = [4.0, 5.0, 6.0]
+        let result = a.dot(b)
+        XCTAssertEqual(result, 32.0)
     }
     
     func testMagnitude() {
-        let v: [Double] = [3.0, 4.0]
+        let v = [3.0, 4.0]
         XCTAssertEqual(v.magnitude, 5.0)
     }
     
-    func testTransform() {
-        //the special identity matrix, although a transform, does not alter vector space
-        let matrix = [[0.5, 0.0],
-                       [-1.0, 0.75]]
-        let v1: [Double] = [3.0, 2.0]
-        let results = v1.transformedBy(matrix)
-        print(results)
+    func testNormalized() {
+        let v = [3.0, 0.0]
+        let result = v.normalized
+        XCTAssertEqual(result, [1.0, 0.0])
     }
     
+    func testCosineOfAngle() {
+        let v1 = [1.0, 0.0]
+        let v2 = [1.0, 1.0]
+        let cosine = v1.cosineOfAngle(with: v2)
+        XCTAssertEqual(cosine, 1.0/sqrt(2.0), accuracy: 1e-10)
+    }
     
-    func testTranspose() {
-        let matrix = [[1.0, 2.0, 3.0],
-                      [4.0, 5.0, 6.0]] as [[Double]]
-        
-        let transposed = matrix.transpose()
-        
-        let expected = [[1.0, 4.0],
-                        [2.0, 5.0],
-                        [3.0, 6.0]] as [[Double]]
-        
-        XCTAssertEqual(transposed.count, expected.count)
-        
-        for i in 0..<transposed.count {
-            XCTAssertEqual(transposed[i], expected[i])
-        }
-        
+    func testScalarProjection() {
+        let v = [3.0, 4.0]
+        let axis = [1.0, 0.0]
+        let result = v.scalarProjection(onto: axis)
+        XCTAssertEqual(result, 3.0)
+    }
+    
+    func testVectorProjection() {
+        let v = [3.0, 4.0]
+        let axis = [1.0, 0.0]
+        let result = v.vectorProjection(onto: axis)
+        XCTAssertEqual(result, [3.0, 0.0])
+    }
+    
+    func testOrthogonalComponent() {
+        let v = [3.0, 4.0]
+        let axis = [1.0, 0.0]
+        let result = v.orthogonalComponent(to: axis)
+        XCTAssertEqual(result, [0.0, 4.0])
+    }
+    
+    func testMatrixTransformation() {
+        let v = [1.0, 2.0]
+        let matrix = [[0.0, -1.0], [1.0, 0.0]]  // 90° rotation
+        let result = v.transformedBy(matrix)
+        XCTAssertEqual(result, [-2.0, 1.0])
     }
 }
