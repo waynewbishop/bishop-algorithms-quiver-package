@@ -121,6 +121,11 @@ public extension Array where Element: FloatingPoint {
         return v.normalized().elements
     }
     
+    /// Calculate the distance between two points or vectors
+    func distance(to other: [Element]) -> Element {
+        return (self - other).magnitude
+    }
+        
     /// Returns the cosine of the angle between two vectors
     func cosineOfAngle(with other: [Element]) -> Element {
         let dotProduct = self.dot(other)
@@ -165,5 +170,62 @@ public extension Array where Element: FloatingPoint {
     func orthogonalComponent(to vector: [Element]) -> [Element] {
         let projection = self.vectorProjection(onto: vector)
         return self - projection
+    }
+}
+
+// MARK: - Double Vector Operations
+
+public extension Array where Element == [Double] {
+
+    /// Returns whether all vectors in the collection have the same dimension count.
+    /// Used to validate that a collection of vectors can be used together in mathematical operations.
+    func areValidVectorDimensions() -> Bool {
+        guard let firstCount = self.first?.count else {
+            return false
+        }
+        
+        return self.allSatisfy { $0.count == firstCount }
+    }
+    
+    /// Calculates the element-wise average of a collection of vectors.
+    /// Returns nil if the input is empty or vectors have inconsistent dimensions.
+    func averageVectors(_ vectors: [[Double]]) -> [Double]? {
+
+        // Return nil for empty input - no vectors to average
+        guard !vectors.isEmpty else { return nil }
+        
+        // Ensure all vectors have the same dimensions for valid averaging
+        guard vectors.areValidVectorDimensions() else { return nil }
+        
+        // Initialize sum vector with zeros matching the input dimension
+        let dimensions = vectors[0].count
+        var sum = [Double].zeros(dimensions)
+        
+        // Sum all vectors element-wise using Quiver's vector addition
+        for vector in vectors {
+            sum = sum + vector
+        }
+        
+        // Divide each element by vector count to get the average
+        return sum.broadcast(dividingBy: Double(vectors.count))
+    }
+    
+    /// Calculate cosine similarities between each vector in the array and a target vector.
+    /// Returns an array of similarity scores where each score represents how similar
+    /// the corresponding vector is to the target (1.0 = identical, 0.0 = orthogonal).
+    func cosineSimilarities(to target: [Double]) -> [Double] {
+        return self.map { $0.cosineOfAngle(with: target) }
+    }
+    
+}
+
+// MARK: - Float Vector Operations
+
+public extension Array where Element == [Float] {
+    /// Calculate cosine similarities between each vector in the array and a target vector.
+    /// Returns an array of similarity scores where each score represents how similar
+    /// the corresponding vector is to the target (1.0 = identical, 0.0 = orthogonal).
+    func cosineSimilarities(to target: [Float]) -> [Float] {
+        return self.map { $0.cosineOfAngle(with: target) }
     }
 }
