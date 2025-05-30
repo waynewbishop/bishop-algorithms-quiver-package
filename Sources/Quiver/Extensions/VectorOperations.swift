@@ -189,25 +189,25 @@ public extension Array where Element == [Double] {
     
     /// Calculates the element-wise average of a collection of vectors.
     /// Returns nil if the input is empty or vectors have inconsistent dimensions.
-    func averageVectors(_ vectors: [[Double]]) -> [Double]? {
-
-        // Return nil for empty input - no vectors to average
-        guard !vectors.isEmpty else { return nil }
+    /// Calculates the element-wise average of the vectors in this array
+    func averaged() -> [Double]? {
+        // Return nil if no vectors to average
+        guard !self.isEmpty else { return nil }
         
-        // Ensure all vectors have the same dimensions for valid averaging
-        guard vectors.areValidVectorDimensions() else { return nil }
+        // Ensure all vectors have consistent dimensions
+        guard self.areValidVectorDimensions() else { return nil }
         
-        // Initialize sum vector with zeros matching the input dimension
-        let dimensions = vectors[0].count
+        // Initialize sum vector with matching dimensions
+        let dimensions = self[0].count
         var sum = [Double].zeros(dimensions)
         
-        // Sum all vectors element-wise using Quiver's vector addition
-        for vector in vectors {
+        // Sum all vectors element-wise
+        for vector in self {
             sum = sum + vector
         }
         
-        // Divide each element by vector count to get the average
-        return sum.broadcast(dividingBy: Double(vectors.count))
+        // Divide by count to get average
+        return sum.broadcast(dividingBy: Double(self.count))
     }
     
     /// Calculate cosine similarities between each vector in the array and a target vector.

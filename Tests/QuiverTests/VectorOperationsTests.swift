@@ -166,23 +166,35 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(similarity_score[0], 1.0, accuracy: 1e-6)  // Same direction = similarity of 1.0
     }
     
-    func testAverageVectors() {
+    func testAveraged() {
         let vectors = [
             [1.0, 2.0, 3.0],
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]
         ]
-        let result = vectors.averageVectors(vectors)
+        let result = vectors.averaged()
         XCTAssertEqual(result, [4.0, 5.0, 6.0])
     }
 
-    func testAverageVectorsWithInvalidDimensions() {
+    func testAveragedWithInvalidDimensions() {
         let vectors = [
             [1.0, 2.0, 3.0],
             [4.0, 5.0],        // Different dimension
             [7.0, 8.0, 9.0]
         ]
-        let result = vectors.averageVectors(vectors)
+        let result = vectors.averaged()
         XCTAssertNil(result)
+    }
+
+    func testAveragedWithEmptyArray() {
+        let vectors: [[Double]] = []
+        let result = vectors.averaged()
+        XCTAssertNil(result)
+    }
+
+    func testAveragedWithSingleVector() {
+        let vectors = [[3.0, 4.0, 5.0]]
+        let result = vectors.averaged()
+        XCTAssertEqual(result, [3.0, 4.0, 5.0])
     }
 }

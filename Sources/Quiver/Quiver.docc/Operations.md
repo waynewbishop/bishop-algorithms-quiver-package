@@ -125,6 +125,7 @@ This approach means you can use these operations directly on standard Swift arra
 - ``Swift/Array/angle(with:)-piry``
 - ``Swift/Array/angleInDegrees(with:)-7n2tx``
 - ``Swift/Array/cosineOfAngle(with:)``
+- ``Swift/Array/averaged()``
 
 ### Vector Projections
 - ``Swift/Array/scalarProjection(onto:)``
