@@ -197,4 +197,90 @@ final class VectorOperationsTests: XCTestCase {
         let result = vectors.averaged()
         XCTAssertEqual(result, [3.0, 4.0, 5.0])
     }
+
+    func testAveragedWithTwoVectors() {
+        let vectors = [
+            [2.0, 4.0, 6.0],
+            [8.0, 6.0, 4.0]
+        ]
+        let result = vectors.averaged()
+        XCTAssertEqual(result, [5.0, 5.0, 5.0])
+    }
+
+    func testAveragedSemanticSearchExample() {
+        // Example from Chapter 20: averaging word embeddings for document vector
+        let wordVectors = [
+            [0.2, 0.8, 0.5],  // "running"
+            [0.3, 0.7, 0.6],  // "shoes"
+            [0.1, 0.6, 0.4]   // "comfortable"
+        ]
+
+        guard let documentVector = wordVectors.averaged() else {
+            XCTFail("Should successfully average word vectors")
+            return
+        }
+
+        // Expected: (0.2 + 0.3 + 0.1)/3 = 0.2, (0.8 + 0.7 + 0.6)/3 = 0.7, (0.5 + 0.6 + 0.4)/3 = 0.5
+        XCTAssertEqual(documentVector[0], 0.2, accuracy: 1e-10)
+        XCTAssertEqual(documentVector[1], 0.7, accuracy: 1e-10)
+        XCTAssertEqual(documentVector[2], 0.5, accuracy: 1e-10)
+    }
+
+    func testAveragedMathematicalAccuracy() {
+        // Test with precise known values
+        let vectors = [
+            [1.0, 2.0, 3.0, 4.0],
+            [5.0, 6.0, 7.0, 8.0],
+            [9.0, 10.0, 11.0, 12.0]
+        ]
+
+        guard let result = vectors.averaged() else {
+            XCTFail("Should successfully average vectors")
+            return
+        }
+
+        // Expected: (1+5+9)/3 = 5, (2+6+10)/3 = 6, (3+7+11)/3 = 7, (4+8+12)/3 = 8
+        XCTAssertEqual(result, [5.0, 6.0, 7.0, 8.0])
+    }
+
+    func testAveragedHighDimensional() {
+        // Test with higher dimensionality like real word embeddings (50-300 dimensions)
+        let dimensions = 50
+        let vector1 = [Double](repeating: 1.0, count: dimensions)
+        let vector2 = [Double](repeating: 3.0, count: dimensions)
+
+        let vectors = [vector1, vector2]
+
+        guard let result = vectors.averaged() else {
+            XCTFail("Should successfully average high-dimensional vectors")
+            return
+        }
+
+        // Expected: all elements should be 2.0
+        XCTAssertEqual(result.count, dimensions)
+        for value in result {
+            XCTAssertEqual(value, 2.0, accuracy: 1e-10)
+        }
+    }
+
+    func testAveragedPreservesSemanticRegion() {
+        // Test that averaging vectors keeps result in expected region
+        // Similar vectors should produce similar averages
+        let athleticVectors = [
+            [0.8, 0.6, 0.4],  // "lightweight"
+            [0.7, 0.5, 0.3],  // "running"
+            [0.9, 0.7, 0.5]   // "athletic"
+        ]
+
+        guard let athleticAvg = athleticVectors.averaged() else {
+            XCTFail("Should successfully average athletic vectors")
+            return
+        }
+
+        // Expected: [0.8, 0.6, 0.4] (within floating point precision)
+        // The average should remain in the "high region" (all components >= 0.4)
+        XCTAssertGreaterThanOrEqual(athleticAvg[0], 0.4)
+        XCTAssertGreaterThanOrEqual(athleticAvg[1], 0.4)
+        XCTAssertGreaterThanOrEqual(athleticAvg[2], 0.4 - 1e-10)  // Allow for floating point precision
+    }
 }
