@@ -94,14 +94,65 @@ extension Array where Element: Collection, Element.Element: Numeric {
     /// - Returns: A new matrix where rows become columns and columns become rows
     func transpose() -> [[Element.Element]] {
         guard !self.isEmpty, !self[0].isEmpty else { return [] }
-        
+
         // Convert to array of arrays for internal implementation
         let matrixArray = self.map { row -> [Element.Element] in
             return row.map { $0 }
         }
-        
+
         // Call the internal implementation from _Vector
         return _Vector.transpose(matrixArray)
+    }
+
+    /// Returns the transpose of a matrix (convenience method matching Swift naming conventions)
+    ///
+    /// This is an alias for `transpose()` that follows Swift's convention of using past participle
+    /// forms for methods that return transformed copies.
+    ///
+    /// - Returns: A new matrix where rows become columns and columns become rows
+    func transposed() -> [[Element.Element]] {
+        return self.transpose()
+    }
+
+    /// Extracts a column from a matrix at the specified index
+    ///
+    /// This method provides an intuitive way to extract vertical slices from matrices,
+    /// which is otherwise awkward in Swift. For example:
+    ///
+    /// ```swift
+    /// let matrix = [[1, 2, 3],
+    ///               [4, 5, 6],
+    ///               [7, 8, 9]]
+    /// let secondColumn = matrix.column(at: 1)  // [2, 5, 8]
+    /// ```
+    ///
+    /// - Parameter index: The column index to extract
+    /// - Returns: An array containing all elements from the specified column
+    func column(at index: Element.Index) -> [Element.Element] {
+        return self.map { $0[index] }
+    }
+
+    /// Transforms a vector by this matrix (matrix-vector multiplication)
+    ///
+    /// This method provides a more intuitive API for matrix-vector multiplication where
+    /// the matrix acts on the vector, which matches mathematical notation: **Mv = w**
+    ///
+    /// For example, to rotate a 2D vector 90 degrees counterclockwise:
+    /// ```swift
+    /// let rotationMatrix = [[0.0, -1.0],
+    ///                       [1.0,  0.0]]
+    /// let vector = [1.0, 0.0]
+    /// let rotated = rotationMatrix.transform(vector)  // [0.0, 1.0]
+    /// ```
+    ///
+    /// - Parameter vector: The vector to transform
+    /// - Returns: The transformed vector
+    func transform(_ vector: [Element.Element]) -> [Element.Element] {
+        // Convert self (which is [Element] where Element: Collection) to [[Element.Element]]
+        let matrixArray = self.map { row -> [Element.Element] in
+            return row.map { $0 }
+        }
+        return vector.transformedBy(matrixArray)
     }
 }
 

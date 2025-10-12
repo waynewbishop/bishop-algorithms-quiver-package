@@ -283,4 +283,168 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(athleticAvg[1], 0.4)
         XCTAssertGreaterThanOrEqual(athleticAvg[2], 0.4 - 1e-10)  // Allow for floating point precision
     }
+
+    // MARK: - Matrix Operation Tests
+
+    func testColumnExtraction() {
+        let matrix = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]
+
+        let column0 = matrix.column(at: 0)
+        let column1 = matrix.column(at: 1)
+        let column2 = matrix.column(at: 2)
+
+        XCTAssertEqual(column0, [1, 4, 7])
+        XCTAssertEqual(column1, [2, 5, 8])
+        XCTAssertEqual(column2, [3, 6, 9])
+    }
+
+    func testColumnExtractionWithDoubles() {
+        let matrix = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ]
+
+        let column1 = matrix.column(at: 1)
+        XCTAssertEqual(column1, [2.0, 5.0, 8.0])
+    }
+
+    func testColumnExtractionRectangularMatrix() {
+        // Test with non-square matrix
+        let matrix = [
+            [1, 2, 3, 4],
+            [5, 6, 7, 8]
+        ]
+
+        let column2 = matrix.column(at: 2)
+        XCTAssertEqual(column2, [3, 7])
+    }
+
+    func testColumnExtractionSingleColumn() {
+        let matrix = [
+            [10],
+            [20],
+            [30]
+        ]
+
+        let column0 = matrix.column(at: 0)
+        XCTAssertEqual(column0, [10, 20, 30])
+    }
+
+    func testTransposed() {
+        let matrix = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0]
+        ]
+
+        let transposed = matrix.transposed()
+
+        XCTAssertEqual(transposed, [
+            [1.0, 4.0],
+            [2.0, 5.0],
+            [3.0, 6.0]
+        ])
+    }
+
+    func testTransposedSquareMatrix() {
+        let matrix = [
+            [1, 2],
+            [3, 4]
+        ]
+
+        let transposed = matrix.transposed()
+        XCTAssertEqual(transposed, [
+            [1, 3],
+            [2, 4]
+        ])
+    }
+
+    func testTransposedSameAsTranspose() {
+        // Verify that transposed() produces the same result as transpose()
+        let matrix = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ]
+
+        let result1 = matrix.transpose()
+        let result2 = matrix.transposed()
+
+        XCTAssertEqual(result1, result2)
+    }
+
+    func testMatrixTransformMethod() {
+        // Test the new transform() method
+        let rotationMatrix = [[0.0, -1.0], [1.0, 0.0]]  // 90° rotation
+        let vector = [1.0, 0.0]
+
+        let result = rotationMatrix.transform(vector)
+        XCTAssertEqual(result, [0.0, 1.0])
+    }
+
+    func testMatrixTransformSameAsTransformedBy() {
+        // Verify that matrix.transform(vector) produces same result as vector.transformedBy(matrix)
+        let matrix = [[2.0, 0.0], [0.0, 3.0]]  // Scale transformation
+        let vector = [4.0, 5.0]
+
+        let result1 = matrix.transform(vector)
+        let result2 = vector.transformedBy(matrix)
+
+        XCTAssertEqual(result1, result2)
+    }
+
+    func testMatrixTransformScaling() {
+        // Test scaling transformation
+        let scaleMatrix = [[2.0, 0.0], [0.0, 2.0]]
+        let vector = [3.0, 4.0]
+
+        let result = scaleMatrix.transform(vector)
+        XCTAssertEqual(result, [6.0, 8.0])
+    }
+
+    func testMatrixTransform3D() {
+        // Test 3D transformation
+        let matrix = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 2.0]  // Scale z by 2
+        ]
+        let vector = [1.0, 2.0, 3.0]
+
+        let result = matrix.transform(vector)
+        XCTAssertEqual(result, [1.0, 2.0, 6.0])
+    }
+
+    func testColumnExtractionGameScoresExample() {
+        // Example from Chapter 21: game scores
+        let gameScores = [
+            [95, 88, 92, 91],  // Player A's scores
+            [87, 90, 89, 93],  // Player B's scores
+            [92, 94, 88, 96]   // Player C's scores
+        ]
+
+        // Extract all scores from game 3 (index 2)
+        let game3Scores = gameScores.column(at: 2)
+        XCTAssertEqual(game3Scores, [92, 89, 88])
+    }
+
+    func testTransposedWithRealWorldData() {
+        // Sensor data: rows = sensors, columns = time readings
+        let sensorData = [
+            [72.1, 73.5, 74.2],
+            [71.8, 72.9, 73.7]
+        ]
+
+        // Transpose to get: rows = time, columns = sensors
+        let timeData = sensorData.transposed()
+
+        // First time reading should have all sensors
+        XCTAssertEqual(timeData[0], [72.1, 71.8])
+        XCTAssertEqual(timeData[1], [73.5, 72.9])
+        XCTAssertEqual(timeData[2], [74.2, 73.7])
+    }
 }

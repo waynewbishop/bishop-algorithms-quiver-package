@@ -72,9 +72,12 @@ Transform vectors using matrices:
 let vector = [1.0, 2.0]
 let matrix = [[0.0, -1.0], [1.0, 0.0]]  // 90° rotation matrix
 
-// Apply matrix transformation
+// Apply matrix transformation (two equivalent ways)
 let transformed = vector.transformedBy(matrix)  // [-2.0, 1.0]
+let transformed2 = matrix.transform(vector)     // [-2.0, 1.0]
 ```
+
+> Tip: Use `matrix.transform(vector)` when you want to emphasize the matrix acting on the vector, matching mathematical notation **Mv = w**. Use `vector.transformedBy(matrix)` when you want to emphasize the vector being transformed.
 
 Matrix transformations are powerful tools for implementing rotations, scaling, and other geometric operations.
 
@@ -134,6 +137,7 @@ This approach means you can use these operations directly on standard Swift arra
 
 ### Matrix Operations
 - ``Swift/Array/transformedBy(_:)``
+- ``Swift/Array/transform(_:)``
 
 ### Related Articles
 - <doc:Primer>
