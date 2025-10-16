@@ -447,4 +447,216 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(timeData[1], [73.5, 72.9])
         XCTAssertEqual(timeData[2], [74.2, 73.7])
     }
+
+    // MARK: - Matrix Multiplication Tests
+
+    func testMatmul2x2() {
+        let a = [[1.0, 2.0], [3.0, 4.0]]
+        let b = [[5.0, 6.0], [7.0, 8.0]]
+        let result = a.matmul(b)
+
+        // Expected:
+        // [1*5+2*7  1*6+2*8]   [19  22]
+        // [3*5+4*7  3*6+4*8] = [43  50]
+        XCTAssertEqual(result, [[19.0, 22.0], [43.0, 50.0]])
+    }
+
+    func testMatmulIdentityMatrix() {
+        let identity = [[1.0, 0.0], [0.0, 1.0]]
+        let matrix = [[3.0, 4.0], [5.0, 6.0]]
+        let result = identity.matmul(matrix)
+
+        // Identity should return original matrix
+        XCTAssertEqual(result, matrix)
+    }
+
+    func testMatmulRotationComposition() {
+        // Compose two 90° rotations = 180° rotation
+        let rotate90 = [[0.0, -1.0], [1.0, 0.0]]
+        let result = rotate90.matmul(rotate90)
+
+        // Expected: 180° rotation = [[-1, 0], [0, -1]]
+        XCTAssertEqual(result[0][0], -1.0, accuracy: 1e-10)
+        XCTAssertEqual(result[0][1], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(result[1][0], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(result[1][1], -1.0, accuracy: 1e-10)
+    }
+
+    func testMatmulNonSquareMatrices() {
+        // (2×3) × (3×2) → (2×2)
+        let a = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+        let b = [[7.0, 8.0], [9.0, 10.0], [11.0, 12.0]]
+        let result = a.matmul(b)
+
+        // Expected:
+        // [1*7+2*9+3*11  1*8+2*10+3*12]   [58  64]
+        // [4*7+5*9+6*11  4*8+5*10+6*12] = [139 154]
+        XCTAssertEqual(result, [[58.0, 64.0], [139.0, 154.0]])
+    }
+
+    func testMatmulScaling() {
+        let scale2x = [[2.0, 0.0], [0.0, 2.0]]
+        let scale3x = [[3.0, 0.0], [0.0, 3.0]]
+        let result = scale2x.matmul(scale3x)
+
+        // Expected: 6× scaling
+        XCTAssertEqual(result, [[6.0, 0.0], [0.0, 6.0]])
+    }
+
+    func testMatmulChapter21Example() {
+        // Example from Chapter 21: composing transformations
+        let scale2x = [[2.0, 0.0], [0.0, 2.0]]
+        let rotate45 = [[0.707, -0.707], [0.707, 0.707]]
+        let combined = scale2x.matmul(rotate45)
+
+        // Expected: scaled rotation matrix
+        XCTAssertEqual(combined[0][0], 1.414, accuracy: 0.001)
+        XCTAssertEqual(combined[0][1], -1.414, accuracy: 0.001)
+        XCTAssertEqual(combined[1][0], 1.414, accuracy: 0.001)
+        XCTAssertEqual(combined[1][1], 1.414, accuracy: 0.001)
+    }
+
+    func testMultiplyMatrixAlias() {
+        // Test that multiplyMatrix() works identically to matmul()
+        let a = [[1.0, 2.0], [3.0, 4.0]]
+        let b = [[5.0, 6.0], [7.0, 8.0]]
+
+        let result1 = a.matmul(b)
+        let result2 = a.multiplyMatrix(b)
+
+        XCTAssertEqual(result1, result2)
+    }
+
+    func testMatmulFreeFunction() {
+        // Test NumPy-style free function
+        let a = [[1.0, 2.0], [3.0, 4.0]]
+        let b = [[5.0, 6.0], [7.0, 8.0]]
+        let result = matmul(a, b)
+
+        XCTAssertEqual(result, [[19.0, 22.0], [43.0, 50.0]])
+    }
+
+    func testMatmulNonCommutative() {
+        // Verify A × B ≠ B × A in general
+        let a = [[1.0, 2.0], [3.0, 4.0]]
+        let b = [[5.0, 6.0], [7.0, 8.0]]
+
+        let ab = a.matmul(b)
+        let ba = b.matmul(a)
+
+        XCTAssertNotEqual(ab, ba)
+    }
+
+    func testMatmulWithIntegers() {
+        // Test with Int matrices
+        let a = [[1, 2], [3, 4]]
+        let b = [[5, 6], [7, 8]]
+        let result = a.matmul(b)
+
+        XCTAssertEqual(result, [[19, 22], [43, 50]])
+    }
+
+    func testMatmul3x3() {
+        let a = [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+        ]
+        let b = [
+            [9.0, 8.0, 7.0],
+            [6.0, 5.0, 4.0],
+            [3.0, 2.0, 1.0]
+        ]
+        let result = a.matmul(b)
+
+        // Expected:
+        // [1*9+2*6+3*3  1*8+2*5+3*2  1*7+2*4+3*1]   [30  24  18]
+        // [4*9+5*6+6*3  4*8+5*5+6*2  4*7+5*4+6*1] = [84  69  54]
+        // [7*9+8*6+9*3  7*8+8*5+9*2  7*7+8*4+9*1]   [138 114  90]
+        XCTAssertEqual(result, [
+            [30.0, 24.0, 18.0],
+            [84.0, 69.0, 54.0],
+            [138.0, 114.0, 90.0]
+        ])
+    }
+
+    func testMatmulVectorAsMatrix() {
+        // Treat vectors as matrices (1×n and n×1)
+        let rowVector = [[1.0, 2.0, 3.0]]
+        let colVector = [[1.0], [2.0], [3.0]]
+        let result = rowVector.matmul(colVector)
+
+        // Expected: dot product as 1×1 matrix
+        XCTAssertEqual(result, [[14.0]])  // 1*1 + 2*2 + 3*3 = 14
+    }
+
+    func testMatmulRotateDataMatrix() {
+        // REAL USE CASE: Rotate multiple data vectors at once
+        // Matrix where each COLUMN is a data point
+        let dataMatrix = [
+            [1.0, 3.0],  // Row 1: x-coordinates of 2 points
+            [0.0, 4.0]   // Row 2: y-coordinates of 2 points
+        ]
+
+        // 90° rotation
+        let rotation = [[0.0, -1.0], [1.0, 0.0]]
+        let rotated = rotation.matmul(dataMatrix)
+
+        // Expected: Both points rotated 90°
+        // Point 1: [1,0] → [0,1]
+        // Point 2: [3,4] → [-4,3]
+        XCTAssertEqual(rotated, [[0.0, -4.0], [1.0, 3.0]])
+    }
+
+    func testMatmulTransformComposition() {
+        // Real-world: Compose rotation → scaling
+        let rotate = [[0.707, -0.707], [0.707, 0.707]]
+        let scale = [[2.0, 0.0], [0.0, 3.0]]
+
+        // Compose: first rotate, then scale
+        let composed = scale.matmul(rotate)
+
+        // Apply to vector
+        let vector = [1.0, 0.0]
+        let result = composed.transform(vector)
+
+        // Verify matches sequential application
+        let step1 = rotate.transform(vector)
+        let step2 = scale.transform(step1)
+
+        XCTAssertEqual(result[0], step2[0], accuracy: 1e-10)
+        XCTAssertEqual(result[1], step2[1], accuracy: 1e-10)
+    }
+
+    func testMatmulMultipleAthleteVectors() {
+        // Example from Chapter 21: rotating multiple athlete performance vectors
+        let athleteData = [
+            [8.0, 7.0, 9.0],  // Speed values for 3 athletes
+            [6.0, 9.0, 5.0]   // Strength values for 3 athletes
+        ]
+
+        // 90° counterclockwise rotation
+        let rotation = [[0.0, -1.0], [1.0, 0.0]]
+        let rotated = rotation.matmul(athleteData)
+
+        // Expected: All three athletes rotated
+        // Athlete 1: [8,6] → [-6,8]
+        // Athlete 2: [7,9] → [-9,7]
+        // Athlete 3: [9,5] → [-5,9]
+        XCTAssertEqual(rotated, [[-6.0, -9.0, -5.0], [8.0, 7.0, 9.0]])
+    }
+
+    func testMatmul4Rotations() {
+        // Four 90° rotations = full circle (identity)
+        let rotate90 = [[0.0, -1.0], [1.0, 0.0]]
+        let rotate180 = rotate90.matmul(rotate90)
+        let rotate270 = rotate180.matmul(rotate90)
+        let rotate360 = rotate270.matmul(rotate90)
+
+        // Should return to identity
+        XCTAssertEqual(rotate360[0][0], 1.0, accuracy: 1e-10)
+        XCTAssertEqual(rotate360[0][1], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(rotate360[1][0], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(rotate360[1][1], 1.0, accuracy: 1e-10)
+    }
 }

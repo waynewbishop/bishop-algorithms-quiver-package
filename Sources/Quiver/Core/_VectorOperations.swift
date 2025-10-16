@@ -78,27 +78,85 @@ extension _Vector where Element: Numeric {
     /// Returns the transpose of a matrix
     static func transpose(_ matrix: [[Element]]) -> [[Element]] {
         guard !matrix.isEmpty, !matrix[0].isEmpty else { return [] }
-        
+
         let rows = matrix.count
         let cols = matrix[0].count
-        
+
         // Create an empty result matrix with swapped dimensions
         var result = [[Element]]()
         for _ in 0..<cols {
             result.append([Element](repeating: .zero, count: rows))
         }
-        
+
         // Fill the transposed matrix
         for i in 0..<rows {
             for j in 0..<cols {
                 result[j][i] = matrix[i][j]
             }
         }
-        
+
         return result
     }
-    
-    
+
+    /// Matrix-matrix multiplication (A × B)
+    /// Multiplies two matrices following standard matrix multiplication rules
+    /// Dimensions: (n×k) × (k×m) → (n×m)
+    static func matrixMatrixMultiply(_ lhs: [[Element]], _ rhs: [[Element]]) -> [[Element]] {
+        // Validate matrices are not empty
+        guard !lhs.isEmpty, !rhs.isEmpty else {
+            preconditionFailure("Cannot multiply empty matrices")
+        }
+
+        guard let lhsFirstRow = lhs.first, !lhsFirstRow.isEmpty else {
+            preconditionFailure("Left matrix is empty")
+        }
+
+        guard let rhsFirstRow = rhs.first, !rhsFirstRow.isEmpty else {
+            preconditionFailure("Right matrix is empty")
+        }
+
+        let n = lhs.count           // Rows in A
+        let k = lhsFirstRow.count   // Columns in A / Rows in B
+        let m = rhsFirstRow.count   // Columns in B
+
+        // Verify all rows have consistent dimensions
+        for row in lhs {
+            guard row.count == k else {
+                preconditionFailure("Left matrix has inconsistent row lengths")
+            }
+        }
+
+        for row in rhs {
+            guard row.count == m else {
+                preconditionFailure("Right matrix has inconsistent row lengths")
+            }
+        }
+
+        // Check dimension compatibility: columns of A must equal rows of B
+        guard k == rhs.count else {
+            preconditionFailure("Matrix dimensions incompatible: (\(n)×\(k)) × (\(rhs.count)×\(m)). Columns of first matrix (\(k)) must equal rows of second matrix (\(rhs.count)).")
+        }
+
+        // Perform matrix multiplication
+        // Result[i][j] = sum of (A[i][k] * B[k][j]) for all k
+        var result = [[Element]]()
+
+        for i in 0..<n {
+            var row = [Element]()
+            for j in 0..<m {
+                var sum = Element.zero
+                for kIdx in 0..<k {
+                    sum += lhs[i][kIdx] * rhs[kIdx][j]
+                }
+                row.append(sum)
+            }
+            result.append(row)
+        }
+
+        return result
+    }
+
+
 }
 
 // MARK: - Floating Point Operations

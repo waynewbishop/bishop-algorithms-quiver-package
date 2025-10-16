@@ -154,6 +154,48 @@ extension Array where Element: Collection, Element.Element: Numeric {
         }
         return vector.transformedBy(matrixArray)
     }
+
+    /// Matrix-matrix multiplication (NumPy-style matmul)
+    ///
+    /// Multiplies this matrix by another matrix following standard matrix multiplication rules.
+    /// For matrices A (n×k) and B (k×m), produces result C (n×m) where:
+    /// `C[i][j] = sum of (A[i][k] * B[k][j])` for all k
+    ///
+    /// Example:
+    /// ```swift
+    /// let rotation = [[0.0, -1.0], [1.0, 0.0]]
+    /// let scaling = [[2.0, 0.0], [0.0, 2.0]]
+    /// let combined = rotation.matmul(scaling)
+    /// ```
+    ///
+    /// - Parameter other: The matrix to multiply with (must have compatible dimensions)
+    /// - Returns: The resulting matrix
+    func matmul(_ other: [[Element.Element]]) -> [[Element.Element]] {
+        // Convert self to [[Element.Element]]
+        let lhsMatrix = self.map { row -> [Element.Element] in
+            return row.map { $0 }
+        }
+
+        return _Vector<Element.Element>.matrixMatrixMultiply(lhsMatrix, other)
+    }
+
+    /// Matrix-matrix multiplication
+    ///
+    /// Multiplies this matrix by another matrix following standard matrix multiplication rules.
+    /// This method provides clear, descriptive naming for matrix multiplication operations.
+    ///
+    /// Example:
+    /// ```swift
+    /// let scale2x = [[2.0, 0.0], [0.0, 2.0]]
+    /// let rotate45 = [[0.707, -0.707], [0.707, 0.707]]
+    /// let combined = scale2x.multiplyMatrix(rotate45)
+    /// ```
+    ///
+    /// - Parameter other: The matrix to multiply with (must have compatible dimensions)
+    /// - Returns: The resulting matrix
+    func multiplyMatrix(_ other: [[Element.Element]]) -> [[Element.Element]] {
+        return self.matmul(other)
+    }
 }
 
 
@@ -279,4 +321,29 @@ public extension Array where Element == [Float] {
     func cosineSimilarities(to target: [Float]) -> [Float] {
         return self.map { $0.cosineOfAngle(with: target) }
     }
+}
+
+// MARK: - Free Functions
+
+/// Matrix-matrix multiplication (NumPy-style free function)
+///
+/// Multiplies two matrices following standard matrix multiplication rules.
+/// This function provides NumPy-style `matmul()` syntax as an alternative to the method form.
+///
+/// For matrices A (n×k) and B (k×m), produces result C (n×m) where:
+/// `C[i][j] = sum of (A[i][k] * B[k][j])` for all k
+///
+/// Example:
+/// ```swift
+/// let a = [[1.0, 2.0], [3.0, 4.0]]
+/// let b = [[5.0, 6.0], [7.0, 8.0]]
+/// let c = matmul(a, b)  // [[19.0, 22.0], [43.0, 50.0]]
+/// ```
+///
+/// - Parameters:
+///   - lhs: Left matrix (n×k)
+///   - rhs: Right matrix (k×m)
+/// - Returns: Result matrix (n×m)
+public func matmul<T: Numeric>(_ lhs: [[T]], _ rhs: [[T]]) -> [[T]] {
+    return _Vector<T>.matrixMatrixMultiply(lhs, rhs)
 }
