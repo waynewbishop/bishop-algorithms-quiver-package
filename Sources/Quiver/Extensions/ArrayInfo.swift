@@ -17,9 +17,8 @@ public extension Array where Element: Numeric {
     func info() -> String {
         var result = "Array Information:\n"
         result += "Count: \(self.count)\n"
-        result += "Shape: \(self.shape)\n"
         result += "Type: \(type(of: Element.self))\n"
-        
+
         // Show a few items if not empty
         if !self.isEmpty {
             let previewCount = Swift.min(5, self.count)
@@ -28,7 +27,7 @@ public extension Array where Element: Numeric {
                 result += "[\(i)]: \(self[i])\n"
             }
         }
-        
+
         return result
     }
 }
@@ -40,9 +39,8 @@ public extension Array where Element: FloatingPoint {
     func info() -> String {
         var result = "Array Information:\n"
         result += "Count: \(self.count)\n"
-        result += "Shape: \(self.shape)\n"
         result += "Type: \(type(of: Element.self))\n"
-        
+
         // Add basic statistics if not empty
         if !self.isEmpty {
             if let mean = self.mean() {
@@ -54,7 +52,7 @@ public extension Array where Element: FloatingPoint {
             if let max = self.max() {
                 result += "Max: \(max)\n"
             }
-            
+
             // Show a few items
             let previewCount = Swift.min(5, self.count)
             result += "\nFirst \(previewCount) items:\n"
@@ -62,7 +60,7 @@ public extension Array where Element: FloatingPoint {
                 result += "[\(i)]: \(self[i])\n"
             }
         }
-        
+
         return result
     }
 }

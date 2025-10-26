@@ -1,47 +1,22 @@
 # Data Inspection
 
-Examine the structure and characteristics of your arrays and matrices.
+Examine the contents and statistics of your arrays.
 
 ## Overview
 
-Quiver provides methods to inspect and understand your data, helping you visualize array characteristics during development and debugging. These inspection tools make it easy to understand the dimensions, type, and statistical properties of your data.
-
-### Shape Information
-
-The `shape` property returns the dimensions of an array in a NumPy-like format:
-
-```swift
-let vector = [1, 2, 3, 4]
-print(vector.shape)  // (4, 0)
-
-let matrix = [[1, 2, 3], [4, 5, 6]]
-print(matrix.shape)  // (2, 3)
-```
-
-> Note: For vectors (1D arrays), the second dimension is 0, which distinguishes them from 1-row matrices. For matrices (2D arrays), the shape represents (rows, columns).
-
-You can also check if an array represents a valid matrix:
-
-```swift
-let validMatrix = [[1, 2], [3, 4]]
-print(validMatrix.isMatrix)  // true
-
-let invalidMatrix = [[1, 2], [3, 4, 5]]
-print(invalidMatrix.isMatrix)  // false - rows have different lengths
-```
+Quiver provides the `info()` method to inspect and understand your data during development and debugging. This inspection tool gives you a quick overview of your array's type, count, statistical properties (for numeric arrays), and a preview of the contents.
 
 ### The `info()` Method
 
-For a more comprehensive overview, the `info()` method provides shape information along with type details, statistical summaries, and a preview of the data:
+The `info()` method provides a comprehensive overview of an array, including type details, statistical summaries (for floating-point arrays), and a preview of the data:
 
 ```swift
-// For vectors (1D arrays)
+// For numeric vectors (1D arrays)
 let vector = [3.5, 1.8, 4.2, 2.7, 5.1]
 print(vector.info())
 // Output:
 // Array Information:
 // Count: 5
-// Shape: (5, 0)
 // Type: Double.Type
 // Mean: 3.46
 // Min: 1.8
@@ -54,72 +29,93 @@ print(vector.info())
 // [3]: 2.7
 // [4]: 5.1
 
-// For matrices (2D arrays)
-let matrix = [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]
-print(matrix.info())
+// For integer arrays (without statistics)
+let counts = [10, 20, 30, 40, 50]
+print(counts.info())
 // Output:
 // Array Information:
-// Count: 3
-// Shape: (3, 2)
-// Type: Array<Double>.Type
+// Count: 5
+// Type: Int.Type
 //
-// First 3 items:
-// [0]: [1.0, 2.0]
-// [1]: [3.0, 4.0]
-// [2]: [5.0, 6.0]
+// First 5 items:
+// [0]: 10
+// [1]: 20
+// [2]: 30
+// [3]: 40
+// [4]: 50
 ```
 
-### When to Use These Methods
+### Statistical Information
 
-These inspection methods serve different purposes:
+For arrays of floating-point numbers (`Double` or `Float`), the `info()` method automatically includes statistical summaries:
 
-- Use `shape` when you only need dimension information, particularly in functions that operate on arrays of specific shapes
-- Use `isMatrix` to validate that a 2D array has consistent row lengths before performing matrix operations
-- Use `info()` when you want a comprehensive overview including shape, type, statistics, and a preview of the contents
+- **Mean**: The average value of all elements
+- **Min**: The smallest value in the array
+- **Max**: The largest value in the array
+
+This makes it easy to quickly understand the distribution and range of your data without writing additional code.
+
+```swift
+let measurements = [23.5, 24.1, 23.8, 24.3, 23.9, 24.0]
+print(measurements.info())
+// Shows mean, min, max, and sample values
+```
+
+### When to Use `info()`
+
+The `info()` method is particularly useful in these scenarios:
+
+- **Debugging**: Quickly verify array contents and statistics during development
+- **Data validation**: Check that loaded data has expected characteristics
+- **Interactive exploration**: Understand dataset properties in playgrounds or REPL environments
+- **Logging**: Generate informative output for debugging logs
 
 ### Workflow Integration
 
-Integrating these methods into your workflow can improve productivity and code clarity:
+Integrating `info()` into your workflow improves productivity:
 
 ```swift
-// Load data
-let data = loadData()
+import Quiver
 
-// Inspect the data structure
-print(data.info())
+// Load or generate data
+let sensorReadings = loadSensorData()
 
-// Validate before operations
-guard data.isMatrix else {
-    print("Error: Data is not a valid matrix")
-    return
-}
+// Quick inspection during development
+print("Sensor data overview:")
+print(sensorReadings.info())
 
-// Use shape information in processing
-let (rows, columns) = data.shape
-print("Processing \(rows) rows and \(columns) columns")
+// The info() output helps you understand:
+// - How many readings were collected (count)
+// - What type of values they are (type)
+// - Statistical distribution (mean, min, max)
+// - Sample values to verify correct parsing
 ```
 
-### Implementation Details
+### Preview Limit
 
-These inspection methods are implemented as properties and functions on Array extensions with appropriate type constraints:
+The `info()` method shows the first 5 items of your array. For longer arrays, this gives you a representative sample without overwhelming output:
 
-- The `shape` property works on arrays of any element type
-- The `isMatrix` property works on arrays of any element type
-- The `info()` method is overloaded to provide appropriate information based on the array's element type:
-  - For general numeric arrays: Shows count, shape, type, and contents
-  - For floating-point arrays: Adds statistical information (mean, min, max)
+```swift
+let largeDataset = [Double].random(1000)
+print(largeDataset.info())
+// Shows statistics for all 1000 values
+// But only displays first 5 items
+```
+
+## Implementation Details
+
+The `info()` method is implemented as an overloaded function with different capabilities based on element type:
+
+- **For numeric types** (`Int`, `Double`, etc.): Shows count, type, and preview
+- **For floating-point types** (`Double`, `Float`): Adds mean, min, and max statistics
+
+This progressive enhancement ensures you get the most relevant information for your data type.
 
 ## Topics
-
-### Inspection Properties
-- ``Swift/Array/shape``
-- ``Swift/Array/isMatrix``
-- ``Swift/Array/matrixDimensions``
 
 ### Inspection Methods
 - ``Swift/Array/info()-44fcx``
 
 ### Related Articles
 - <doc:Statistics>
-- <doc:Shape>
-```
+- <doc:Elements>

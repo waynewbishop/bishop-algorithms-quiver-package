@@ -137,7 +137,6 @@ This approach means you can use these operations directly on standard Swift arra
 
 ### Matrix Operations
 - ``Swift/Array/transformedBy(_:)``
-- ``Swift/Array/transform(_:)``
 
 ### Related Articles
 - <doc:Primer>

@@ -16,37 +16,7 @@ import Foundation
 // MARK: - Standard Numeric Vector Operations
 
 public extension Array where Element: Numeric {
-    
-    /// Returns the shape of the array (NumPy-like)
-    /// For vectors: (length, 0)
-    /// For matrices: (rows, columns)
-    var shape: (rows: Int, columns: Int) {
-        // Check if this is a matrix (2D array)
-        if let matrix = self as? [[Any]], !matrix.isEmpty {
-            let rowCount = matrix.count
-            let columnCount = matrix[0].count
-            return (rowCount, columnCount)
-        }
-        
-        // Otherwise, treat as a vector
-        return (self.count, 0)
-    }
-    
-   /// Returns true if this array represents a valid matrix (2D array with consistent row lengths)
-   var isMatrix: Bool {
-       guard let firstRow = self.first as? [Element] else { return false }
-       return self.allSatisfy { row in
-           guard let row = row as? [Element] else { return false }
-           return row.count == firstRow.count
-       }
-   }
-   
-   /// Returns the dimensions of the matrix as (rows, columns) if this is a valid matrix
-   var matrixDimensions: (rows: Int, columns: Int)? {
-       guard isMatrix, let firstRow = self.first as? [Element] else { return nil }
-       return (self.count, firstRow.count)
-   }
-    
+
     /// Calculates the dot product of two vectors
     func dot(_ other: [Element]) -> Element {
         let v1 = _Vector(elements: self)

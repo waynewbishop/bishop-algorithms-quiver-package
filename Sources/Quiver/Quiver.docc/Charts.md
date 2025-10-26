@@ -151,6 +151,281 @@ struct FilteredAreaChart: View {
 
 > Tip: When using `masked(by:)`, ensure the boolean mask has the same length as the array being filtered. Quiver will check this at runtime.
 
+## Time Series with Rolling Average
+
+Smooth noisy time series data using rolling averages:
+
+```swift
+struct StepCountChart: View {
+    let dailySteps = [5200.0, 6800.0, 4200.0, 7500.0, 5800.0, 6200.0, 5500.0, 6900.0, 7200.0, 5900.0]
+    let days = Array(1...10)
+
+    var body: some View {
+        Chart {
+            // Original noisy data
+            ForEach(Array(zip(days, dailySteps)), id: \.0) { day, steps in
+                LineMark(x: .value("Day", day), y: .value("Steps", steps))
+                    .foregroundStyle(.gray.opacity(0.3))
+            }
+
+            // Smoothed trend using 3-day rolling average
+            let smoothed = dailySteps.rollingMean(window: 3)
+            ForEach(Array(zip(days, smoothed)), id: \.0) { day, avgSteps in
+                LineMark(x: .value("Day", day), y: .value("Avg Steps", avgSteps))
+                    .foregroundStyle(.blue)
+                    .lineStyle(StrokeStyle(lineWidth: 3))
+            }
+        }
+        .frame(height: 200)
+        .chartLegend(position: .top)
+    }
+}
+```
+
+**Quiver function used:**
+- `dailySteps.rollingMean(window: 3)` - Calculates a 3-day moving average, smoothing out daily fluctuations to reveal the underlying trend.
+
+> Tip: For financial data, use 7-day or 30-day windows. For sensor data, adjust the window based on your sampling frequency.
+
+## Histogram for Distribution Analysis
+
+Create distribution histograms to visualize data frequency:
+
+```swift
+struct AgeDistributionChart: View {
+    let ages = [22.0, 25.0, 28.0, 31.0, 35.0, 38.0, 42.0, 45.0, 51.0, 58.0,
+                23.0, 27.0, 29.0, 33.0, 37.0, 41.0, 44.0, 48.0, 52.0, 55.0]
+
+    var body: some View {
+        VStack {
+            // Generate histogram bins using Quiver
+            let bins = ages.histogram(bins: 5)
+
+            Chart(bins, id: \.midpoint) { bin in
+                BarMark(x: .value("Age Range", bin.midpoint),
+                       y: .value("Count", bin.count))
+                    .foregroundStyle(.purple.gradient)
+            }
+            .frame(height: 200)
+            .chartXAxis {
+                AxisMarks(values: .automatic) { value in
+                    AxisValueLabel {
+                        if let age = value.as(Double.self) {
+                            Text("\(Int(age))")
+                        }
+                    }
+                }
+            }
+
+            if let meanAge = ages.mean() {
+                Text("Average age: \(meanAge, specifier: "%.1f") years")
+                    .font(.caption)
+            }
+        }
+    }
+}
+```
+
+**Quiver function used:**
+- `ages.histogram(bins: 5)` - Automatically divides the age range into 5 equal bins and counts how many values fall into each bin, returning tuples of `(midpoint, count)`.
+
+> Tip: Start with 5-10 bins for most datasets. Too few bins oversimplify the distribution; too many bins create noise.
+
+## Box Plot with Quartiles
+
+Visualize data distribution using box plots:
+
+```swift
+struct ResponseTimeBoxPlot: View {
+    let responseTimes = [120.0, 145.0, 132.0, 118.0, 155.0, 125.0, 140.0,
+                        138.0, 142.0, 128.0, 135.0, 148.0, 122.0, 158.0]
+
+    var body: some View {
+        VStack {
+            if let stats = responseTimes.quartiles() {
+                Chart {
+                    // Box (IQR: Q1 to Q3)
+                    RectangleMark(
+                        xStart: .value("Q1", stats.q1),
+                        xEnd: .value("Q3", stats.q3),
+                        y: .value("Response Time", "API"),
+                        height: 40
+                    )
+                    .foregroundStyle(.blue.opacity(0.3))
+
+                    // Median line
+                    RuleMark(x: .value("Median", stats.median), y: .value("", "API"))
+                        .foregroundStyle(.blue)
+                        .lineStyle(StrokeStyle(lineWidth: 3))
+
+                    // Whiskers (min and max)
+                    RuleMark(x: .value("Min", stats.min), y: .value("", "API"))
+                        .foregroundStyle(.gray)
+                    RuleMark(x: .value("Max", stats.max), y: .value("", "API"))
+                        .foregroundStyle(.gray)
+                }
+                .frame(height: 150)
+                .chartXAxis {
+                    AxisMarks { value in
+                        AxisValueLabel {
+                            if let time = value.as(Double.self) {
+                                Text("\(Int(time))ms")
+                            }
+                        }
+                    }
+                }
+
+                Text("Median: \(stats.median, specifier: "%.0f")ms | IQR: \(stats.iqr, specifier: "%.0f")ms")
+                    .font(.caption)
+            }
+        }
+    }
+}
+```
+
+**Quiver function used:**
+- `responseTimes.quartiles()` - Returns a comprehensive summary: minimum, Q1 (25th percentile), median, Q3 (75th percentile), maximum, and IQR (interquartile range).
+
+> Tip: Box plots excel at comparing distributions across categories. The IQR (Q3 - Q1) represents the middle 50% of your data.
+
+## Grouped Bar Chart with Aggregations
+
+Aggregate data by category for grouped visualizations:
+
+```swift
+struct SalesByCategoryChart: View {
+    let sales = [299.0, 89.0, 449.0, 45.0, 125.0, 350.0, 75.0, 220.0]
+    let categories = ["Electronics", "Clothing", "Electronics", "Food",
+                     "Clothing", "Electronics", "Food", "Clothing"]
+
+    var body: some View {
+        VStack {
+            // Group and aggregate using Quiver
+            let chartData = sales.groupedData(by: categories, using: .sum)
+
+            Chart(chartData, id: \.category) { item in
+                BarMark(x: .value("Category", item.category),
+                       y: .value("Total Sales", item.value))
+                    .foregroundStyle(.green.gradient)
+                    .annotation(position: .top) {
+                        Text("$\(Int(item.value))")
+                            .font(.caption)
+                    }
+            }
+            .frame(height: 200)
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisValueLabel {
+                        if let amount = value.as(Double.self) {
+                            Text("$\(Int(amount))")
+                        }
+                    }
+                }
+            }
+
+            Text("Total revenue: $\(Int(sales.sum()))")
+                .font(.caption.bold())
+        }
+    }
+}
+```
+
+**Quiver functions used:**
+- `sales.groupedData(by: categories, using: .sum)` - Groups sales by category and calculates the sum for each, returning chart-ready tuples sorted by category name.
+- Aggregation methods: `.sum`, `.mean`, `.count`, `.min`, `.max`
+
+> Tip: Use `.mean` for average values per category, `.count` to show frequency, and `.sum` for totals.
+
+## Correlation Heatmap
+
+Visualize relationships between multiple variables:
+
+```swift
+struct CorrelationHeatmap: View {
+    let featureNames = ["Price", "Size", "Rating"]
+    let features: [[Double]] = [
+        [100.0, 120.0, 110.0, 130.0, 150.0],  // Price
+        [50.0, 60.0, 55.0, 65.0, 75.0],       // Size
+        [4.2, 4.5, 4.1, 4.8, 4.9]             // Rating
+    ]
+
+    var body: some View {
+        VStack {
+            // Calculate correlation matrix and prepare heatmap data
+            let heatmapData = features.heatmapData(labels: featureNames)
+
+            Chart(heatmapData, id: \.x) { point in
+                RectangleMark(
+                    x: .value("Feature 1", point.x),
+                    y: .value("Feature 2", point.y)
+                )
+                .foregroundStyle(by: .value("Correlation", point.value))
+                .annotation {
+                    Text("\(point.value, specifier: "%.2f")")
+                        .font(.caption2)
+                        .foregroundStyle(.white)
+                }
+            }
+            .frame(height: 200)
+            .chartForegroundStyleScale(domain: -1...1, range: [.red, .white, .blue])
+
+            Text("Blue = positive correlation, Red = negative correlation")
+                .font(.caption)
+        }
+    }
+}
+```
+
+**Quiver function used:**
+- `features.heatmapData(labels: featureNames)` - Calculates Pearson correlations between all feature pairs and returns tuples of `(x, y, value)` ready for Swift Charts RectangleMark.
+
+> Tip: Correlation values range from -1 (perfect negative) to +1 (perfect positive). Values near 0 indicate no linear relationship.
+
+## Percentage Change Chart
+
+Track period-over-period changes:
+
+```swift
+struct RevenueGrowthChart: View {
+    let monthlyRevenue = [10000.0, 12000.0, 11500.0, 13000.0, 15000.0, 14200.0]
+    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+
+    var body: some View {
+        VStack {
+            // Calculate month-over-month percentage change
+            let changes = monthlyRevenue.percentChange()
+
+            Chart {
+                ForEach(Array(zip(months.dropFirst(), changes)), id: \.0) { month, change in
+                    BarMark(x: .value("Month", month), y: .value("Growth", change))
+                        .foregroundStyle(change >= 0 ? .green : .red)
+                        .annotation(position: .top) {
+                            Text("\(change, specifier: "%.1f")%")
+                                .font(.caption2)
+                        }
+                }
+
+                // Zero line
+                RuleMark(y: .value("Zero", 0))
+                    .foregroundStyle(.gray)
+            }
+            .frame(height: 200)
+
+            if let avgGrowth = changes.mean() {
+                Text("Average growth: \(avgGrowth, specifier: "%.1f")%")
+                    .font(.caption)
+            }
+        }
+    }
+}
+```
+
+**Quiver functions used:**
+- `monthlyRevenue.percentChange()` - Calculates month-over-month percentage change: `((current - previous) / previous) * 100`.
+- `monthlyRevenue.diff()` - For absolute differences instead of percentages.
+
+> Tip: Percentage changes are better for comparing values of different magnitudes. Use absolute differences when showing dollar amounts or counts.
+
 ## Related Articles
 - <doc:Operations> - Learn more about the vector operations used in these charts
 - <doc:Statistics> - Explore the statistical functions used in the Bar Chart example
