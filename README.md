@@ -14,6 +14,7 @@ Quiver is a Swift package that provides powerful numerical computing capabilitie
   * Basic statistics (mean, median, min, max)
   * Variance and standard deviation
   * Cumulative operations (sum, product)
+  * Chart helpers (rolling averages, histograms, percentiles, quartiles, groupBy)
 
 * **Array Generation and Manipulation**
   * Generate arrays (zeros, ones, linspace, random)
@@ -74,10 +75,11 @@ Quiver is particularly useful for:
 ## Swift Charts Integration
 
 Quiver seamlessly integrates with Swift Charts for data visualization:
-* Generate sequences for x-coordinates
-* Calculate statistics for reference lines
-* Normalize data for consistent scaling
-* Filter data points based on conditions
+* Rolling averages for time series smoothing
+* Histogram binning for distribution analysis
+* Percentiles and quartiles for box plots
+* Grouped aggregations for bar charts
+* Percentage change and correlation analysis
 
 ## Contributing
 
