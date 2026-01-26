@@ -10,7 +10,7 @@ You don't need advanced mathematical knowledge to get started—if you can work 
 
 ### Vectors: More Than Just Arrays
 
-In programming, we often use arrays to store collections of values. In linear algebra, these become "vectors" which represent quantities with both `magnitude` (size) and direction.
+In programming, we often use arrays to store collections of values. In linear algebra, these become "vectors" which represent quantities with both `magnitude` (size) and direction. See <doc:Operations> for comprehensive vector operations.
 
 ```swift
 // A 2D vector representing a point or direction
@@ -88,12 +88,18 @@ let matrix = [
 ```
 
 Matrices serve two primary purposes:
-1. Organizing data (rows might be samples, columns might be features)
-2. Representing transformations (rotations, scaling, etc.)
+1. **Organizing data** (rows might be samples, columns might be features)
+2. **Representing transformations** (rotations, scaling, reflections, shearing)
+
+Quiver supports comprehensive matrix operations:
+- **Element-wise arithmetic** (<doc:Elements>): `matrix1 + matrix2`, `matrix1 * matrix2` (Hadamard product)
+- **Scalar broadcasting** (<doc:Broadcast>): `matrix * 2.0`, `matrix - mean`
+- **Transpose** (<doc:Matrices-Operations>): Flip rows and columns
+- **Matrix multiplication** (<doc:Matrices-Operations>): True matrix multiplication (dot product) via `.multiplyMatrix()`
 
 #### Matrix Creation
 
-Quiver makes it easy to create common matrices:
+Quiver makes it easy to create common matrices (see <doc:Generation> for more matrix creation methods):
 
 ```swift
 // Create a 3×3 identity matrix
@@ -107,7 +113,7 @@ let zeros = [Double].zeros(2, 3)
 
 #### Transforming with Matrices
 
-One of the most powerful applications of matrices is transforming vectors:
+One of the most powerful applications of matrices is transforming vectors (see <doc:Transformations-Fundamentals> for detailed transformation concepts):
 
 ```swift
 // A 2D rotation matrix (90° counterclockwise)
@@ -182,6 +188,8 @@ let product2 = [3.8, 8.2, 2.9, 9.7]
 let similarity = product1.cosineOfAngle(with: product2)  // ~0.998
 ```
 
+See <doc:Similarity-Operations> for more on measuring vector similarity in machine learning applications.
+
 ### Beyond the Basics
 
 This primer covers fundamental concepts, but linear algebra goes much deeper. As you get comfortable with these basics, explore:
@@ -192,3 +200,37 @@ This primer covers fundamental concepts, but linear algebra goes much deeper. As
 - Principal component analysis (PCA)
 
 > Tip: The best way to learn is by applying these concepts in real projects. Start small and build intuition through practice.
+
+## See Also
+
+### Dive Deeper
+
+Ready to explore these concepts in more detail? The documentation is organized to follow a natural learning progression:
+
+**Vectors (Chapter 20):**
+- <doc:Operations>
+- <doc:Elements>
+
+**Matrices (Chapter 21):**
+- <doc:Matrices-Operations>
+- <doc:Broadcast>
+- <doc:Generation>
+
+**Transformations (Chapter 22):**
+- <doc:Transformations-Fundamentals>
+- <doc:Transformations-Common>
+- <doc:Transformations-Composition>
+
+**Semantic Search (Chapter 23):**
+- <doc:Text-Processing>
+- <doc:Similarity-Operations>
+- <doc:Ranking-Operations>
+
+## Further Learning
+
+This primer introduces core concepts, but [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/) provides comprehensive coverage with step-by-step examples, visualizations, and algorithmic analysis:
+
+- [Chapter 20: Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) - Vector mathematics fundamentals
+- [Chapter 21: Matrices](https://waynewbishop.github.io/swift-algorithms/21-matrices.html) - Matrix operations and applications
+- [Chapter 22: Transformations](https://waynewbishop.github.io/swift-algorithms/22-transformations.html) - Geometric transformations
+- [Chapter 23: Semantic Search](https://waynewbishop.github.io/swift-algorithms/23-semantic-search.html) - Building search systems

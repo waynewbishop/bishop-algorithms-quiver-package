@@ -6,7 +6,7 @@ Create arrays with specific patterns and values for numerical computing tasks.
 
 Quiver provides a set of static methods to generate arrays with specific values, sequences, and patterns. These generation functions help you create arrays filled with zeros, ones, or custom values, as well as evenly spaced sequences or identity matrices.
 
-Array generation functions are essential for initializing data structures, creating test data, and setting up mathematical operations that require specific initial states.
+Array generation functions are essential for initializing data structures, creating test data, and setting up mathematical operations that require specific initial states. These operations support Chapter 21 (Matrices) and Chapter 22 (Matrix Transformations) concepts in algorithms and data structures.
 
 ### Basic Array Creation
 
@@ -128,5 +128,5 @@ The array generation functions in Quiver are implemented as static methods on Ar
 - ``Swift/Array/diag(_:)``
 
 ### Related Articles
-- <doc:Operations>
-- <doc:Elements>
+- <doc:Matrices-Operations>
+- <doc:Transformations-Fundamentals>

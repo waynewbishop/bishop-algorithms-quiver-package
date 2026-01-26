@@ -4,7 +4,7 @@ Apply operations between arrays and scalars or between arrays of different dimen
 
 ## Overview
 
-Quiver provides broadcasting capabilities that let you perform operations between arrays and scalars, or between arrays of different shapes. Broadcasting allows you to write cleaner, more expressive code by eliminating explicit loops for common element-wise operations.
+Quiver provides broadcasting capabilities that let you perform operations between arrays and scalars, or between arrays of different shapes. Broadcasting allows you to write cleaner, more expressive code by eliminating explicit loops for common element-wise operations. These operations support Chapter 21 (Matrices) concepts in algorithms and data structures.
 
 ### Scalar Broadcasting
 
@@ -26,7 +26,43 @@ let decreased = vector.broadcast(subtracting: 1.0)  // [0.0, 1.0, 2.0, 3.0]
 let divided = vector.broadcast(dividingBy: 2.0)  // [0.5, 1.0, 1.5, 2.0]
 ```
 
-> Tip: Broadcasting operations create new arrays without modifying the original, maintaining Swift's value semantics.
+> Tip: Broadcasting operations create new arrays without modifying the original array, maintaining Swift's value semantics.
+
+### Operator-Based Broadcasting
+
+As of Quiver 2025.1, scalar broadcasting is available through standard arithmetic operators, providing cleaner NumPy-style syntax:
+
+**Vector broadcasting:**
+```swift
+let vector = [1.0, 2.0, 3.0]
+
+// Method syntax (still supported)
+let result1 = vector.broadcast(adding: 10.0)
+
+// Operator syntax (recommended)
+let result2 = vector + 10.0  // Cleaner!
+let result3 = vector * 2.0
+let result4 = vector / 3.0
+
+// Commutative operations work both ways
+let result5 = 10.0 + vector  // Same as vector + 10.0
+let result6 = 2.0 * vector   // Same as vector * 2.0
+```
+
+**Matrix broadcasting:**
+```swift
+let matrix = [[1.0, 2.0], [3.0, 4.0]]
+
+// Method syntax
+let result1 = matrix.map { $0.broadcast(multiplyingBy: 2.0) }
+
+// Operator syntax (much cleaner!)
+let result2 = matrix * 2.0
+let result3 = matrix + 10.0
+let result4 = (matrix - 5.0) / 2.0  // Complex expressions
+```
+
+The operator syntax is recommended for new code as it matches NumPy conventions and improves readability. The method-based syntax remains available for compatibility and for cases requiring custom operations via closures.
 
 ### Matrix-Vector Broadcasting
 
@@ -99,7 +135,7 @@ let customRowOperation = matrix.broadcast(withRowVector: rowVector) { matrixElem
 
 Broadcasting operations are particularly useful for:
 
-- **Data normalization**: Subtract means or divide by standard deviations
+- **Data standardization**: Subtract means or divide by standard deviations (z-score)
 - **Feature scaling**: Apply weights to feature vectors
 - **Signal processing**: Apply filters or transformations to signals
 - **Image processing**: Adjust color channels or apply transformations
@@ -134,4 +170,5 @@ The broadcasting implementations verify dimension compatibility at runtime, prov
 - ``Swift/Array/broadcast(withRowVector:operation:)``
 - ``Swift/Array/broadcast(withColumnVector:operation:)``
 
-```
+### Related Articles
+- <doc:Matrices-Operations>

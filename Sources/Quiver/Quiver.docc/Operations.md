@@ -4,9 +4,11 @@ Transform arrays into mathematical vectors with magnitude, direction, and spatia
 
 ## Overview
 
-Quiver provides a comprehensive set of vector operations that treat arrays as mathematical vectors, enabling calculations like magnitude, normalization, dot products, and angle measurements.
+> Tip: For a comprehensive introduction to vector mathematics with step-by-step examples, see [Chapter 20: Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) in Swift Algorithms & Data Structures.
 
-These operations are essential for graphics programming, physics simulations, machine learning algorithms, and any application that deals with spatial data or mathematical modeling.
+Quiver provides a comprehensive set of vector operations that treat arrays as mathematical vectors, enabling calculations like magnitude, normalization, dot products, and angle measurements. These operations form the foundation for Chapter 20 (Vectors) concepts in algorithms and data structures.
+
+Vector operations are essential for graphics programming, physics simulations, machine learning algorithms, and any application that deals with spatial data or mathematical modeling.
 
 ### Basic Vector Properties
 
@@ -77,9 +79,40 @@ let transformed = vector.transformedBy(matrix)  // [-2.0, 1.0]
 let transformed2 = matrix.transform(vector)     // [-2.0, 1.0]
 ```
 
-> Tip: Use `matrix.transform(vector)` when you want to emphasize the matrix acting on the vector, matching mathematical notation **Mv = w**. Use `vector.transformedBy(matrix)` when you want to emphasize the vector being transformed.
+> Tip: Use `matrix.transform(vector)` when you want to emphasize the matrix acting on the vector, matching mathematical notation Mv = w. Use `vector.transformedBy(matrix)` when you want to emphasize the vector being transformed.
 
 Matrix transformations are powerful tools for implementing rotations, scaling, and other geometric operations.
+
+### Matrix Arithmetic
+
+Quiver supports element-wise arithmetic operations on 2D arrays (matrices):
+
+```swift
+let m1 = [[1.0, 2.0], [3.0, 4.0]]
+let m2 = [[5.0, 6.0], [7.0, 8.0]]
+
+// Element-wise operations
+let sum = m1 + m2        // Addition: [[6.0, 8.0], [10.0, 12.0]]
+let diff = m1 - m2       // Subtraction: [[-4.0, -4.0], [-4.0, -4.0]]
+let product = m1 * m2    // Hadamard product (element-wise): [[5.0, 12.0], [21.0, 32.0]]
+let quotient = m1 / m2   // Element-wise division: [[0.2, 0.33...], [0.42..., 0.5]]
+```
+
+> Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication (dot product), use `.multiplyMatrix()`.
+
+**Scalar broadcasting with matrices:**
+```swift
+let matrix = [[100.0, 200.0], [300.0, 400.0]]
+
+// Data standardization (z-score)
+let standardized = (matrix - 250.0) / 150.0
+
+// Scaling and offset
+let scaled = matrix * 0.5      // [[50.0, 100.0], [150.0, 200.0]]
+let adjusted = matrix + 10.0   // [[110.0, 210.0], [310.0, 410.0]]
+```
+
+Matrix operations maintain the same preconditions as vector operations: dimensions must match for element-wise operations between matrices.
 
 ### Mathematical Foundation
 
@@ -140,3 +173,5 @@ This approach means you can use these operations directly on standard Swift arra
 
 ### Related Articles
 - <doc:Primer>
+- <doc:Similarity-Operations>
+- <doc:Transformations-Fundamentals>

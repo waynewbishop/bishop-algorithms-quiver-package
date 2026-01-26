@@ -47,3 +47,123 @@ public extension Array where Element: FloatingPoint {
         return _Vector<Element>.divide(v1, v2).elements
     }
 }
+
+// MARK: - Matrix Arithmetic Operations (Double)
+
+public extension Array where Element == [Double] {
+    /// Element-wise addition of two matrices
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the sum of corresponding elements
+    static func + (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot add empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 + row2  // Uses vector addition
+        }
+    }
+
+    /// Element-wise subtraction of two matrices
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the difference of corresponding elements
+    static func - (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot subtract empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 - row2  // Uses vector subtraction
+        }
+    }
+
+    /// Element-wise multiplication of two matrices (Hadamard product)
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the product of corresponding elements
+    static func * (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot multiply empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 * row2  // Uses vector multiplication
+        }
+    }
+
+    /// Element-wise division of two matrices
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the quotient of corresponding elements
+    static func / (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot divide empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 / row2  // Uses vector division
+        }
+    }
+}
+
+// MARK: - Matrix Arithmetic Operations (Float)
+
+public extension Array where Element == [Float] {
+    /// Element-wise addition of two matrices
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the sum of corresponding elements
+    static func + (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot add empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 + row2  // Uses vector addition
+        }
+    }
+
+    /// Element-wise subtraction of two matrices
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the difference of corresponding elements
+    static func - (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot subtract empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 - row2  // Uses vector subtraction
+        }
+    }
+
+    /// Element-wise multiplication of two matrices (Hadamard product)
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the product of corresponding elements
+    static func * (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot multiply empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 * row2  // Uses vector multiplication
+        }
+    }
+
+    /// Element-wise division of two matrices
+    /// - Parameters:
+    ///   - lhs: The first matrix
+    ///   - rhs: The second matrix
+    /// - Returns: A new matrix where each element is the quotient of corresponding elements
+    static func / (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
+        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
+        precondition(!lhs.isEmpty, "Cannot divide empty matrices")
+
+        return zip(lhs, rhs).map { row1, row2 in
+            row1 / row2  // Uses vector division
+        }
+    }
+}

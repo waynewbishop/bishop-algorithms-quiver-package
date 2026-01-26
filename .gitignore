@@ -20,6 +20,7 @@ Package.resolved
 
 # Documentation
 docs/build/
+**/.docc-build/
 
 # Temp files
 *.swp

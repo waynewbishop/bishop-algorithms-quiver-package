@@ -125,34 +125,13 @@ extension Array where Element: Collection, Element.Element: Numeric {
         return vector.transformedBy(matrixArray)
     }
 
-    /// Matrix-matrix multiplication (NumPy-style matmul)
-    ///
-    /// Multiplies this matrix by another matrix following standard matrix multiplication rules.
-    /// For matrices A (n×k) and B (k×m), produces result C (n×m) where:
-    /// `C[i][j] = sum of (A[i][k] * B[k][j])` for all k
-    ///
-    /// Example:
-    /// ```swift
-    /// let rotation = [[0.0, -1.0], [1.0, 0.0]]
-    /// let scaling = [[2.0, 0.0], [0.0, 2.0]]
-    /// let combined = rotation.matmul(scaling)
-    /// ```
-    ///
-    /// - Parameter other: The matrix to multiply with (must have compatible dimensions)
-    /// - Returns: The resulting matrix
-    func matmul(_ other: [[Element.Element]]) -> [[Element.Element]] {
-        // Convert self to [[Element.Element]]
-        let lhsMatrix = self.map { row -> [Element.Element] in
-            return row.map { $0 }
-        }
-
-        return _Vector<Element.Element>.matrixMatrixMultiply(lhsMatrix, other)
-    }
-
     /// Matrix-matrix multiplication
     ///
     /// Multiplies this matrix by another matrix following standard matrix multiplication rules.
     /// This method provides clear, descriptive naming for matrix multiplication operations.
+    ///
+    /// For matrices A (n×k) and B (k×m), produces result C (n×m) where:
+    /// `C[i][j] = sum of (A[i][k] * B[k][j])` for all k
     ///
     /// Example:
     /// ```swift
@@ -164,7 +143,12 @@ extension Array where Element: Collection, Element.Element: Numeric {
     /// - Parameter other: The matrix to multiply with (must have compatible dimensions)
     /// - Returns: The resulting matrix
     func multiplyMatrix(_ other: [[Element.Element]]) -> [[Element.Element]] {
-        return self.matmul(other)
+        // Convert self to [[Element.Element]]
+        let lhsMatrix = self.map { row -> [Element.Element] in
+            return row.map { $0 }
+        }
+
+        return _Vector<Element.Element>.matrixMatrixMultiply(lhsMatrix, other)
     }
 }
 
@@ -279,7 +263,35 @@ public extension Array where Element == [Double] {
     func cosineSimilarities(to target: [Double]) -> [Double] {
         return self.map { $0.cosineOfAngle(with: target) }
     }
-    
+}
+
+// MARK: - Array Ranking Operations
+
+public extension Array where Element == Double {
+
+    /// Returns the indices and values of the top K highest elements.
+    ///
+    /// This method sorts the array in descending order and returns the indices and values
+    /// of the top K elements. Commonly used in similarity search, recommendation systems,
+    /// and ranking operations.
+    ///
+    /// Example:
+    /// ```swift
+    /// let scores = [0.3, 0.9, 0.1, 0.7, 0.5]
+    /// let top3 = scores.topIndices(k: 3)
+    /// // Returns: [(index: 1, score: 0.9), (index: 3, score: 0.7), (index: 4, score: 0.5)]
+    /// ```
+    ///
+    /// - Parameter k: Number of top elements to return
+    /// - Returns: Array of tuples containing index and score, sorted by score (highest first)
+    func topIndices(k: Int) -> [(index: Int, score: Double)] {
+        return self.enumerated()
+            .map { (index: $0.offset, score: $0.element) }
+            .sorted { $0.score > $1.score }
+            .prefix(k)
+            .map { $0 }
+    }
+
 }
 
 // MARK: - Float Vector Operations
@@ -293,27 +305,3 @@ public extension Array where Element == [Float] {
     }
 }
 
-// MARK: - Free Functions
-
-/// Matrix-matrix multiplication (NumPy-style free function)
-///
-/// Multiplies two matrices following standard matrix multiplication rules.
-/// This function provides NumPy-style `matmul()` syntax as an alternative to the method form.
-///
-/// For matrices A (n×k) and B (k×m), produces result C (n×m) where:
-/// `C[i][j] = sum of (A[i][k] * B[k][j])` for all k
-///
-/// Example:
-/// ```swift
-/// let a = [[1.0, 2.0], [3.0, 4.0]]
-/// let b = [[5.0, 6.0], [7.0, 8.0]]
-/// let c = matmul(a, b)  // [[19.0, 22.0], [43.0, 50.0]]
-/// ```
-///
-/// - Parameters:
-///   - lhs: Left matrix (n×k)
-///   - rhs: Right matrix (k×m)
-/// - Returns: Result matrix (n×m)
-public func matmul<T: Numeric>(_ lhs: [[T]], _ rhs: [[T]]) -> [[T]] {
-    return _Vector<T>.matrixMatrixMultiply(lhs, rhs)
-}

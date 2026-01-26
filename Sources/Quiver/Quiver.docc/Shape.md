@@ -4,7 +4,7 @@ Work with matrices using transpose and column extraction operations.
 
 ## Overview
 
-Quiver extends Swift arrays to support common matrix operations, making it easy to work with two-dimensional data structures. When working with matrices (arrays of arrays), Quiver provides convenient methods for transformations and data extraction.
+Quiver extends Swift arrays to support common matrix operations, making it easy to work with two-dimensional data structures. When working with matrices (arrays of arrays), Quiver provides convenient methods for transformations and data extraction. These operations support Chapter 21 (Matrices) concepts in algorithms and data structures.
 
 ### Transposing Matrices
 
@@ -51,5 +51,5 @@ Matrix operations in Quiver are designed to work seamlessly with Swift's array t
 > Note: Quiver represents matrices as nested Swift arrays. A matrix is simply an array of arrays, not a specialized matrix type. This makes it easy to integrate with existing Swift code.
 
 ## Related Articles
-- <doc:Elements>
-- <doc:Operations>
+- <doc:Matrices-Operations>
+- <doc:Transformations-Common>

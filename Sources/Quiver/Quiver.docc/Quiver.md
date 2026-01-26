@@ -1,52 +1,54 @@
 # ``Quiver``
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+@Metadata {
+    @PageKind(article)
+    @SupportedLanguage(swift)
+}
+
+@Options(scope: local)
 
 A Swift package that provides vector mathematics, numerical computing, and statistical operations.
 
 ## Overview
 
-This lightweight, functional and educational framework enables developers to perform element-wise operations, vector calculations, and matrix transformations with simple, readable syntax.
+Quiver expands the Swift ecosystem with a native, Swift-first approach to vector mathematics and numerical computing. By building directly on Swift's powerful type system and syntax, Quiver creates an intuitive bridge between traditional array operations and advanced mathematical concepts. Built as an extension on the standard `Array` type, the framework embraces Swift's emphasis on readability and expressiveness, offering mathematical operations that feel natural to iOS and macOS developers.
 
-Quiver expands the Swift ecosystem with a native, Swift-first approach to numerical computing and vector mathematics. By building directly on Swift's powerful type system and syntax, Quiver creates an intuitive bridge between traditional array operations and advanced mathematical concepts. Built as an extension on the standard `Array` type, The framework embraces Swift's emphasis on readability and expressiveness, offering mathematical operations that feel natural to iOS and macOS developers.
+### Data science in Swift
 
-### Data Science in Swift
+As Swift continues to expand beyond app development into domains like server-side computing, machine learning, and data analysis, the need for robust mathematical tools becomes increasingly important. Quiver serves as a foundation for data science workflows in Swift, enabling operations that are fundamental to fields like computer vision, game development, machine learning, and scientific computing.
 
-As Swift continues to expand beyond app development into domains like server-side computing, machine learning, and data analysis, the need for robust mathematical tools becomes increasingly important. Quiver serves as a foundation for data science workflows in Swift, enabling operations that are fundamental to fields like computer vision, game development, machine learning, and scientific computing. 
+### Learn by Example
+
+This framework is companion to [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/), a comprehensive guide that teaches algorithmic thinking through hands-on Swift examples. The book covers foundational concepts in Chapters 20-23, while Quiver provides production-ready implementations optimized for real-world applications.
 
 ## Topics
 
 ### Getting Started
-- <doc:Design>
 - <doc:Primer>
-- <doc:Charts>
 
-### Core Operations
-- <doc:Elements>
+### Vectors
 - <doc:Operations>
-- <doc:Broadcast>
-- <doc:Inspection>
-- ``Swift/Array/+(_:_:)``
-- ``Swift/Array/-(_:_:)``
-- ``Swift/Array/*(_:_:)``
-- ``Swift/Array/dot(_:)``
-- ``Swift/Array/magnitude``
-- ``Swift/Array/normalized``
+- <doc:Elements>
 
-### Data Analysis
-- <doc:Statistics>
-- <doc:Comparison>
-- ``Swift/Array/mean()``
-- ``Swift/Array/variance(ddof:)``
-- ``Swift/Array/std(ddof:)``
-- ``Swift/Array/isGreaterThan(_:)``
-- ``Swift/Array/masked(by:)``
-
-### Data Creation and Manipulation
+### Matrices
+- <doc:Matrices-Operations>
 - <doc:Generation>
-- <doc:Shape>
+- <doc:Broadcast>
+
+### Transformations
+- <doc:Transformations-Fundamentals>
+- <doc:Transformations-Common>
+- <doc:Transformations-Composition>
+
+### Semantic Search
+- <doc:Text-Processing>
+- <doc:Similarity-Operations>
+- <doc:Ranking-Operations>
+
+### Advanced Topics
+- <doc:Statistics>
+- <doc:Charts>
 - <doc:Random>
-- ``Swift/Array/zeros(_:)``
-- ``Swift/Array/linspace(_:_:num:)``
-- ``Swift/Array/random(_:)-6ulik``
-- ``Swift/Array/transformedBy(_:)``
+- <doc:Shape>
+- <doc:Comparison>
+- <doc:Inspection>

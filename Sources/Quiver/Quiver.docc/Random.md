@@ -89,4 +89,3 @@ By default, the random values are generated in the range `[0, 1]` which you can 
 
 ### Related Articles
 - <doc:Statistics>
-```

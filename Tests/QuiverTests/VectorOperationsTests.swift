@@ -453,7 +453,7 @@ final class VectorOperationsTests: XCTestCase {
     func testMatmul2x2() {
         let a = [[1.0, 2.0], [3.0, 4.0]]
         let b = [[5.0, 6.0], [7.0, 8.0]]
-        let result = a.matmul(b)
+        let result = a.multiplyMatrix(b)
 
         // Expected:
         // [1*5+2*7  1*6+2*8]   [19  22]
@@ -464,7 +464,7 @@ final class VectorOperationsTests: XCTestCase {
     func testMatmulIdentityMatrix() {
         let identity = [[1.0, 0.0], [0.0, 1.0]]
         let matrix = [[3.0, 4.0], [5.0, 6.0]]
-        let result = identity.matmul(matrix)
+        let result = identity.multiplyMatrix(matrix)
 
         // Identity should return original matrix
         XCTAssertEqual(result, matrix)
@@ -473,7 +473,7 @@ final class VectorOperationsTests: XCTestCase {
     func testMatmulRotationComposition() {
         // Compose two 90° rotations = 180° rotation
         let rotate90 = [[0.0, -1.0], [1.0, 0.0]]
-        let result = rotate90.matmul(rotate90)
+        let result = rotate90.multiplyMatrix(rotate90)
 
         // Expected: 180° rotation = [[-1, 0], [0, -1]]
         XCTAssertEqual(result[0][0], -1.0, accuracy: 1e-10)
@@ -486,7 +486,7 @@ final class VectorOperationsTests: XCTestCase {
         // (2×3) × (3×2) → (2×2)
         let a = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
         let b = [[7.0, 8.0], [9.0, 10.0], [11.0, 12.0]]
-        let result = a.matmul(b)
+        let result = a.multiplyMatrix(b)
 
         // Expected:
         // [1*7+2*9+3*11  1*8+2*10+3*12]   [58  64]
@@ -497,7 +497,7 @@ final class VectorOperationsTests: XCTestCase {
     func testMatmulScaling() {
         let scale2x = [[2.0, 0.0], [0.0, 2.0]]
         let scale3x = [[3.0, 0.0], [0.0, 3.0]]
-        let result = scale2x.matmul(scale3x)
+        let result = scale2x.multiplyMatrix(scale3x)
 
         // Expected: 6× scaling
         XCTAssertEqual(result, [[6.0, 0.0], [0.0, 6.0]])
@@ -507,7 +507,7 @@ final class VectorOperationsTests: XCTestCase {
         // Example from Chapter 21: composing transformations
         let scale2x = [[2.0, 0.0], [0.0, 2.0]]
         let rotate45 = [[0.707, -0.707], [0.707, 0.707]]
-        let combined = scale2x.matmul(rotate45)
+        let combined = scale2x.multiplyMatrix(rotate45)
 
         // Expected: scaled rotation matrix
         XCTAssertEqual(combined[0][0], 1.414, accuracy: 0.001)
@@ -517,21 +517,11 @@ final class VectorOperationsTests: XCTestCase {
     }
 
     func testMultiplyMatrixAlias() {
-        // Test that multiplyMatrix() works identically to matmul()
+        // Test multiplyMatrix() method
         let a = [[1.0, 2.0], [3.0, 4.0]]
         let b = [[5.0, 6.0], [7.0, 8.0]]
 
-        let result1 = a.matmul(b)
-        let result2 = a.multiplyMatrix(b)
-
-        XCTAssertEqual(result1, result2)
-    }
-
-    func testMatmulFreeFunction() {
-        // Test NumPy-style free function
-        let a = [[1.0, 2.0], [3.0, 4.0]]
-        let b = [[5.0, 6.0], [7.0, 8.0]]
-        let result = matmul(a, b)
+        let result = a.multiplyMatrix(b)
 
         XCTAssertEqual(result, [[19.0, 22.0], [43.0, 50.0]])
     }
@@ -541,8 +531,8 @@ final class VectorOperationsTests: XCTestCase {
         let a = [[1.0, 2.0], [3.0, 4.0]]
         let b = [[5.0, 6.0], [7.0, 8.0]]
 
-        let ab = a.matmul(b)
-        let ba = b.matmul(a)
+        let ab = a.multiplyMatrix(b)
+        let ba = b.multiplyMatrix(a)
 
         XCTAssertNotEqual(ab, ba)
     }
@@ -551,7 +541,7 @@ final class VectorOperationsTests: XCTestCase {
         // Test with Int matrices
         let a = [[1, 2], [3, 4]]
         let b = [[5, 6], [7, 8]]
-        let result = a.matmul(b)
+        let result = a.multiplyMatrix(b)
 
         XCTAssertEqual(result, [[19, 22], [43, 50]])
     }
@@ -567,7 +557,7 @@ final class VectorOperationsTests: XCTestCase {
             [6.0, 5.0, 4.0],
             [3.0, 2.0, 1.0]
         ]
-        let result = a.matmul(b)
+        let result = a.multiplyMatrix(b)
 
         // Expected:
         // [1*9+2*6+3*3  1*8+2*5+3*2  1*7+2*4+3*1]   [30  24  18]
@@ -584,7 +574,7 @@ final class VectorOperationsTests: XCTestCase {
         // Treat vectors as matrices (1×n and n×1)
         let rowVector = [[1.0, 2.0, 3.0]]
         let colVector = [[1.0], [2.0], [3.0]]
-        let result = rowVector.matmul(colVector)
+        let result = rowVector.multiplyMatrix(colVector)
 
         // Expected: dot product as 1×1 matrix
         XCTAssertEqual(result, [[14.0]])  // 1*1 + 2*2 + 3*3 = 14
@@ -600,7 +590,7 @@ final class VectorOperationsTests: XCTestCase {
 
         // 90° rotation
         let rotation = [[0.0, -1.0], [1.0, 0.0]]
-        let rotated = rotation.matmul(dataMatrix)
+        let rotated = rotation.multiplyMatrix(dataMatrix)
 
         // Expected: Both points rotated 90°
         // Point 1: [1,0] → [0,1]
@@ -614,7 +604,7 @@ final class VectorOperationsTests: XCTestCase {
         let scale = [[2.0, 0.0], [0.0, 3.0]]
 
         // Compose: first rotate, then scale
-        let composed = scale.matmul(rotate)
+        let composed = scale.multiplyMatrix(rotate)
 
         // Apply to vector
         let vector = [1.0, 0.0]
@@ -637,7 +627,7 @@ final class VectorOperationsTests: XCTestCase {
 
         // 90° counterclockwise rotation
         let rotation = [[0.0, -1.0], [1.0, 0.0]]
-        let rotated = rotation.matmul(athleteData)
+        let rotated = rotation.multiplyMatrix(athleteData)
 
         // Expected: All three athletes rotated
         // Athlete 1: [8,6] → [-6,8]
@@ -649,14 +639,86 @@ final class VectorOperationsTests: XCTestCase {
     func testMatmul4Rotations() {
         // Four 90° rotations = full circle (identity)
         let rotate90 = [[0.0, -1.0], [1.0, 0.0]]
-        let rotate180 = rotate90.matmul(rotate90)
-        let rotate270 = rotate180.matmul(rotate90)
-        let rotate360 = rotate270.matmul(rotate90)
+        let rotate180 = rotate90.multiplyMatrix(rotate90)
+        let rotate270 = rotate180.multiplyMatrix(rotate90)
+        let rotate360 = rotate270.multiplyMatrix(rotate90)
 
         // Should return to identity
         XCTAssertEqual(rotate360[0][0], 1.0, accuracy: 1e-10)
         XCTAssertEqual(rotate360[0][1], 0.0, accuracy: 1e-10)
         XCTAssertEqual(rotate360[1][0], 0.0, accuracy: 1e-10)
         XCTAssertEqual(rotate360[1][1], 1.0, accuracy: 1e-10)
+    }
+
+    // MARK: - TopIndices Tests
+
+    func testTopIndicesBasic() {
+        let scores = [0.3, 0.9, 0.1, 0.7, 0.5]
+        let top3 = scores.topIndices(k: 3)
+
+        XCTAssertEqual(top3.count, 3)
+        XCTAssertEqual(top3[0].index, 1)
+        XCTAssertEqual(top3[0].score, 0.9)
+        XCTAssertEqual(top3[1].index, 3)
+        XCTAssertEqual(top3[1].score, 0.7)
+        XCTAssertEqual(top3[2].index, 4)
+        XCTAssertEqual(top3[2].score, 0.5)
+    }
+
+    func testTopIndicesAll() {
+        let scores = [0.3, 0.9, 0.1]
+        let all = scores.topIndices(k: 3)
+
+        XCTAssertEqual(all.count, 3)
+        XCTAssertEqual(all[0].score, 0.9)
+        XCTAssertEqual(all[1].score, 0.3)
+        XCTAssertEqual(all[2].score, 0.1)
+    }
+
+    func testTopIndicesMoreThanAvailable() {
+        let scores = [0.3, 0.9]
+        let top5 = scores.topIndices(k: 5)
+
+        XCTAssertEqual(top5.count, 2)
+        XCTAssertEqual(top5[0].score, 0.9)
+        XCTAssertEqual(top5[1].score, 0.3)
+    }
+
+    func testTopIndicesOne() {
+        let scores = [0.3, 0.9, 0.1, 0.7, 0.5]
+        let top1 = scores.topIndices(k: 1)
+
+        XCTAssertEqual(top1.count, 1)
+        XCTAssertEqual(top1[0].index, 1)
+        XCTAssertEqual(top1[0].score, 0.9)
+    }
+
+    func testTopIndicesEmpty() {
+        let scores: [Double] = []
+        let top3 = scores.topIndices(k: 3)
+
+        XCTAssertEqual(top3.count, 0)
+    }
+
+    func testTopIndicesDuplicates() {
+        let scores = [0.5, 0.9, 0.5, 0.9, 0.3]
+        let top3 = scores.topIndices(k: 3)
+
+        XCTAssertEqual(top3.count, 3)
+        // Both 0.9 values should appear before 0.5 values
+        XCTAssertEqual(top3[0].score, 0.9)
+        XCTAssertEqual(top3[1].score, 0.9)
+        XCTAssertTrue(top3[2].score == 0.5 || top3[2].score == 0.3)
+    }
+
+    func testTopIndicesSemanticSearchExample() {
+        // Simulate semantic search scores
+        let similarities = [0.85, 0.42, 0.91, 0.15, 0.73]
+        let topResults = similarities.topIndices(k: 3)
+
+        XCTAssertEqual(topResults.count, 3)
+        XCTAssertEqual(topResults[0].index, 2)  // Highest: 0.91
+        XCTAssertEqual(topResults[1].index, 0)  // Second: 0.85
+        XCTAssertEqual(topResults[2].index, 4)  // Third: 0.73
     }
 }

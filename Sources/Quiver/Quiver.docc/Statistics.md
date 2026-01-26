@@ -212,4 +212,6 @@ This approach provides a natural and intuitive API that works directly with Swif
 - ``Swift/Array/cumulativeProduct()``
 
 ### Related Articles
+- <doc:Operations>
+- <doc:Elements>
 - <doc:Broadcast>
