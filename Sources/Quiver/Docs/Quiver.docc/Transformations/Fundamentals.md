@@ -370,8 +370,8 @@ This perspective helps understand:
 
 ## See Also
 
-- <doc:Transformations-Common>
-- <doc:Transformations-Composition>
+- <doc:Common>
+- <doc:Composition>
 - <doc:Matrices-Operations>
 - <doc:Operations>
 

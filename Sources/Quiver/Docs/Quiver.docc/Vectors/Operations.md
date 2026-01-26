@@ -4,11 +4,11 @@ Transform arrays into mathematical vectors with magnitude, direction, and spatia
 
 ## Overview
 
-> Tip: For a comprehensive introduction to vector mathematics with step-by-step examples, see [Chapter 20: Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) in Swift Algorithms & Data Structures.
-
-Quiver provides a comprehensive set of vector operations that treat arrays as mathematical vectors, enabling calculations like magnitude, normalization, dot products, and angle measurements. These operations form the foundation for Chapter 20 (Vectors) concepts in algorithms and data structures.
+Quiver provides a comprehensive set of vector operations that treat arrays as mathematical vectors, enabling calculations like magnitude, normalization, dot products, and angle measurements. 
 
 Vector operations are essential for graphics programming, physics simulations, machine learning algorithms, and any application that deals with spatial data or mathematical modeling.
+
+> Tip: For a comprehensive introduction to vector mathematics with step-by-step examples, see [Chapter 20: Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) in Swift Algorithms & Data Structures.
 
 ### Basic Vector Properties
 
@@ -174,4 +174,4 @@ This approach means you can use these operations directly on standard Swift arra
 ### Related Articles
 - <doc:Primer>
 - <doc:Similarity-Operations>
-- <doc:Transformations-Fundamentals>
+- <doc:Fundamentals>

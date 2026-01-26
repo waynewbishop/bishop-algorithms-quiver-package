@@ -19,7 +19,7 @@ As Swift continues to expand beyond app development into domains like server-sid
 
 ### Learn by Example
 
-This framework is companion to [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/), a comprehensive guide that teaches algorithmic thinking through hands-on Swift examples. The book covers foundational concepts in Chapters 20-23, while Quiver provides production-ready implementations optimized for real-world applications.
+This framework is companion to [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/), a comprehensive guide that teaches algorithmic thinking through hands-on Swift examples. 
 
 ## Topics
 
@@ -29,26 +29,23 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 ### Vectors
 - <doc:Operations>
 - <doc:Elements>
+- <doc:Statistics>
 
 ### Matrices
 - <doc:Matrices-Operations>
-- <doc:Generation>
 - <doc:Broadcast>
+- <doc:Generation>
+- <doc:Random>
 
 ### Transformations
-- <doc:Transformations-Fundamentals>
-- <doc:Transformations-Common>
-- <doc:Transformations-Composition>
+- <doc:Fundamentals>
+- <doc:Common>
+- <doc:Composition>
 
 ### Semantic Search
 - <doc:Text-Processing>
 - <doc:Similarity-Operations>
 - <doc:Ranking-Operations>
 
-### Advanced Topics
-- <doc:Statistics>
-- <doc:Charts>
-- <doc:Random>
+### Utilities
 - <doc:Shape>
-- <doc:Comparison>
-- <doc:Inspection>

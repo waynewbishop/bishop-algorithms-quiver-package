@@ -4,7 +4,7 @@ Apply rotation, scaling, reflection, and shear transformations using transformat
 
 ## Overview
 
-After understanding how transformation matrices work (see <doc:Transformations-Fundamentals>), we can construct specific matrices for common geometric operations. These transformations are fundamental to graphics programming, game development, computer vision, and spatial computing.
+After understanding how transformation matrices work (see <doc:Fundamentals>), we can construct specific matrices for common geometric operations. These transformations are fundamental to graphics programming, game development, computer vision, and spatial computing.
 
 Each transformation has a characteristic matrix form that describes how it moves the basis vectors (i-hat and j-hat). Understanding these patterns lets you create custom transformations and predict how vectors will move.
 
@@ -468,8 +468,8 @@ let transformed = sprites.map { $0.transformedBy(transform) }
 
 ## See Also
 
-- <doc:Transformations-Fundamentals>
-- <doc:Transformations-Composition>
+- <doc:Fundamentals>
+- <doc:Composition>
 - <doc:Matrices-Operations>
 - <doc:Operations>
 

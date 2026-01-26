@@ -113,7 +113,7 @@ let zeros = [Double].zeros(2, 3)
 
 #### Transforming with Matrices
 
-One of the most powerful applications of matrices is transforming vectors (see <doc:Transformations-Fundamentals> for detailed transformation concepts):
+One of the most powerful applications of matrices is transforming vectors (see <doc:Fundamentals> for detailed transformation concepts):
 
 ```swift
 // A 2D rotation matrix (90° counterclockwise)
@@ -189,6 +189,18 @@ let similarity = product1.cosineOfAngle(with: product2)  // ~0.998
 ```
 
 See <doc:Similarity-Operations> for more on measuring vector similarity in machine learning applications.
+
+### Inspecting Your Data
+
+During development, we can quickly inspect arrays using the `info()` method:
+
+```swift
+let vector = [3.5, 1.8, 4.2, 2.7, 5.1]
+print(vector.info())
+// Shows: count, type, mean, min, max, and first 5 items
+```
+
+For floating-point arrays, `info()` displays statistical summaries (mean, min, max) along with a preview of values—useful for debugging and data validation.
 
 ### Beyond the Basics
 

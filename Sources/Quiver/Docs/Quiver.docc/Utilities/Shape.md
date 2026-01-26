@@ -52,4 +52,4 @@ Matrix operations in Quiver are designed to work seamlessly with Swift's array t
 
 ## Related Articles
 - <doc:Matrices-Operations>
-- <doc:Transformations-Common>
+- <doc:Common>

@@ -457,9 +457,9 @@ struct Particle {
 
 ## See Also
 
-- <doc:Transformations-Fundamentals>
-- <doc:Transformations-Common>
-- <doc:Matrices-Operations>
+- <doc:Fundamentals>
+- <doc:Common>
+- <doc:Operations>
 - <doc:Operations>
 
 ## Topics
