@@ -4,13 +4,13 @@ Learn how matrices transform vector spaces through basis vectors and the identit
 
 ## Overview
 
-> Tip: For an in-depth exploration of transformation matrices with geometric examples, see [Chapter 22: Matrix Transformations](https://waynewbishop.github.io/swift-algorithms/22-transformations.html) in Swift Algorithms & Data Structures.
-
 Matrices serve two purposes: organizing data (see <doc:Matrices-Operations>) and **transforming** vector spaces. While a matrix can represent a table of numbers, it can also represent a coordinate system transformation—rotating, scaling, reflecting, or shearing vectors in space.
 
 Understanding transformations is essential for graphics programming, game development, computer vision, AR/VR applications, and any domain requiring coordinate system manipulations.
 
-## Basis Vectors
+> Tip: For an in-depth exploration of transformation matrices with geometric examples, see [Matrix Transformations](https://waynewbishop.github.io/swift-algorithms/22-transformations.html) in Swift Algorithms & Data Structures.
+
+## Basis vectors
 
 Every coordinate system is defined by **basis vectors**—the fundamental directions that define the axes. In 2D, we conventionally use two unit vectors:
 
@@ -41,7 +41,7 @@ let v = [3.0, 4.0]
 
 The coordinates `[3, 4]` tell us "move 3 units in the i-hat direction, then 4 units in the j-hat direction."
 
-### Basis Vectors Define the Canvas
+### Basis vectors define the canvas
 
 Think of basis vectors as defining your coordinate system's "canvas":
 - **i-hat** defines what "right" means
@@ -50,7 +50,7 @@ Think of basis vectors as defining your coordinate system's "canvas":
 
 When we **transform** vectors, we're actually changing where these basis vectors point. The same coordinates `[3, 4]` in a transformed space mean "3 units along the new i-hat, 4 units along the new j-hat."
 
-## The Identity Matrix
+## The identity matrix
 
 The **identity matrix** represents the standard, untransformed coordinate system. Its columns are simply the basis vectors:
 
@@ -68,7 +68,7 @@ let identity = [Double].identity(2)
 //  [0.0, 1.0]]
 ```
 
-### Properties of Identity Matrix
+### Properties of identity matrix
 
 **Transforming by identity doesn't change vectors:**
 ```swift
@@ -94,7 +94,7 @@ Identity is the multiplicative neutral element for matrices, like how 1 is for n
 - `1 × x = x`
 - `I × M = M` (where I is identity)
 
-## Reading Transformation Matrices
+## Reading transformation matrices
 
 A transformation matrix tells you **where the basis vectors land** after transformation:
 
@@ -125,7 +125,7 @@ let rotated = right.transformedBy(rotate90)
 // [0.0, 1.0] - now points up! ✓
 ```
 
-### Visualizing Transformations
+### Visualizing transformations
 
 Before transformation (identity):
 ```
@@ -151,7 +151,7 @@ The vector `[2, 1]` means:
 [2.0, 1.0].transformedBy(rotate90)  // [-1.0, 2.0] ✓
 ```
 
-## Matrix-Vector Multiplication
+## Matrix-vector multiplication
 
 When we multiply a matrix by a vector, we're asking: "Where does this vector land in the transformed space?"
 
@@ -176,7 +176,7 @@ The math:
 [0  3] [5] = [0×4 + 3×5] = [15]
 ```
 
-### Two Equivalent Syntaxes
+### Two equivalent syntaxes
 
 Quiver provides two ways to express the same operation:
 
@@ -194,7 +194,7 @@ Both produce identical results. Choose based on what you want to emphasize:
 - Use `.transformedBy()` when focusing on the vector
 - Use `.transform()` when focusing on the transformation
 
-## Creating Transformation Matrices
+## Creating transformation matrices
 
 ### Identity
 
@@ -203,7 +203,7 @@ let identity2D = [Double].identity(2)
 let identity3D = [Double].identity(3)
 ```
 
-### Diagonal Matrices (Scaling)
+### Diagonal matrices (scaling)
 
 ```swift
 // Scale x by 2, y by 3
@@ -219,9 +219,9 @@ let scaled = v.transformedBy(scale)
 // [8.0, 15.0] - x scaled by 2, y scaled by 3
 ```
 
-## Practical Examples
+## Practical examples
 
-### Example 1: Uniform Scaling
+### Example 1: Uniform scaling
 
 ```swift
 // Scale everything by 2
@@ -237,7 +237,7 @@ let scale2x = [Double].diag([2.0, 2.0])
 // [6.0, 8.0] - doubled in both dimensions
 ```
 
-### Example 2: Non-Uniform Scaling
+### Example 2: Non-uniform scaling
 
 ```swift
 // Stretch horizontally, compress vertically
@@ -250,7 +250,7 @@ let stretch = [
 // [6.0, 2.0] - wider but shorter
 ```
 
-### Example 3: Identity Verification
+### Example 3: Identity verification
 
 ```swift
 let identity = [Double].identity(2)
@@ -259,7 +259,7 @@ let v = [5.0, 7.0]
 v.transformedBy(identity) == v  // true - no change
 ```
 
-## For iOS Developers
+## For iOS developers
 
 Quiver's transformation matrices directly correspond to iOS frameworks:
 
@@ -314,7 +314,7 @@ transform.scale = [2, 2, 2]  // 3D scaling
 let scale3D = [Double].diag([2.0, 2.0, 2.0])  // 3×3 matrix
 ```
 
-## For Python Developers
+## For Python developers
 
 Quiver's transformations match NumPy linear algebra:
 
@@ -334,7 +334,7 @@ let vector = [3.0, 4.0]
 let transformed = vector.transformedBy(identity)
 ```
 
-## Geometric Intuition
+## Geometric intuition
 
 Transformations change the **coordinate system**, not just the vector:
 
@@ -350,7 +350,7 @@ This perspective helps understand:
 - How transformations compose
 - Why some transformations are invertible
 
-## Key Principles
+## Key principles
 
 1. **Basis vectors define the coordinate system**
    - Standard basis: i-hat = [1,0], j-hat = [0,1]
@@ -368,7 +368,7 @@ This perspective helps understand:
    - [3,4] means 3×i-hat + 4×j-hat
    - Same in any coordinate system
 
-## See Also
+## See also
 
 - <doc:Common>
 - <doc:Composition>
@@ -377,10 +377,10 @@ This perspective helps understand:
 
 ## Topics
 
-### Matrix Creation
+### Matrix creation
 - ``Swift/Array/identity(_:)``
 - ``Swift/Array/diag(_:)``
 
-### Transformation Operations
+### Transformation operations
 - ``Swift/Array/transformedBy(_:)``
 - ``Swift/Array/transform(_:)``

@@ -10,7 +10,7 @@ Quiver provides text processing extensions that enable natural language processi
 
 This approach is fundamental to modern AI applications: instead of exact keyword matching, we represent text as vectors in high-dimensional space where similar meanings have similar numerical representations.
 
-### The Text-to-Vector Pipeline
+### The text-to-vector pipeline
 
 Text processing in Quiver follows a three-step pipeline:
 
@@ -44,7 +44,7 @@ The `.tokenize()` method:
 - Filters empty strings
 - Returns an array of clean word tokens
 
-### Practical Examples
+### Practical examples
 
 **Basic tokenization:**
 ```swift
@@ -70,7 +70,7 @@ let productDescriptions = products.map { $0.description.tokenize() }
 
 > Note: This is basic tokenization suitable for word embeddings. Production systems may use more sophisticated tokenization (stemming, lemmatization, subword tokenization) depending on requirements.
 
-## Word Embedding Lookup
+## Word embedding lookup
 
 Convert tokenized words to their vector representations using pre-trained embeddings. Word embeddings are dictionaries mapping words to numerical vectors that capture semantic meaning.
 
@@ -92,7 +92,7 @@ The `.embed(using:)` method:
 - Automatically filters out unknown words
 - Preserves order of found words
 
-### Handling Unknown Words
+### Handling unknown words
 
 Words not in the vocabulary are silently filtered:
 
@@ -103,7 +103,7 @@ let vectors = words.embed(using: embeddings)
 // "unknown" automatically filtered out
 ```
 
-### Loading Pre-trained Embeddings
+### Loading pre-trained embeddings
 
 Real-world applications use pre-trained embeddings like GloVe, Word2Vec, or FastText:
 
@@ -132,7 +132,7 @@ let gloveEmbeddings = try loadGloVe(from: "glove.6B.50d.txt")
 let vectors = words.embed(using: gloveEmbeddings)
 ```
 
-## Document Embeddings
+## Document embeddings
 
 Combine multiple word vectors into a single document vector by averaging. This creates a numerical representation of the entire text's semantic meaning.
 
@@ -153,7 +153,7 @@ The `.averaged()` method:
 - Returns `nil` if vectors have inconsistent dimensions
 - Requires all vectors to be same length
 
-### Complete Text-to-Vector Example
+### Complete text-to-vector example
 
 ```swift
 import Quiver
@@ -174,7 +174,7 @@ let doc2 = embedText("comfortable jogging sneakers", embeddings: embeddings)
 // Now doc1 and doc2 are vectors we can compare mathematically
 ```
 
-### Why Averaging Works
+### Why averaging works
 
 Averaging word vectors is simple but effective:
 - Captures overall topic/theme of the text
@@ -189,9 +189,9 @@ Averaging word vectors is simple but effective:
 
 More sophisticated approaches (weighted averaging, transformers) preserve these nuances, but simple averaging provides excellent results for semantic similarity tasks.
 
-## Practical Applications
+## Practical applications
 
-### Semantic Search
+### Semantic search
 
 ```swift
 // Index documents
@@ -214,7 +214,7 @@ let similarities = database.cosineSimilarities(to: queryVector)
 let topResults = similarities.topIndices(k: 3)
 ```
 
-### Document Similarity
+### Document similarity
 
 ```swift
 let doc1 = embedText("machine learning algorithms", embeddings: embeddings)!
@@ -225,20 +225,26 @@ let similarity1 = doc1.cosineOfAngle(with: doc2)  // High (~0.8)
 let similarity2 = doc1.cosineOfAngle(with: doc3)  // Low (~0.1)
 ```
 
-### Recommendation Systems
+### Recommendation systems
 
 ```swift
 // User's liked articles
-let userProfile = [
+let likedArticles = [
     "deep learning neural networks",
     "computer vision applications",
     "natural language processing"
 ].compactMap { embedText($0, embeddings: embeddings) }
-.averaged()!
+
+guard let userProfile = likedArticles.averaged() else {
+    fatalError("Unable to create user profile from liked articles")
+}
 
 // Candidate articles
-let candidates = newArticles.map { article in
-    (article, embedText(article.text, embeddings: embeddings)!)
+let candidates = newArticles.compactMap { article -> (Article, [Double])? in
+    guard let vector = embedText(article.text, embeddings: embeddings) else {
+        return nil
+    }
+    return (article, vector)
 }
 
 // Rank by similarity to user profile
@@ -250,7 +256,7 @@ let recommendations = candidates
     .prefix(10)
 ```
 
-## For Python Developers
+## For Python developers
 
 Quiver's text processing matches scikit-learn and NLTK workflows:
 
@@ -286,7 +292,7 @@ let docVector = text.tokenize()
     .averaged()
 ```
 
-## For iOS Developers
+## For iOS developers
 
 ### Integration with CoreML
 
@@ -341,9 +347,9 @@ struct SearchView: View {
 }
 ```
 
-## Performance Considerations
+## Performance considerations
 
-### Memory Efficiency
+### Memory efficiency
 
 Pre-trained embeddings can be large (GloVe 50d: ~171 MB for 400K words):
 
@@ -369,7 +375,7 @@ func loadSubsetEmbeddings(words: Set<String>,
 }
 ```
 
-### Caching Document Vectors
+### Caching document vectors
 
 For static content, compute document vectors once:
 
@@ -391,7 +397,7 @@ let results = documents.map { $0.vector }
     .cosineSimilarities(to: queryVector)
 ```
 
-## See Also
+## See also
 
 - <doc:Similarity-Operations>
 - <doc:Ranking-Operations>
@@ -400,12 +406,12 @@ let results = documents.map { $0.vector }
 
 ## Topics
 
-### String Processing
+### String processing
 - ``Swift/String/tokenize()``
 
-### Word Embeddings
+### Word embeddings
 - ``Swift/Array/embed(using:)-string-array``
 
-### Document Embeddings
+### Document embeddings
 - ``Swift/Array/averaged()-double-array``
 - ``Swift/Array/areValidVectorDimensions()``

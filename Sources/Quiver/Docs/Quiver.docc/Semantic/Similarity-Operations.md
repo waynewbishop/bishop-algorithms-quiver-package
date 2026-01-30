@@ -8,7 +8,7 @@ Once text is converted to numerical vectors (see <doc:Text-Processing>), we need
 
 Quiver provides efficient similarity operations optimized for high-dimensional vectors commonly used in machine learning and natural language processing.
 
-## Cosine Similarity
+## Cosine similarity
 
 Cosine similarity measures the angle between two vectors, ranging from -1 (opposite directions) to 1 (identical directions). It focuses on **direction** rather than magnitude, making it ideal for comparing text embeddings where document length shouldn't affect similarity.
 
@@ -20,7 +20,7 @@ let similarity = doc1.cosineOfAngle(with: doc2)
 // 1.0 - identical semantic meaning despite different magnitudes
 ```
 
-### Why Cosine for Text?
+### Why cosine for text
 
 Consider two product descriptions:
 - Short: "running shoes"
@@ -28,7 +28,7 @@ Consider two product descriptions:
 
 Both are about running shoes, but the long description has more words, resulting in a larger vector magnitude. Cosine similarity ignores magnitude and measures only directional alignment—exactly what we need for semantic comparison.
 
-### Mathematical Definition
+### Mathematical definition
 
 For vectors v and w:
 
@@ -41,7 +41,7 @@ Where:
 - `||v||` is the magnitude of v
 - `||w||` is the magnitude of w
 
-### Practical Examples
+### Practical examples
 
 **High similarity (related meanings):**
 ```swift
@@ -67,7 +67,7 @@ let v2 = [0.0, 1.0]
 v1.cosineOfAngle(with: v2)  // 0.0 (completely unrelated)
 ```
 
-## Euclidean Distance
+## Euclidean distance
 
 Euclidean distance measures the straight-line distance between two points in vector space. Unlike cosine similarity, distance considers both direction and magnitude.
 
@@ -79,7 +79,7 @@ let dist = point1.distance(to: point2)
 // 5.0 (Pythagorean theorem: sqrt(3² + 4²))
 ```
 
-### When to Use Distance vs Similarity
+### When to use distance vs similarity
 
 **Use Euclidean distance when:**
 - Magnitude matters (physical positions, measurements)
@@ -91,7 +91,7 @@ let dist = point1.distance(to: point2)
 - Comparing variable-length documents
 - Working with word embeddings
 
-### Example: Different Metrics, Different Results
+### Example: Different metrics, different results
 
 ```swift
 let short = [1.0, 1.0]
@@ -104,7 +104,7 @@ short.cosineOfAngle(with: long)  // 1.0 (identical direction)
 short.distance(to: long)  // ~12.7 (far apart in space)
 ```
 
-## Batch Similarity Operations
+## Batch similarity operations
 
 For semantic search, we often compare one query vector against many document vectors. Batch operations process all comparisons efficiently.
 
@@ -129,7 +129,7 @@ The `.cosineSimilarities(to:)` method:
 - Preserves order (result[i] is similarity of database[i] to query)
 - Efficient for large-scale searches
 
-### Semantic Search Example
+### Semantic search example
 
 ```swift
 import Quiver
@@ -150,9 +150,11 @@ let database = products.compactMap {
 
 // Search query
 let query = "best running shoes for training"
-let queryVector = query.tokenize()
+guard let queryVector = query.tokenize()
     .embed(using: embeddings)
-    .averaged()!
+    .averaged() else {
+    fatalError("Unable to create query vector")
+}
 
 // Find similarities
 let similarities = database.cosineSimilarities(to: queryVector)
@@ -161,9 +163,9 @@ let similarities = database.cosineSimilarities(to: queryVector)
 // Last product very different (laptop/computer)
 ```
 
-## Similarity Properties
+## Similarity properties
 
-### Range and Interpretation
+### Range and interpretation
 
 **Cosine similarity:**
 - Range: -1 to 1
@@ -189,7 +191,7 @@ v1.distance(to: v2) == v2.distance(to: v1)                // Always true
 
 This means order doesn't matter when comparing vectors.
 
-## Performance Optimization
+## Performance optimization
 
 ### Pre-normalization
 
@@ -206,7 +208,7 @@ let similarities = normalizedDocs.map { $0.dot(normalizedQuery) }
 
 When vectors are normalized (magnitude = 1), dot product equals cosine similarity, eliminating division operations.
 
-### Batch Processing
+### Batch processing
 
 Process many queries efficiently:
 
@@ -226,9 +228,9 @@ let allSimilarities = queries.map { query in
 // allSimilarities[i][j] = similarity of query i to document j
 ```
 
-## Practical Applications
+## Practical applications
 
-### Duplicate Detection
+### Duplicate detection
 
 ```swift
 // Find near-duplicate documents
@@ -244,7 +246,7 @@ for i in 0..<documents.count {
 }
 ```
 
-### Content Recommendation
+### Content recommendation
 
 ```swift
 // Recommend similar articles to what user is reading
@@ -258,7 +260,7 @@ let recommendations = articleDatabase
     .map { (index: $0.offset, similarity: $0.element) }
 ```
 
-### Clustering Validation
+### Clustering validation
 
 ```swift
 // Check if items in a cluster are actually similar
@@ -283,7 +285,7 @@ let quality = clusterQuality(items: clusterItems)
 // Low quality < 0.5 (items are dissimilar - poor clustering)
 ```
 
-## For Python Developers
+## For Python developers
 
 Quiver's similarity operations match scikit-learn and SciPy:
 
@@ -315,7 +317,7 @@ let dist = v1.distance(to: v2)
 let cosSim = v1.cosineOfAngle(with: v2)
 ```
 
-## For iOS Developers
+## For iOS developers
 
 ### Integration with CoreML
 
@@ -355,7 +357,7 @@ func compareImages(_ image1: UIImage, _ image2: UIImage) {
 }
 ```
 
-### Real-time Search with SwiftUI
+### Real-time search with SwiftUI
 
 ```swift
 struct SearchResultsView: View {
@@ -390,7 +392,7 @@ struct SearchResultsView: View {
 }
 ```
 
-## Algorithm Complexity
+## Algorithm complexity
 
 | Operation | Time Complexity | Space Complexity |
 |-----------|----------------|------------------|
@@ -406,7 +408,7 @@ For semantic search with 10,000 documents and 50-dimensional vectors:
 - Single similarity: ~50 operations
 - Batch similarities: ~500,000 operations
 
-## See Also
+## See also
 
 - <doc:Text-Processing>
 - <doc:Ranking-Operations>
@@ -415,10 +417,10 @@ For semantic search with 10,000 documents and 50-dimensional vectors:
 
 ## Topics
 
-### Similarity Metrics
+### Similarity metrics
 - ``Swift/Array/cosineOfAngle(with:)``
 - ``Swift/Array/distance(to:)``
 
-### Batch Operations
+### Batch operations
 - ``Swift/Array/cosineSimilarities(to:)-double-array``
 - ``Swift/Array/cosineSimilarities(to:)-float-array``

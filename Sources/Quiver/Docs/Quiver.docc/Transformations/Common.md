@@ -27,7 +27,7 @@ func rotationMatrix(angle: Double) -> [[Double]] {
 }
 ```
 
-### Common Rotations
+### Common rotations
 
 **90° counterclockwise:**
 ```swift
@@ -66,7 +66,7 @@ let rotate45 = [
 // [0.707, 0.707] - 45° between x and y axes
 ```
 
-### Practical Examples
+### Practical examples
 
 **Game character rotation:**
 ```swift
@@ -123,7 +123,7 @@ let stretch = [
 // [6.0, 2.0] - 3× wider, half as tall
 ```
 
-### Practical Examples
+### Practical examples
 
 **Sprite scaling:**
 ```swift
@@ -189,7 +189,7 @@ let reflectDiagonal = [
 // [4.0, 3.0] - x and y swapped (this is transpose!)
 ```
 
-### Practical Examples
+### Practical examples
 
 **Mirror image:**
 ```swift
@@ -241,7 +241,7 @@ let shear = shearY(0.5)
 // [2.0, 5.0]
 ```
 
-### Practical Examples
+### Practical examples
 
 **Italic text effect:**
 ```swift
@@ -259,9 +259,9 @@ let objectDepth = [x, z]  // z is depth
 let screenPosition = objectDepth.transformedBy(perspective)
 ```
 
-## Combining Transformation Properties
+## Combining transformation properties
 
-### Preserving Properties
+### Preserving properties
 
 **Rotations preserve:**
 - Length (magnitude)
@@ -281,33 +281,7 @@ let screenPosition = objectDepth.transformedBy(perspective)
 - Areas
 - Parallel lines
 
-### Determinant and Area
-
-The **determinant** of a transformation matrix tells you how it affects areas:
-
-```swift
-// Determinant of 2×2 matrix
-func determinant(_ matrix: [[Double]]) -> Double {
-    let a = matrix[0][0], b = matrix[0][1]
-    let c = matrix[1][0], d = matrix[1][1]
-    return a * d - b * c
-}
-
-// Examples:
-determinant(rotate90)      //  1.0 - preserves area
-determinant(scale2x)       //  4.0 - quadruples area (2×2)
-determinant(reflectX)      // -1.0 - preserves area, flips orientation
-determinant(shearX(0.5))   //  1.0 - preserves area
-```
-
-**Interpretation:**
-- `det = 1`: Preserves area and orientation
-- `det = -1`: Preserves area, reverses orientation
-- `|det| > 1`: Expands areas
-- `|det| < 1`: Shrinks areas
-- `det = 0`: Collapses to lower dimension (not invertible)
-
-## For iOS Developers
+## For iOS developers
 
 ### CoreGraphics Transformations
 
@@ -375,7 +349,7 @@ func scale3D(x: Double, y: Double, z: Double) -> [[Double]] {
 }
 ```
 
-## For Python Developers
+## For Python developers
 
 Quiver's transformations match NumPy and SciPy:
 
@@ -410,7 +384,7 @@ let scaling = [Double].diag([2.0, 3.0])
 let transformed = vector.transformedBy(rotation)
 ```
 
-## Transformation Cheat Sheet
+## Transformation cheat sheet
 
 | Transformation | Matrix | Effect | Determinant |
 |----------------|--------|--------|-------------|
@@ -422,9 +396,9 @@ let transformed = vector.transformedBy(rotation)
 | Reflect Y | `[[-1,0],[0,1]]` | Vertical flip | -1 |
 | Shear X | `[[1,s],[0,1]]` | Slant right | 1 |
 
-## Practical Applications
+## Practical applications
 
-### Game Character Movement
+### Game character movement
 
 ```swift
 // Face character toward target
@@ -438,7 +412,7 @@ let rotation = rotationMatrix(angle: angle)
 let facingDirection = [1.0, 0.0].transformedBy(rotation)
 ```
 
-### Camera System
+### Camera system
 
 ```swift
 // Camera looking at point with zoom
@@ -455,7 +429,7 @@ let zoomed = centered.transformedBy(uniformScale(zoomLevel))
 let screenPos = zoomed + screenCenter
 ```
 
-### Sprite Batch Rendering
+### Sprite batch rendering
 
 ```swift
 // Transform many sprites efficiently
@@ -466,7 +440,7 @@ let transform = rotationMatrix(angle: angle)
 let transformed = sprites.map { $0.transformedBy(transform) }
 ```
 
-## See Also
+## See also
 
 - <doc:Fundamentals>
 - <doc:Composition>
@@ -475,10 +449,10 @@ let transformed = sprites.map { $0.transformedBy(transform) }
 
 ## Topics
 
-### Transformation Operations
+### Transformation operations
 - ``Swift/Array/transformedBy(_:)``
 - ``Swift/Array/transform(_:)``
 
-### Matrix Creation
+### Matrix creation
 - ``Swift/Array/diag(_:)``
 - ``Swift/Array/identity(_:)``

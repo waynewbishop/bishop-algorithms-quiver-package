@@ -106,5 +106,20 @@ public extension Array where Element: FloatingPoint {
         let vector = _Vector(elements: self)
         return vector.std(ddof: ddof)
     }
-    
+
+    /// Detect outliers using the z-score method
+    /// - Parameters:
+    ///   - threshold: Number of standard deviations from mean to consider an outlier (default: 2.0)
+    ///   - mean: Pre-calculated mean (optional, calculated if nil)
+    ///   - std: Pre-calculated standard deviation (optional, calculated if nil)
+    /// - Returns: Boolean mask array where true indicates an outlier
+    func outlierMask(threshold: Element = 2.0, mean: Element? = nil, std: Element? = nil) -> [Bool] {
+        guard !self.isEmpty else { return [] }
+
+        let computedMean = mean ?? self.mean() ?? 0
+        let computedStd = std ?? self.std() ?? 1
+
+        return self.map { abs($0 - computedMean) > threshold * computedStd }
+    }
+
 }

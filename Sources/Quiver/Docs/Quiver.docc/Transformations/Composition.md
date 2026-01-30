@@ -8,7 +8,7 @@ Individual transformations like rotation and scaling are useful, but real applic
 
 Understanding transformation composition is crucial for graphics pipelines, animation systems, and any application that chains coordinate system changes.
 
-## Matrix Multiplication
+## Matrix multiplication
 
 Matrix multiplication composes transformations: the result represents applying one transformation after another. Unlike regular multiplication, **order matters**.
 
@@ -24,7 +24,7 @@ let v = [1.0, 0.0]
 let result = v.transformedBy(combined)
 ```
 
-### Two Equivalent Approaches
+### Two equivalent approaches
 
 **Approach 1: Compose first, apply once**
 ```swift
@@ -41,7 +41,7 @@ let result = vector
 
 Both produce the same result, but composition is more efficient when applying the same transformation to many vectors.
 
-## Order Matters!
+## Order matters
 
 Matrix multiplication is **not commutative**: `A × B ≠ B × A` in general.
 
@@ -64,7 +64,7 @@ rotateFirst // [0, 1]
 scaleFirst  // [0, 2]
 ```
 
-### Reading Order
+### Reading order
 
 When composing with matrix multiplication:
 
@@ -86,9 +86,9 @@ v.transformedBy(combined)
 - = `(A × B) × v`
 - = `A × (B × v)`  ← B applied first
 
-## Common Composition Patterns
+## Common composition patterns
 
-### Scale then Rotate
+### Scale then rotate
 
 ```swift
 // Make sprite 2× larger, then rotate 45°
@@ -104,7 +104,7 @@ let scaleRotate = rotate.multiplyMatrix(scale)
 - Rotation changes orientation, making subsequent scaling more complex
 - Generally: scale/shear first, rotate last
 
-### Rotate Around a Point
+### Rotate around a point
 
 To rotate around a point other than origin:
 1. Translate point to origin
@@ -130,7 +130,7 @@ let rotated = (vector - pivot)
     + pivot
 ```
 
-### Multiple Rotations
+### Multiple rotations
 
 ```swift
 // Rotate 30° three times = 90° total
@@ -145,7 +145,7 @@ let rotate90 = rotate30
 // [0, 1] (approximately, within floating-point precision)
 ```
 
-### Combining Different Transformations
+### Combining different transformations
 
 ```swift
 // Complex transformation: scale, shear, then rotate
@@ -160,7 +160,7 @@ let complex = rotate.multiplyMatrix(shear).multiplyMatrix(scale)
 let transformed = vectors.map { $0.transformedBy(complex) }
 ```
 
-## Matrix Multiplication Mechanics
+## Matrix multiplication mechanics
 
 For 2×2 matrices:
 
@@ -193,7 +193,7 @@ Verify:
 [1, 0].transformedBy(C)        // [0, 3] - rotate then scale ✓
 ```
 
-## Transformation Pipelines
+## Transformation pipelines
 
 Graphics applications often have transformation pipelines:
 
@@ -212,7 +212,7 @@ let objectToScreen = cameraToScreen
 let screenVertices = objectVertices.map { $0.transformedBy(objectToScreen) }
 ```
 
-### Incremental Updates
+### Incremental updates
 
 When only one transform changes:
 
@@ -224,7 +224,7 @@ let worldToScreen = cameraToScreen.multiplyMatrix(worldToCamera)
 let newObjectToScreen = worldToScreen.multiplyMatrix(newObjectTransform)
 ```
 
-## Inverse Transformations
+## Inverse transformations
 
 Some transformations can be reversed:
 
@@ -248,12 +248,9 @@ let identity = scale.multiplyMatrix(unscale)
 // [[1,0],[0,1]]
 ```
 
-**General inverse:**
-Not all matrices have inverses. A matrix is invertible if its determinant ≠ 0.
+## Performance optimization
 
-## Performance Optimization
-
-### Precompute Complex Transformations
+### Precompute complex transformations
 
 ```swift
 // BAD: Recompute for every vertex
@@ -271,7 +268,7 @@ for vertex in vertices {
 }
 ```
 
-### Matrix Multiplication Complexity
+### Matrix multiplication complexity
 
 - Matrix multiplication: O(n³) for n×n matrices
 - Matrix-vector multiplication: O(n²)
@@ -293,7 +290,7 @@ let AB = A.multiplyMatrix(B)
 let result2 = vertices.map { $0.transformedBy(AB) }
 ```
 
-## For iOS Developers
+## For iOS developers
 
 ### CoreGraphics Transform Composition
 
@@ -327,7 +324,7 @@ let worldTransform = parentTransform.multiplyMatrix(childTransform)
 let worldPosition = localPosition.transformedBy(worldTransform)
 ```
 
-### Custom Camera System
+### Custom camera system
 
 ```swift
 // Build camera transformation
@@ -341,7 +338,7 @@ let cameraTransform = offset
     .multiplyMatrix(zoom)
 ```
 
-## For Python Developers
+## For Python developers
 
 Quiver's composition matches NumPy:
 
@@ -373,9 +370,9 @@ let v = [1.0, 0.0]
 let result = v.transformedBy(C)
 ```
 
-## Practical Applications
+## Practical applications
 
-### Animation System
+### Animation system
 
 ```swift
 // Interpolate between two transformations
@@ -399,7 +396,7 @@ let currentRotation = interpolate(from: startRotation,
                                   t: animationProgress)
 ```
 
-### Skeletal Animation
+### Skeletal animation
 
 ```swift
 // Bone hierarchy: shoulder → elbow → hand
@@ -415,7 +412,7 @@ let handWorld = shoulderRotation
 let handPosition = handLocalPosition.transformedBy(handWorld)
 ```
 
-### Particle System
+### Particle system
 
 ```swift
 // Each particle has: position, velocity, rotation, scale
@@ -434,7 +431,7 @@ struct Particle {
 }
 ```
 
-## Key Principles
+## Key principles
 
 1. **Matrix multiplication composes transformations**
    - `C = A.multiplyMatrix(B)` means "apply B, then A"
@@ -455,7 +452,7 @@ struct Particle {
    - `M × M⁻¹ = I` (when inverse exists)
    - Useful for "unwind" operations
 
-## See Also
+## See also
 
 - <doc:Fundamentals>
 - <doc:Common>
@@ -464,13 +461,13 @@ struct Particle {
 
 ## Topics
 
-### Matrix Multiplication
+### Matrix multiplication
 - ``Swift/Array/multiplyMatrix(_:)``
 
-### Transformation Operations
+### Transformation operations
 - ``Swift/Array/transformedBy(_:)``
 - ``Swift/Array/transform(_:)``
 
-### Matrix Creation
+### Matrix creation
 - ``Swift/Array/identity(_:)``
 - ``Swift/Array/diag(_:)``

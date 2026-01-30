@@ -4,15 +4,13 @@ Transform arrays into mathematical vectors with magnitude, direction, and spatia
 
 ## Overview
 
-Quiver provides a comprehensive set of vector operations that treat arrays as mathematical vectors, enabling calculations like magnitude, normalization, dot products, and angle measurements. 
+Quiver provides a comprehensive set of vector operations that treat `arrays` as mathematical **vectors**, enabling calculations like `magnitude`, `normalization`, dot products, and angle measurements. 
 
-Vector operations are essential for graphics programming, physics simulations, machine learning algorithms, and any application that deals with spatial data or mathematical modeling.
+> Tip: Vector operations are essential for graphics programming, physics simulations, machine learning algorithms, and any application that deals with spatial data or mathematical modeling. For a comprehensive introduction to vector mathematics with step-by-step examples, see [Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) in Swift Algorithms & Data Structures.
 
-> Tip: For a comprehensive introduction to vector mathematics with step-by-step examples, see [Chapter 20: Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) in Swift Algorithms & Data Structures.
+### Basic vector properties
 
-### Basic Vector Properties
-
-Quiver enables you to calculate fundamental vector properties:
+Quiver enables you to calculate fundamental vector properties. A `vector` is a mathematical object that represents both `magnitude` and direction. Unlike a scalar value, which represents only size (like temperature or weight), a `vector` captures directional information alongside its size:
 
 ```swift
 let vector = [3.0, 4.0]
@@ -26,7 +24,7 @@ vector.normalized  // [0.6, 0.8]
 
 > Note: These vector properties are only available for arrays with elements that conform to `FloatingPoint` (like `Double` or `Float`).
 
-### Vector Relationships
+### Vector relationships
 
 Calculate relationships between vectors with these operations:
 
@@ -44,7 +42,7 @@ v1.angleInDegrees(with: v2)  // 90.0 degrees
 
 > Tip: The dot product is zero when vectors are perpendicular and equals the product of their magnitudes when they're parallel.
 
-### Vector Projections
+### Vector projections
 
 Projections help decompose vectors into components:
 
@@ -66,7 +64,7 @@ These operations are particularly useful in physics calculations, computer graph
 
 > Important: When projecting onto another vector, the target vector cannot be a zero vector (a vector with zero magnitude).
 
-### Matrix-Vector Operations
+### Matrix-vector operations
 
 Transform vectors using matrices:
 
@@ -83,7 +81,7 @@ let transformed2 = matrix.transform(vector)     // [-2.0, 1.0]
 
 Matrix transformations are powerful tools for implementing rotations, scaling, and other geometric operations.
 
-### Matrix Arithmetic
+### Matrix arithmetic
 
 Quiver supports element-wise arithmetic operations on 2D arrays (matrices):
 
@@ -114,7 +112,7 @@ let adjusted = matrix + 10.0   // [[110.0, 210.0], [310.0, 410.0]]
 
 Matrix operations maintain the same preconditions as vector operations: dimensions must match for element-wise operations between matrices.
 
-### Mathematical Foundation
+### Mathematical foundation
 
 Vector operations in Quiver are based on well-established mathematical principles:
 
@@ -140,7 +138,7 @@ let result = matrix.broadcast(addingToEachRow: rowVector)
 ```
 > Tip: Broadcasting eliminates the need for explicit loops when operating between arrays of compatible shapes.
 
-### Implementation Details
+### Implementation details
 
 Vector operations in Quiver are implemented as extensions to the `Array` type with appropriate type constraints:
 
@@ -152,7 +150,7 @@ This approach means you can use these operations directly on standard Swift arra
 
 ## Topics
 
-### Vector Properties
+### Vector properties
 - ``Swift/Array/magnitude``
 - ``Swift/Array/normalized``
 
@@ -163,15 +161,15 @@ This approach means you can use these operations directly on standard Swift arra
 - ``Swift/Array/cosineOfAngle(with:)``
 - ``Swift/Array/averaged()``
 
-### Vector Projections
+### Vector projections
 - ``Swift/Array/scalarProjection(onto:)``
 - ``Swift/Array/vectorProjection(onto:)``
 - ``Swift/Array/orthogonalComponent(to:)``
 
-### Matrix Operations
+### Matrix operations
 - ``Swift/Array/transformedBy(_:)``
 
-### Related Articles
+### Related articles
 - <doc:Primer>
 - <doc:Similarity-Operations>
 - <doc:Fundamentals>

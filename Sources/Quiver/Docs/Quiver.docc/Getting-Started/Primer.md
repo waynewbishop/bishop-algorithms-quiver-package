@@ -6,11 +6,11 @@ A concise introduction to essential linear algebra concepts using Quiver.
 
 Linear algebra forms the mathematical foundation for many fields including computer graphics, machine learning, data analysis, and physics simulations. This primer introduces key concepts through practical Swift code examples using Quiver.
 
-You don't need advanced mathematical knowledge to get started—if you can work with Swift arrays, you can begin applying linear algebra concepts in your code.
+> Note: You don't need advanced mathematical knowledge to get started—if you can work with Swift arrays, you can begin applying linear algebra concepts in your code.
 
-### Vectors: More Than Just Arrays
+### Introducing vectors
 
-In programming, we often use arrays to store collections of values. In linear algebra, these become "vectors" which represent quantities with both `magnitude` (size) and direction. See <doc:Operations> for comprehensive vector operations.
+In programming, we often use arrays to store collections of values. In linear algebra, these become **vectors** which represent quantities with both `magnitude` (size) and direction. See <doc:Operations> for comprehensive vector operations.
 
 ```swift
 // A 2D vector representing a point or direction
@@ -31,11 +31,11 @@ Vectors can represent many real-world concepts:
 - Features in machine learning
 - RGB color values
 
-### Vector Operations: Relationships Between Vectors
+### Vector operations
 
 Vector operations reveal relationships between vectors and enable transformations.
 
-#### Dot Product: Measuring Alignment
+#### Dot Product
 
 The dot product measures how parallel two vectors are:
 
@@ -55,7 +55,7 @@ Applications include:
 - Calculating work in physics (force × distance)
 - Finding projections of one vector onto another
 
-#### Vector Projection: Breaking Down Components
+#### Vector Projection
 
 Projection decomposes one vector into components relative to another:
 
@@ -73,9 +73,7 @@ let forceInDirection = force.vectorProjection(onto: direction)  // [5.0, 0.0]
 let forcePerpendicular = force.orthogonalComponent(to: direction)  // [0.0, 5.0]
 ```
 
-> Note: Vector projection is essential in physics for resolving forces and in graphics for light calculations.
-
-### Matrices: Organizing Data and Transformations
+### Introducing matrices
 
 Matrices are rectangular arrays of numbers. In Quiver, we represent them as arrays of arrays:
 
@@ -87,21 +85,15 @@ let matrix = [
 ]
 ```
 
-Matrices serve two primary purposes:
-1. **Organizing data** (rows might be samples, columns might be features)
-2. **Representing transformations** (rotations, scaling, reflections, shearing)
-
-Quiver supports comprehensive matrix operations:
-- **Element-wise arithmetic** (<doc:Elements>): `matrix1 + matrix2`, `matrix1 * matrix2` (Hadamard product)
-- **Scalar broadcasting** (<doc:Broadcast>): `matrix * 2.0`, `matrix - mean`
-- **Transpose** (<doc:Matrices-Operations>): Flip rows and columns
-- **Matrix multiplication** (<doc:Matrices-Operations>): True matrix multiplication (dot product) via `.multiplyMatrix()`
+Matrices serve two primary purposes: organizing data (where rows might represent samples and columns represent features) and representing transformations (such as rotations, scaling, reflections, and shearing). 
 
 #### Matrix Creation
 
 Quiver makes it easy to create common matrices (see <doc:Generation> for more matrix creation methods):
 
 ```swift
+import Quiver
+
 // Create a 3×3 identity matrix
 let identity = [Double].identity(3)
 // [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -190,32 +182,9 @@ let similarity = product1.cosineOfAngle(with: product2)  // ~0.998
 
 See <doc:Similarity-Operations> for more on measuring vector similarity in machine learning applications.
 
-### Inspecting Your Data
+## See also
 
-During development, we can quickly inspect arrays using the `info()` method:
-
-```swift
-let vector = [3.5, 1.8, 4.2, 2.7, 5.1]
-print(vector.info())
-// Shows: count, type, mean, min, max, and first 5 items
-```
-
-For floating-point arrays, `info()` displays statistical summaries (mean, min, max) along with a preview of values—useful for debugging and data validation.
-
-### Beyond the Basics
-
-This primer covers fundamental concepts, but linear algebra goes much deeper. As you get comfortable with these basics, explore:
-
-- Eigenvalues and eigenvectors
-- Matrix decomposition
-- Singular value decomposition (SVD)
-- Principal component analysis (PCA)
-
-> Tip: The best way to learn is by applying these concepts in real projects. Start small and build intuition through practice.
-
-## See Also
-
-### Dive Deeper
+### Dive deeper
 
 Ready to explore these concepts in more detail? The documentation is organized to follow a natural learning progression:
 
@@ -238,7 +207,7 @@ Ready to explore these concepts in more detail? The documentation is organized t
 - <doc:Similarity-Operations>
 - <doc:Ranking-Operations>
 
-## Further Learning
+## Further learning
 
 This primer introduces core concepts, but [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/) provides comprehensive coverage with step-by-step examples, visualizations, and algorithmic analysis:
 

@@ -8,7 +8,7 @@ Quiver extends Swift arrays with powerful statistical functions that let you cal
 
 Statistical functions form the foundation of data analysis and are essential for understanding the characteristics of your numerical data.
 
-### Quick Data Overview
+### Quick data overview
 
 For a comprehensive overview of your data including both shape information and key statistics, use the `info()` method:
 
@@ -32,7 +32,7 @@ print(data.info())
 // [4]: 13.7
 ```
 
-### Aggregation Functions
+### Aggregation functions
 
 Quiver also provides functions to calculate basic aggregations on arrays:
 
@@ -53,7 +53,7 @@ let maxIndex = data.argmax()  // 3
 
 > Tip: Use `argmin()` and `argmax()` when you need to know not just the extreme values but also where they occur in your data.
 
-### Central Tendency
+### Central tendency
 
 These functions help you find the "center" of your data distribution:
 
@@ -69,7 +69,7 @@ let median = data.median()  // 4.0
 
 > Note: The mean is affected by extreme values (outliers), while the median is more robust. Comparing these two measures can help identify skewed distributions.
 
-### Dispersion and Variation
+### Dispersion and variation
 
 These functions help you understand how spread out your data is:
 
@@ -89,7 +89,7 @@ let sampleStd = data.std(ddof: 1)  // 3.16...
 
 > Important: The `ddof` parameter (Delta Degrees of Freedom) changes how variance is calculated. Use `ddof: 0` for population statistics and `ddof: 1` for sample statistics. Sample statistics are more commonly used when your data represents only a subset of all possible observations.
 
-### Cumulative Operations
+### Cumulative operations
 
 Calculate cumulative statistics across your array:
 
@@ -108,7 +108,7 @@ Cumulative operations are useful for:
 - Calculating growth over time
 - Building empirical distribution functions
 
-### Working with Different Data Types
+### Working with different data types
 
 Quiver's statistical functions have appropriate type constraints:
 
@@ -124,20 +124,22 @@ let mean = doubles.mean()  // 3.0
 
 > Note: If you need to perform statistical operations on integer data, consider converting to a floating-point type first to avoid precision loss.
 
-## Common Use Cases
+## Common use cases
 
-### Data Normalization
+### Data normalization
 
 Normalize data with simple transformations:
 
 ```swift
+import Quiver
+
 let temperatures = [72.0, 68.0, 73.0, 70.0, 75.0]
 
 // Convert Fahrenheit to Celsius: (F - 32) * 5/9
 // Using map
 let celsiusMap = temperatures.map { ($0 - 32.0) * 5.0/9.0 }
 
-// Using broadcasting for cleaner code
+// Using Quiver broadcasting for cleaner code
 let celsius = temperatures.broadcast(subtracting: 32.0).broadcast(multiplyingBy: 5.0/9.0)
 // [22.2, 20.0, 22.8, 21.1, 23.9]
 
@@ -151,47 +153,39 @@ let celsiusCustom = temperatures.broadcast(with: 0.0) { fahrenheit, _ in
 // Using map
 let increasedMap = temperatures.map { $0 * 1.1 }
 
-// Using broadcasting
+// Using Quiver broadcasting
 let increased = temperatures.broadcast(multiplyingBy: 1.1)
 // [79.2, 74.8, 80.3, 77.0, 82.5]
 ```
 
-> Tip: Custom broadcasting with closures is particularly useful for complex transformations that combine multiple operations or include conditional logic.
+> Tip: Custom broadcasting with closures is particularly useful for complex transformations that combine multiple operations or include conditional logic. Learn more about <doc:Broadcast>.
 
 > Note: The second parameter in the custom broadcasting closure is a placeholder in this example (hence the `_`), but you can use it for operations that require a specific value.
 
-### Anomaly Detection
+### Anomaly detection
 
-Find values that deviate significantly from the norm:
+Find values that deviate significantly from the norm using z-score method:
 
 ```swift
 let data = [4.0, 7.0, 2.0, 9.0, 3.0, 35.0, 5.0]
 
-let mean = data.mean()!
-let std = data.std()!
-
 // Find outliers (values more than 2 standard deviations from mean)
-let outlierThreshold = 2.0
-let isOutlier = data.map { abs($0 - mean) > outlierThreshold * std }
+let mask = data.outlierMask(threshold: 2.0)
 // [false, false, false, false, false, true, false]
 
 // Extract outlier values
-let outliers = data.masked(by: isOutlier)  // [35.0]
+let outliers = data.masked(by: mask)  // [35.0]
+
+// For performance, pre-calculate statistics when processing multiple arrays
+guard let mean = data.mean(), let std = data.std() else {
+    fatalError("Unable to calculate statistics for empty array")
+}
+let mask2 = data.outlierMask(threshold: 3.0, mean: mean, std: std)
 ```
-
-## Implementation Details
-
-Quiver implements statistical functions as extensions to the `Array` type with appropriate type constraints:
-
-- Basic operations like `sum()` and `product()` are available for any `Numeric` element type
-- Operations requiring comparison like `min()` and `max()` require `Comparable` elements
-- Advanced statistics like `mean()` and `variance()` require `FloatingPoint` elements
-
-This approach provides a natural and intuitive API that works directly with Swift's native arrays.
 
 ## Topics
 
-### Basic Aggregations
+### Basic aggregations
 - ``Swift/Array/sum()``
 - ``Swift/Array/product()``
 - ``Swift/Array/min()``
@@ -199,19 +193,19 @@ This approach provides a natural and intuitive API that works directly with Swif
 - ``Swift/Array/argmin()``
 - ``Swift/Array/argmax()``
 
-### Central Tendency
+### Central tendency
 - ``Swift/Array/mean()``
 - ``Swift/Array/median()``
 
-### Dispersion Measures
+### Dispersion measures
 - ``Swift/Array/variance(ddof:)``
 - ``Swift/Array/std(ddof:)``
 
-### Cumulative Statistics
+### Cumulative statistics
 - ``Swift/Array/cumulativeSum()``
 - ``Swift/Array/cumulativeProduct()``
 
-### Related Articles
+### Related articles
 - <doc:Operations>
 - <doc:Elements>
 - <doc:Broadcast>

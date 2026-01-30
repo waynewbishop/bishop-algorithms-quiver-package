@@ -6,7 +6,7 @@ Generate arrays of random values for testing and simulation.
 
 Quiver provides methods to generate arrays filled with random values between 0 and 1. These functions are useful for creating test data, simulations, and any application that requires random numbers.
 
-### Generating Random Arrays
+### Generating random arrays
 
 Create arrays with uniformly distributed random values:
 
@@ -25,7 +25,7 @@ let randomMatrix = [Double].random(3, 2)
 
 > Note: Each call produces different random values. The examples above just show possible outputs.
 
-### Float and Double Support
+### Float and double support
 
 Random generation works with both `Float` and `Double` types:
 
@@ -39,7 +39,7 @@ let randomDoubles = [Double].random(3)
 // Example: [0.45, 0.27, 0.84]
 ```
 
-### Creating Test Data
+### Creating test data
 
 Generate random data for testing:
 
@@ -49,7 +49,7 @@ let testScores = [Double].random(10).map { $0 * 100 }
 // Example: [45.2, 87.3, 32.9, 76.1, 94.5, 21.8, 65.3, 50.9, 88.2, 12.7]
 ```
 
-### Simple Simulation
+### Simple simulation
 
 Use random values for a basic coin flip simulation:
 
@@ -62,7 +62,7 @@ let coinFlips = [Double].random(20).map { $0 < 0.5 ? "Tails" : "Heads" }
 let headsCount = coinFlips.filter { $0 == "Heads" }.count
 ```
 
-### Random Selection
+### Random selection
 
 Randomly select items from an array:
 
@@ -73,7 +73,7 @@ let selectedFruit = fruits[randomIndex]
 // Might select any fruit from the array
 ```
 
-### Implementation Details
+### Implementation details
 
 The random number generation in Quiver uses Swift's built-in random functions. These functions return high-quality random values uniformly distributed between 0 and 1.
 
@@ -83,9 +83,9 @@ By default, the random values are generated in the range `[0, 1]` which you can 
 
 ## Topics
 
-### Random Array Generation
+### Random array generation
 - ``Swift/Array/random(_:)-6ulik``  
 - ``Swift/Array/random(_:_:)-9gsef``  
 
-### Related Articles
+### Related articles
 - <doc:Statistics>

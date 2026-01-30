@@ -17,13 +17,13 @@ Quiver expands the Swift ecosystem with a native, Swift-first approach to vector
 
 As Swift continues to expand beyond app development into domains like server-side computing, machine learning, and data analysis, the need for robust mathematical tools becomes increasingly important. Quiver serves as a foundation for data science workflows in Swift, enabling operations that are fundamental to fields like computer vision, game development, machine learning, and scientific computing.
 
-### Learn by Example
+### Learn by example
 
 This framework is companion to [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/), a comprehensive guide that teaches algorithmic thinking through hands-on Swift examples. 
 
 ## Topics
 
-### Getting Started
+### Getting started
 - <doc:Primer>
 
 ### Vectors
@@ -42,10 +42,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Common>
 - <doc:Composition>
 
-### Semantic Search
+### Semantic search
 - <doc:Text-Processing>
 - <doc:Similarity-Operations>
 - <doc:Ranking-Operations>
-
-### Utilities
-- <doc:Shape>

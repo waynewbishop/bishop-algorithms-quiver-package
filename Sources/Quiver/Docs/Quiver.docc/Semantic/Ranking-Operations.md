@@ -8,7 +8,7 @@ After computing similarity scores between a query and a database (see <doc:Simil
 
 Quiver's ranking operations provide efficient algorithms for finding top results without sorting the entire dataset, making them suitable for large-scale applications.
 
-## Top-K Selection
+## Top-K selection
 
 The `.topIndices(k:)` method finds the K highest-scoring elements and returns their indices with scores. This is more efficient than sorting when K is much smaller than N.
 
@@ -27,7 +27,7 @@ The method returns:
 - Limited to K results
 - Preserves original indices for lookup
 
-### Why Use Top-K Instead of Full Sort?
+### Why use top-K instead of full sort
 
 **Sorting all results:**
 ```swift
@@ -45,7 +45,7 @@ let topK = scores.topIndices(k: k)
 
 For large databases (n = 1M) with small result sets (k = 10), top-K selection can be significantly faster with heap-based implementations.
 
-## Semantic Search with Top-K
+## Semantic search with top-K
 
 Combine similarity computation with ranking to build semantic search:
 
@@ -75,7 +75,7 @@ let results = similarities.topIndices(k: 3)
 //  (index: 2, score: 0.98)]  // Doc 2 - similar
 ```
 
-### Complete Search Function
+### Complete search function
 
 ```swift
 func findSimilar(query: [Double],
@@ -88,10 +88,12 @@ func findSimilar(query: [Double],
 // Use it
 let embeddings = try loadGloVe(from: "glove.6B.50d.txt")
 
-let queryVector = "best running shoes"
+guard let queryVector = "best running shoes"
     .tokenize()
     .embed(using: embeddings)
-    .averaged()!
+    .averaged() else {
+    fatalError("Unable to create query vector")
+}
 
 let topResults = findSimilar(query: queryVector,
                              database: documentVectors,
@@ -168,14 +170,15 @@ func weightedKNN(item: [Double],
 
 This gives more influence to closer neighbors, improving classification accuracy.
 
-## Recommendation Systems
+## Recommendation systems
 
 Rank items by similarity to user preferences:
 
 ```swift
 // User's preference profile (average of liked items)
-let userProfile = likedArticles.map { $0.vector }
-    .averaged()!
+guard let userProfile = likedArticles.map({ $0.vector }).averaged() else {
+    fatalError("Unable to create user profile from liked articles")
+}
 
 // Candidate articles
 struct Article {
@@ -201,9 +204,9 @@ for (article, score) in recommendations {
 }
 ```
 
-## Performance Optimization
+## Performance optimization
 
-### Heap-Based Top-K (Advanced)
+### Heap-based top-K (advanced)
 
 For very large datasets, heap-based selection can improve performance from O(n log n) to O(n log k):
 
@@ -225,7 +228,7 @@ The performance difference becomes significant with large N and small k:
 | 100,000 | 10 | O(1,660,000) | O(330,000) | 5.0× |
 | 1,000,000 | 5 | O(20,000,000) | O(2,300,000) | 8.7× |
 
-### Caching and Precomputation
+### Caching and precomputation
 
 For static databases, precompute once:
 
@@ -256,7 +259,7 @@ let index = SearchIndex(documents: allDocuments,
 let results = index.search(userQuery, embeddings: embeddings)
 ```
 
-## Threshold Filtering
+## Threshold filtering
 
 Combine ranking with relevance thresholds:
 
@@ -279,9 +282,9 @@ let results = relevantResults(query: queryVector,
 
 This prevents returning irrelevant results even if they're in the top K.
 
-## Practical Applications
+## Practical applications
 
-### Duplicate Detection
+### Duplicate detection
 
 ```swift
 // Find near-duplicates in a collection
@@ -305,7 +308,7 @@ func findDuplicates(in documents: [[Double]],
 }
 ```
 
-### Multi-Label Classification
+### Multi-label classification
 
 ```swift
 // Assign multiple categories based on top-K similarity
@@ -332,7 +335,7 @@ let labels = multiLabelClassify(item: newsArticleVector,
 // ["politics", "economics", "international"]
 ```
 
-### Exploration vs Exploitation
+### Exploration vs exploitation
 
 Balance popular items with diverse recommendations:
 
@@ -357,7 +360,7 @@ func diverseRecommendations(userProfile: [Double],
 }
 ```
 
-## For Python Developers
+## For Python developers
 
 Quiver's ranking matches NumPy and scikit-learn workflows:
 
@@ -395,7 +398,7 @@ let neighbors = trainingVectors
     .topIndices(k: 5)
 ```
 
-## For iOS Developers
+## For iOS developers
 
 ### SwiftUI Search Results
 
@@ -425,7 +428,7 @@ struct SearchResultsView: View {
 }
 ```
 
-### Real-Time Filtering
+### Real-time filtering
 
 ```swift
 class SearchViewModel: ObservableObject {
@@ -468,7 +471,7 @@ func findSimilarImages(to query: UIImage,
 }
 ```
 
-## Algorithm Complexity
+## Algorithm complexity
 
 | Operation | Time | Space | Notes |
 |-----------|------|-------|-------|
@@ -482,7 +485,7 @@ For typical semantic search:
 - k = 10 results
 - Total: ~600,000 operations (very fast)
 
-## See Also
+## See also
 
 - <doc:Similarity-Operations>
 - <doc:Text-Processing>
@@ -491,9 +494,9 @@ For typical semantic search:
 
 ## Topics
 
-### Top-K Selection
+### Top-K selection
 - ``Swift/Array/topIndices(k:)``
 
-### Related Operations
+### Related operations
 - ``Swift/Array/cosineSimilarities(to:)-double-array``
 - ``Swift/Array/cosineOfAngle(with:)``

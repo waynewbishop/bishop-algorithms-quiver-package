@@ -4,9 +4,47 @@ Apply operations between arrays and scalars or between arrays of different dimen
 
 ## Overview
 
-Quiver provides broadcasting capabilities that let you perform operations between arrays and scalars, or between arrays of different shapes. Broadcasting allows you to write cleaner, more expressive code by eliminating explicit loops for common element-wise operations. These operations support Chapter 21 (Matrices) concepts in algorithms and data structures.
+Quiver provides **broadcasting** capabilities that let you perform operations between arrays and scalars, or between arrays of different shapes. Broadcasting allows you to write cleaner, more expressive code by eliminating explicit loops for common element-wise operations. 
 
-### Scalar Broadcasting
+### Why broadcasting?
+
+Swift already provides powerful functional methods like `map`, `reduce`, and `filter` for transforming arrays. Broadcasting is borrowed from NumPy and the Python data science ecosystem, where it has become the standard approach for mathematical operations on arrays. While Swift's functional methods are excellent for general-purpose transformations, broadcasting provides a more declarative, mathematical syntax specifically designed for numerical computing.
+
+**Swift's map (functional approach):**
+```swift
+let temperatures = [72.0, 68.0, 73.0, 70.0, 75.0]
+
+// Convert Fahrenheit to Celsius: (F - 32) * 5/9
+let celsiusMap = temperatures.map { ($0 - 32.0) * 5.0/9.0 }
+// [22.2, 20.0, 22.8, 21.1, 23.9]
+```
+
+**Quiver's broadcasting (mathematical approach):**
+```swift
+// More declarative - separates operations clearly
+let celsius = (temperatures - 32.0) * 5.0/9.0
+// [22.2, 20.0, 22.8, 21.1, 23.9]
+
+// Method chaining also available
+let celsiusAlt = temperatures.broadcast(subtracting: 32.0)
+                            .broadcast(multiplyingBy: 5.0/9.0)
+```
+
+**When to use broadcasting vs map:**
+
+Broadcasting is ideal when you need to apply scalar mathematical operations to arrays. It makes the code read like mathematical notation and clearly separates each transformation step. Use `map` when you need custom logic, complex transformations, or non-mathematical operations where broadcasting doesn't apply.
+
+```swift
+// Broadcasting excels at mathematical operations
+let normalized = (data - mean) / stdDev
+let scaled = matrix * 2.0
+
+// Map excels at custom transformations
+let formatted = temperatures.map { "\($0)°F" }
+let categorized = scores.map { $0 >= 90 ? "A" : "B" }
+```
+
+### Scalar broadcasting
 
 The simplest form of broadcasting applies a scalar operation to every element in an array:
 
@@ -28,9 +66,9 @@ let divided = vector.broadcast(dividingBy: 2.0)  // [0.5, 1.0, 1.5, 2.0]
 
 > Tip: Broadcasting operations create new arrays without modifying the original array, maintaining Swift's value semantics.
 
-### Operator-Based Broadcasting
+### Operator-based broadcasting
 
-As of Quiver 2025.1, scalar broadcasting is available through standard arithmetic operators, providing cleaner NumPy-style syntax:
+Scalar broadcasting is available through standard arithmetic operators, providing cleaner NumPy-style syntax:
 
 **Vector broadcasting:**
 ```swift
@@ -64,7 +102,7 @@ let result4 = (matrix - 5.0) / 2.0  // Complex expressions
 
 The operator syntax is recommended for new code as it matches NumPy conventions and improves readability. The method-based syntax remains available for compatibility and for cases requiring custom operations via closures.
 
-### Matrix-Vector Broadcasting
+### Matrix-vector broadcasting
 
 Broadcasting also allows operations between matrices (2D arrays) and vectors:
 
@@ -98,7 +136,7 @@ let columnMultiply = matrix.broadcast(multiplyingEachColumnBy: columnVector)
 
 > Important: When broadcasting vectors across matrices, the dimensions must be compatible. Row vectors must have the same length as matrix columns, and column vectors must have the same length as matrix rows.
 
-### Custom Broadcasting Operations
+### Custom broadcasting operations
 
 For more flexibility, Quiver provides custom broadcasting operations with closures:
 
@@ -131,7 +169,7 @@ let customRowOperation = matrix.broadcast(withRowVector: rowVector) { matrixElem
 
 > Tip: Choose descriptive parameter names in your closure that reflect the specific operation you're performing, rather than using generic names like "a" and "b".
 
-### Use Cases
+### Use cases
 
 Broadcasting operations are particularly useful for:
 
@@ -141,7 +179,7 @@ Broadcasting operations are particularly useful for:
 - **Image processing**: Adjust color channels or apply transformations
 - **Financial calculations**: Apply interest rates or time factors
 
-### Implementation Details
+### Implementation details
 
 Quiver implements broadcasting through extension methods on `Array` with appropriate type constraints:
 
@@ -153,22 +191,22 @@ The broadcasting implementations verify dimension compatibility at runtime, prov
 
 ## Topics
 
-### Scalar Broadcasting
+### Scalar broadcasting
 - ``Swift/Array/broadcast(adding:)``
 - ``Swift/Array/broadcast(multiplyingBy:)``
 - ``Swift/Array/broadcast(subtracting:)``
 - ``Swift/Array/broadcast(dividingBy:)``
 
-### Matrix-Vector Broadcasting
+### Matrix-vector broadcasting
 - ``Swift/Array/broadcast(addingToEachRow:)``
 - ``Swift/Array/broadcast(addingToEachColumn:)``
 - ``Swift/Array/broadcast(multiplyingEachRowBy:)``
 - ``Swift/Array/broadcast(multiplyingEachColumnBy:)``
 
-### Custom Broadcasting
+### Custom broadcasting
 - ``Swift/Array/broadcast(with:operation:)``
 - ``Swift/Array/broadcast(withRowVector:operation:)``
 - ``Swift/Array/broadcast(withColumnVector:operation:)``
 
-### Related Articles
+### Related articles
 - <doc:Matrices-Operations>

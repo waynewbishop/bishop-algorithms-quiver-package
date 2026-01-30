@@ -4,11 +4,11 @@ Work with two-dimensional arrays (matrices) using element-wise arithmetic and tr
 
 ## Overview
 
-> Tip: For detailed coverage of matrix concepts with visualizations and examples, see [Chapter 21: Matrices](https://waynewbishop.github.io/swift-algorithms/21-matrices.html) in Swift Algorithms & Data Structures.
+A **matrix** is a rectangular grid of numbers arranged in rows and columns. While a `vector` is a single list of numbers representing a point or direction in space, a matrix is a collection of multiple vectors organized together. Quiver extends Swift's `Array` type to support matrix operations on nested arrays. Matrices represent tabular data, transformations, and multi-dimensional datasets. 
 
-Quiver extends Swift's `Array` type to support matrix operations on nested arrays (`[[Double]]` and `[[Float]]`). Matrices represent tabular data, transformations, and multi-dimensional datasets. These operations form the foundation for Chapter 21 (Matrices) and Chapter 22 (Matrix Transformations) concepts in algorithms and data structures.
+> Tip: For detailed coverage of matrix concepts with visualizations and examples, see [Matrices](https://waynewbishop.github.io/swift-algorithms/21-matrices.html) in Swift Algorithms & Data Structures.
 
-### Creating Matrices
+### Creating matrices
 
 ```swift
 import Quiver
@@ -29,7 +29,7 @@ let firstRow = matrix[0]  // [1.0, 2.0, 3.0]
 let secondColumn = matrix.column(at: 1)  // [2.0, 5.0]
 ```
 
-### Element-wise Arithmetic
+### Element-wise arithmetic
 
 Matrix arithmetic operations work element-by-element:
 
@@ -43,9 +43,9 @@ let product = m1 * m2     // [[5.0, 12.0], [21.0, 32.0]] (Hadamard)
 let quotient = m1 / m2    // [[0.2, 0.33...], [0.42..., 0.5]]
 ```
 
-> Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication (dot product), use `.multiplyMatrix()`.
+> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For [dot product](<doc:Fundamentals>) matrix multiplication, use `.multiplyMatrix()`.
 
-### Scalar Broadcasting
+### Scalar broadcasting
 
 Apply a scalar value to every element:
 
@@ -62,7 +62,7 @@ let doubled = 2.0 * matrix       // Same as matrix * 2.0
 let offset = 5.0 + matrix        // Same as matrix + 5.0
 ```
 
-### Common Patterns
+### Common patterns
 
 **Data standardization (z-score):**
 ```swift
@@ -96,7 +96,7 @@ let transposed = matrix.transpose()
 // Result: [[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]]
 ```
 
-### Matrix Multiplication
+### Matrix multiplication
 
 For true matrix multiplication (dot product), use `.multiplyMatrix()`:
 
@@ -107,7 +107,7 @@ let product = a.multiplyMatrix(b)
 // Result: [[19.0, 22.0], [43.0, 50.0]]
 ```
 
-### Working with Data
+### Working with data
 
 Matrices naturally represent tabular data:
 
@@ -127,7 +127,7 @@ let playerB = scores[1]
 let average = playerB.mean() ?? 0.0  // 88.67
 ```
 
-### Document-Term Matrices
+### Document-term matrices
 
 Matrices organize text data for analysis:
 
@@ -146,7 +146,7 @@ let word1Usage = documents.column(at: 0)  // [2.0, 1.0, 3.0]
 let byTerms = documents.transpose()
 ```
 
-### Type Support
+### Type support
 
 Matrix operations work with both `Double` and `Float` types:
 
@@ -175,6 +175,6 @@ Quiver's matrix operations match NumPy's behavior:
 
 This makes Quiver familiar to data science practitioners transitioning from Python to Swift.
 
-## See Also
+## See also
 
 - <doc:Operations>
