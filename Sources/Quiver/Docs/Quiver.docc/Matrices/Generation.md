@@ -61,11 +61,13 @@ let identity = [Double].identity(3)
 // [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
 // Create a diagonal matrix from a vector
-let diag = [Int].diag([1, 2, 3])  
+let diag = [Int].diag([1, 2, 3])
 // [[1, 0, 0], [0, 2, 0], [0, 0, 3]]
 ```
 
 Identity and diagonal matrices are commonly used in linear algebra operations and transformations.
+
+> Tip: For a deep understanding of identity matrices and their role in transformations, see <doc:Fundamentals>.
 
 ## Common patterns
 

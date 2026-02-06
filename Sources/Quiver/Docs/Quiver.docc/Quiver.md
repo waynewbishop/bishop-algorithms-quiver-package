@@ -42,7 +42,8 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Common>
 - <doc:Composition>
 
-### Semantic search
-- <doc:Text-Processing>
+### Similarity and Distance
 - <doc:Similarity-Operations>
-- <doc:Ranking-Operations>
+
+### Sorting and Selection
+- <doc:Selection>

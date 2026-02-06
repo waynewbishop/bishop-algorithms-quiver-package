@@ -721,4 +721,482 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(topResults[1].index, 0)  // Second: 0.85
         XCTAssertEqual(topResults[2].index, 4)  // Third: 0.73
     }
+
+    // MARK: - FindDuplicates Tests
+
+    func testFindDuplicatesBasic() {
+        let documents = [
+            [0.8, 0.6, 0.9],
+            [0.8, 0.6, 0.9],  // Exact duplicate of first
+            [0.1, 0.2, 0.1]
+        ]
+
+        let duplicates = documents.findDuplicates(threshold: 0.95)
+
+        XCTAssertEqual(duplicates.count, 1)
+        XCTAssertEqual(duplicates[0].index1, 0)
+        XCTAssertEqual(duplicates[0].index2, 1)
+        XCTAssertEqual(duplicates[0].similarity, 1.0, accuracy: 1e-10)
+    }
+
+    func testFindDuplicatesNearDuplicates() {
+        let documents = [
+            [0.8, 0.7, 0.9],
+            [0.82, 0.71, 0.88],  // Very similar
+            [0.1, 0.2, 0.1]
+        ]
+
+        let duplicates = documents.findDuplicates(threshold: 0.95)
+
+        // Should find the near-duplicate pair
+        XCTAssertEqual(duplicates.count, 1)
+        XCTAssertEqual(duplicates[0].index1, 0)
+        XCTAssertEqual(duplicates[0].index2, 1)
+        XCTAssertGreaterThan(duplicates[0].similarity, 0.95)
+    }
+
+    func testFindDuplicatesNoDuplicates() {
+        let documents = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0]
+        ]
+
+        let duplicates = documents.findDuplicates(threshold: 0.95)
+
+        // Orthogonal vectors should not be duplicates
+        XCTAssertEqual(duplicates.count, 0)
+    }
+
+    func testFindDuplicatesMultiplePairs() {
+        let documents = [
+            [1.0, 0.0, 0.0],  // 0
+            [1.0, 0.0, 0.0],  // 1 - exact duplicate of 0
+            [0.0, 1.0, 0.0],  // 2
+            [0.0, 1.0, 0.0],  // 3 - exact duplicate of 2
+            [0.0, 0.0, 1.0]   // 4 - distinct
+        ]
+
+        let duplicates = documents.findDuplicates(threshold: 0.99)
+
+        // Should find exactly two duplicate pairs (0,1) and (2,3)
+        XCTAssertEqual(duplicates.count, 2)
+
+        // Verify the correct pairs are identified
+        let pair1 = duplicates[0]
+        let pair2 = duplicates[1]
+
+        // Both pairs should have similarity of 1.0
+        XCTAssertEqual(pair1.similarity, 1.0, accuracy: 1e-10)
+        XCTAssertEqual(pair2.similarity, 1.0, accuracy: 1e-10)
+
+        // Check that we found pairs (0,1) and (2,3) in some order
+        let allIndices = [(pair1.index1, pair1.index2), (pair2.index1, pair2.index2)]
+        let hasPair01 = allIndices.contains { $0 == (0, 1) }
+        let hasPair23 = allIndices.contains { $0 == (2, 3) }
+
+        XCTAssertTrue(hasPair01, "Should find pair (0,1)")
+        XCTAssertTrue(hasPair23, "Should find pair (2,3)")
+    }
+
+    func testFindDuplicatesEmptyArray() {
+        let documents: [[Double]] = []
+        let duplicates = documents.findDuplicates(threshold: 0.95)
+
+        XCTAssertEqual(duplicates.count, 0)
+    }
+
+    func testFindDuplicatesSingleVector() {
+        let documents = [[0.5, 0.5, 0.5]]
+        let duplicates = documents.findDuplicates(threshold: 0.95)
+
+        XCTAssertEqual(duplicates.count, 0)
+    }
+
+    func testFindDuplicatesCustomThreshold() {
+        let documents = [
+            [0.8, 0.6],
+            [0.7, 0.7],  // Moderately similar
+        ]
+
+        let highThreshold = documents.findDuplicates(threshold: 0.99)
+        let lowThreshold = documents.findDuplicates(threshold: 0.90)
+
+        // High threshold should find fewer duplicates
+        XCTAssertEqual(highThreshold.count, 0)
+
+        // Low threshold should find more duplicates
+        XCTAssertEqual(lowThreshold.count, 1)
+    }
+
+    func testFindDuplicatesSortedByScore() {
+        let documents = [
+            [1.0, 0.0, 0.0],  // 0
+            [0.99, 0.1, 0.0], // 1 - high similarity to 0
+            [0.95, 0.2, 0.0], // 2 - medium similarity to 0
+        ]
+
+        let duplicates = documents.findDuplicates(threshold: 0.85)
+
+        // Results should be sorted by similarity (highest first)
+        XCTAssertGreaterThan(duplicates[0].similarity, duplicates[1].similarity)
+    }
+
+    // MARK: - ClusterCohesion Tests
+
+    func testClusterCohesionPerfectCluster() {
+        // All vectors identical = perfect cohesion
+        let cluster = [
+            [1.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0]
+        ]
+
+        let cohesion = cluster.clusterCohesion()
+
+        XCTAssertEqual(cohesion, 1.0, accuracy: 1e-10)
+    }
+
+    func testClusterCohesionHighCohesion() {
+        // Similar vectors = high cohesion
+        let cluster = [
+            [0.8, 0.7, 0.9],
+            [0.7, 0.8, 0.8],
+            [0.9, 0.6, 0.9]
+        ]
+
+        let cohesion = cluster.clusterCohesion()
+
+        // Should be high cohesion (> 0.9)
+        XCTAssertGreaterThan(cohesion, 0.9)
+    }
+
+    func testClusterCohesionLowCohesion() {
+        // Orthogonal vectors = low cohesion
+        let cluster = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0]
+        ]
+
+        let cohesion = cluster.clusterCohesion()
+
+        // Should be very low cohesion (= 0)
+        XCTAssertEqual(cohesion, 0.0, accuracy: 1e-10)
+    }
+
+    func testClusterCohesionTwoVectors() {
+        // Minimum cluster size
+        let cluster = [
+            [0.8, 0.6],
+            [0.6, 0.8]
+        ]
+
+        let cohesion = cluster.clusterCohesion()
+
+        // Should equal the cosine similarity between the two vectors
+        let expectedSimilarity = cluster[0].cosineOfAngle(with: cluster[1])
+        XCTAssertEqual(cohesion, expectedSimilarity, accuracy: 1e-10)
+    }
+
+    func testClusterCohesionSingleVector() {
+        // Single vector should return 0 (no cohesion possible)
+        let cluster = [[0.5, 0.5, 0.5]]
+        let cohesion = cluster.clusterCohesion()
+
+        XCTAssertEqual(cohesion, 0.0)
+    }
+
+    func testClusterCohesionEmptyArray() {
+        let cluster: [[Double]] = []
+        let cohesion = cluster.clusterCohesion()
+
+        XCTAssertEqual(cohesion, 0.0)
+    }
+
+    func testClusterCohesionModerateCohesion() {
+        // Mixed similarity = moderate cohesion
+        let cluster = [
+            [1.0, 0.0, 0.0],
+            [0.9, 0.1, 0.0],
+            [0.7, 0.3, 0.0]
+        ]
+
+        let cohesion = cluster.clusterCohesion()
+
+        // Should be between 0 and 1
+        XCTAssertGreaterThan(cohesion, 0.0)
+        XCTAssertLessThan(cohesion, 1.0)
+    }
+
+    func testClusterCohesionRealWorldExample() {
+        // Simulate sports performance vectors (speed, strength, endurance)
+        let athleticCluster = [
+            [0.8, 0.7, 0.6],  // Athlete 1
+            [0.75, 0.72, 0.58], // Athlete 2 (similar)
+            [0.82, 0.68, 0.62]  // Athlete 3 (similar)
+        ]
+
+        let cohesion = athleticCluster.clusterCohesion()
+
+        // Should have high cohesion (> 0.95)
+        XCTAssertGreaterThan(cohesion, 0.95)
+    }
+
+    func testClusterCohesionSemanticExample() {
+        // Simulate word embeddings for related concepts
+        let techCluster = [
+            [0.8, 0.3, 0.9],  // "algorithm"
+            [0.7, 0.4, 0.8],  // "programming"
+            [0.75, 0.35, 0.85] // "coding"
+        ]
+
+        let cohesion = techCluster.clusterCohesion()
+
+        // Related concepts should have reasonable cohesion
+        XCTAssertGreaterThan(cohesion, 0.8)
+    }
+
+    // MARK: - Sum Tests
+
+    func testSumDoubles() {
+        let values = [1.0, 2.0, 3.0, 4.0]
+        let result = values.sum()
+        XCTAssertEqual(result, 10.0)
+    }
+
+    func testSumIntegers() {
+        let values = [5, 10, 15, 20]
+        let result = values.sum()
+        XCTAssertEqual(result, 50)
+    }
+
+    func testSumNegativeNumbers() {
+        let values = [-5.0, 3.0, -2.0, 8.0]
+        let result = values.sum()
+        XCTAssertEqual(result, 4.0)
+    }
+
+    func testSumEmptyArray() {
+        let values: [Double] = []
+        let result = values.sum()
+        XCTAssertEqual(result, 0.0)
+    }
+
+    func testSumSingleElement() {
+        let values = [42.0]
+        let result = values.sum()
+        XCTAssertEqual(result, 42.0)
+    }
+
+    func testSumFloats() {
+        let values: [Float] = [1.5, 2.5, 3.0]
+        let result = values.sum()
+        XCTAssertEqual(result, 7.0)
+    }
+
+    // MARK: - SortedIndices Tests
+
+    func testSortedIndicesBasic() {
+        let values = [40.0, 10.0, 30.0, 20.0]
+        let indices = values.sortedIndices()
+        XCTAssertEqual(indices, [1, 3, 2, 0])  // Indices that would sort the array
+    }
+
+    func testSortedIndicesVerifyMapping() {
+        let values = [5.0, 2.0, 8.0, 1.0]
+        let indices = values.sortedIndices()
+
+        // Use the indices to create sorted array
+        let sorted = indices.map { values[$0] }
+        XCTAssertEqual(sorted, [1.0, 2.0, 5.0, 8.0])
+    }
+
+    func testSortedIndicesDuplicates() {
+        let values = [3.0, 1.0, 3.0, 2.0]
+        let indices = values.sortedIndices()
+
+        // Should produce a valid sorting
+        let sorted = indices.map { values[$0] }
+        XCTAssertEqual(sorted, [1.0, 2.0, 3.0, 3.0])
+    }
+
+    func testSortedIndicesAlreadySorted() {
+        let values = [1.0, 2.0, 3.0, 4.0]
+        let indices = values.sortedIndices()
+        XCTAssertEqual(indices, [0, 1, 2, 3])
+    }
+
+    func testSortedIndicesReverseSorted() {
+        let values = [4.0, 3.0, 2.0, 1.0]
+        let indices = values.sortedIndices()
+        XCTAssertEqual(indices, [3, 2, 1, 0])
+    }
+
+    func testSortedIndicesEmptyArray() {
+        let values: [Double] = []
+        let indices = values.sortedIndices()
+        XCTAssertEqual(indices, [])
+    }
+
+    func testSortedIndicesSingleElement() {
+        let values = [42.0]
+        let indices = values.sortedIndices()
+        XCTAssertEqual(indices, [0])
+    }
+
+    func testSortedIndicesNegativeNumbers() {
+        let values = [5.0, -3.0, 0.0, -1.0]
+        let indices = values.sortedIndices()
+
+        let sorted = indices.map { values[$0] }
+        XCTAssertEqual(sorted, [-3.0, -1.0, 0.0, 5.0])
+    }
+
+    // MARK: - Matrix Determinant Tests
+
+    func testDeterminant1x1() {
+        let matrix = [[5.0]]
+        let det = matrix.determinant
+        XCTAssertEqual(det, 5.0)
+    }
+
+    func testDeterminant2x2() {
+        let matrix = [[3.0, 8.0], [4.0, 6.0]]
+        let det = matrix.determinant
+        // 3*6 - 8*4 = 18 - 32 = -14
+        XCTAssertEqual(det, -14.0)
+    }
+
+    func testDeterminant2x2Identity() {
+        let identity = [[1.0, 0.0], [0.0, 1.0]]
+        let det = identity.determinant
+        XCTAssertEqual(det, 1.0)
+    }
+
+    func testDeterminant3x3() {
+        let matrix = [
+            [1.0, 2.0, 3.0],
+            [0.0, 1.0, 4.0],
+            [5.0, 6.0, 0.0]
+        ]
+        let det = matrix.determinant
+        // Expanded: 1*(1*0 - 4*6) - 2*(0*0 - 4*5) + 3*(0*6 - 1*5)
+        // = 1*(-24) - 2*(-20) + 3*(-5)
+        // = -24 + 40 - 15 = 1
+        XCTAssertEqual(det, 1.0, accuracy: 1e-10)
+    }
+
+    func testDeterminantSingular() {
+        // Singular matrix (rows are linearly dependent)
+        let matrix = [
+            [1.0, 2.0],
+            [2.0, 4.0]  // Second row is 2x first row
+        ]
+        let det = matrix.determinant
+        XCTAssertEqual(det, 0.0, accuracy: 1e-10)
+    }
+
+    func testDeterminant3x3Identity() {
+        let identity = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0]
+        ]
+        let det = identity.determinant
+        XCTAssertEqual(det, 1.0, accuracy: 1e-10)
+    }
+
+    func testDeterminantScaled() {
+        // Scaling a matrix by k multiplies determinant by k^n for nxn matrix
+        let matrix = [[2.0, 0.0], [0.0, 2.0]]  // 2x identity
+        let det = matrix.determinant
+        // det(2I) = 2^2 = 4
+        XCTAssertEqual(det, 4.0)
+    }
+
+    // MARK: - Matrix Inverted Tests
+
+    func testInverted2x2() {
+        let matrix = [[4.0, 7.0], [2.0, 6.0]]
+        let inverse = matrix.inverted()
+
+        // Verify A * A^-1 = I
+        let identity = matrix.multiplyMatrix(inverse)
+
+        XCTAssertEqual(identity[0][0], 1.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[0][1], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[1][0], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[1][1], 1.0, accuracy: 1e-10)
+    }
+
+    func testInvertedIdentity() {
+        let identity = [[1.0, 0.0], [0.0, 1.0]]
+        let inverse = identity.inverted()
+
+        // Inverse of identity is identity
+        XCTAssertEqual(inverse, identity)
+    }
+
+    func testInverted3x3() {
+        let matrix = [
+            [1.0, 2.0, 3.0],
+            [0.0, 1.0, 4.0],
+            [5.0, 6.0, 0.0]
+        ]
+        let inverse = matrix.inverted()
+
+        // Verify A * A^-1 = I
+        let identity = matrix.multiplyMatrix(inverse)
+
+        // Check diagonal is 1
+        XCTAssertEqual(identity[0][0], 1.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[1][1], 1.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[2][2], 1.0, accuracy: 1e-10)
+
+        // Check off-diagonal is 0
+        XCTAssertEqual(identity[0][1], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[0][2], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[1][0], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[1][2], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[2][0], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[2][1], 0.0, accuracy: 1e-10)
+    }
+
+    func testInvertedScalingMatrix() {
+        let scale = [[2.0, 0.0], [0.0, 3.0]]
+        let inverse = scale.inverted()
+
+        // Inverse of scaling should be 1/scale
+        XCTAssertEqual(inverse[0][0], 0.5, accuracy: 1e-10)
+        XCTAssertEqual(inverse[1][1], 1.0/3.0, accuracy: 1e-10)
+        XCTAssertEqual(inverse[0][1], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(inverse[1][0], 0.0, accuracy: 1e-10)
+    }
+
+    func testInvertedSymmetric() {
+        // Symmetric matrix
+        let matrix = [[4.0, 2.0], [2.0, 3.0]]
+        let inverse = matrix.inverted()
+
+        // Verify A * A^-1 = I
+        let identity = matrix.multiplyMatrix(inverse)
+
+        XCTAssertEqual(identity[0][0], 1.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[0][1], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[1][0], 0.0, accuracy: 1e-10)
+        XCTAssertEqual(identity[1][1], 1.0, accuracy: 1e-10)
+    }
+
+    func testInvertedReverseOrder() {
+        // Verify that (A^-1)^-1 = A
+        let matrix = [[3.0, 7.0], [2.0, 5.0]]
+        let inverse = matrix.inverted()
+        let doubleInverse = inverse.inverted()
+
+        XCTAssertEqual(doubleInverse[0][0], matrix[0][0], accuracy: 1e-10)
+        XCTAssertEqual(doubleInverse[0][1], matrix[0][1], accuracy: 1e-10)
+        XCTAssertEqual(doubleInverse[1][0], matrix[1][0], accuracy: 1e-10)
+        XCTAssertEqual(doubleInverse[1][1], matrix[1][1], accuracy: 1e-10)
+    }
 }

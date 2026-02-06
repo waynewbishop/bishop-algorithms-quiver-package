@@ -75,9 +75,7 @@ let selectedFruit = fruits[randomIndex]
 
 ### Implementation details
 
-The random number generation in Quiver uses Swift's built-in random functions. These functions return high-quality random values uniformly distributed between 0 and 1.
-
-By default, the random values are generated in the range `[0, 1]` which you can scale to any desired range by simple multiplication.
+The random number generation in Quiver uses Swift's built-in random functions. These functions return high-quality random values uniformly distributed between 0 and 1. By default, the random values are generated in the range `[0, 1]` which you can scale to any desired range by simple multiplication.
 
 > Tip: To generate random numbers in a specific range, multiply the values by the range size and add the minimum value. For example, for values between 5 and 10: `random(3).map { 5 + $0 * 5 }`
 

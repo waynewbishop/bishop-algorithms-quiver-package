@@ -152,6 +152,149 @@ extension Array where Element: Collection, Element.Element: Numeric {
     }
 }
 
+// MARK: - Matrix Operations (FloatingPoint)
+
+public extension Array where Element: Collection, Element.Element: FloatingPoint {
+
+    /// Returns the determinant of a square matrix.
+    ///
+    /// The determinant is a scalar value that provides information about the matrix:
+    /// - det = 0: Matrix is singular (not invertible)
+    /// - det ≠ 0: Matrix is invertible
+    ///
+    /// Example:
+    /// ```swift
+    /// let matrix = [[4.0, 3.0],
+    ///               [6.0, 3.0]]
+    /// let det = matrix.determinant  // -6.0
+    /// ```
+    ///
+    /// - Returns: The determinant value
+    var determinant: Element.Element {
+        let matrix = self.map { $0.map { $0 } }
+        guard !matrix.isEmpty, matrix.count == matrix[0].count else {
+            fatalError("Determinant requires a square matrix")
+        }
+
+        let n = matrix.count
+
+        // Base cases
+        if n == 1 {
+            return matrix[0][0]
+        }
+        if n == 2 {
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+        }
+
+        // LU decomposition for larger matrices
+        var A = matrix
+        var det = Element.Element(1)
+
+        for i in 0..<n {
+            // Find pivot
+            var maxRow = i
+            for k in (i+1)..<n {
+                if abs(A[k][i]) > abs(A[maxRow][i]) {
+                    maxRow = k
+                }
+            }
+
+            // Check for singular matrix (nearly zero pivot)
+            let epsilon = Element.Element.ulpOfOne * 1000
+            if abs(A[maxRow][i]) < epsilon {
+                return 0
+            }
+
+            if maxRow != i {
+                A.swapAt(i, maxRow)
+                det = -det
+            }
+
+            det *= A[i][i]
+
+            // Eliminate column
+            for k in (i+1)..<n {
+                let factor = A[k][i] / A[i][i]
+                for j in (i+1)..<n {
+                    A[k][j] -= factor * A[i][j]
+                }
+            }
+        }
+
+        return det
+    }
+
+    /// Returns the inverse of a square matrix.
+    ///
+    /// The inverse matrix A⁻¹ satisfies: A × A⁻¹ = I (identity matrix)
+    /// Only non-singular matrices (determinant ≠ 0) have an inverse.
+    ///
+    /// Example:
+    /// ```swift
+    /// let matrix = [[4.0, 7.0],
+    ///               [2.0, 6.0]]
+    /// let inverse = matrix.inverted()
+    /// // [[0.6, -0.7], [-0.2, 0.4]]
+    /// ```
+    ///
+    /// - Returns: The inverted matrix
+    func inverted() -> [[Element.Element]] {
+        let matrix = self.map { $0.map { $0 } }
+        guard !matrix.isEmpty, matrix.count == matrix[0].count else {
+            fatalError("Matrix inversion requires a square matrix")
+        }
+
+        let n = matrix.count
+        var A = matrix
+        var inv = [[Element.Element]](repeating: [Element.Element](repeating: 0, count: n), count: n)
+
+        // Initialize inv as identity matrix
+        for i in 0..<n {
+            inv[i][i] = 1
+        }
+
+        // Gaussian elimination with partial pivoting
+        for i in 0..<n {
+            // Find pivot
+            var maxRow = i
+            for k in (i+1)..<n {
+                if abs(A[k][i]) > abs(A[maxRow][i]) {
+                    maxRow = k
+                }
+            }
+
+            // Check for singular matrix (nearly zero pivot)
+            let epsilon = Element.Element.ulpOfOne * 1000
+            if abs(A[maxRow][i]) < epsilon {
+                fatalError("Matrix is singular and cannot be inverted (determinant = 0)")
+            }
+
+            if maxRow != i {
+                A.swapAt(i, maxRow)
+                inv.swapAt(i, maxRow)
+            }
+
+            // Scale pivot row
+            let pivot = A[i][i]
+            for j in 0..<n {
+                A[i][j] /= pivot
+                inv[i][j] /= pivot
+            }
+
+            // Eliminate column
+            for k in 0..<n where k != i {
+                let factor = A[k][i]
+                for j in 0..<n {
+                    A[k][j] -= factor * A[i][j]
+                    inv[k][j] -= factor * inv[i][j]
+                }
+            }
+        }
+
+        return inv
+    }
+}
+
 
 // MARK: - FloatingPoint Vector Operations
 
@@ -263,6 +406,62 @@ public extension Array where Element == [Double] {
     func cosineSimilarities(to target: [Double]) -> [Double] {
         return self.map { $0.cosineOfAngle(with: target) }
     }
+
+    /// Find pairs of vectors with similarity above the specified threshold.
+    ///
+    /// Computes pairwise cosine similarities and returns all pairs that meet or exceed
+    /// the threshold. Useful for duplicate detection, near-neighbor search, and identifying
+    /// similar items in datasets.
+    ///
+    /// Example:
+    /// ```swift
+    /// let documents = [
+    ///     [0.8, 0.6, 0.9],
+    ///     [0.8, 0.6, 0.9],  // Duplicate of first
+    ///     [0.1, 0.2, 0.1]
+    /// ]
+    /// let duplicates = documents.findDuplicates(threshold: 0.95)
+    /// // Returns: [(index1: 0, index2: 1, similarity: 1.0)]
+    /// ```
+    ///
+    /// - Parameter threshold: Minimum cosine similarity (0.0 to 1.0). Default is 0.95.
+    /// - Returns: Array of tuples containing pair indices and similarity scores, sorted by similarity (highest first)
+    func findDuplicates(threshold: Double = 0.95) -> [(index1: Int, index2: Int, similarity: Double)] {
+        return self.enumerated().flatMap { i, vec1 in
+            self.dropFirst(i + 1).enumerated().compactMap { j, vec2 in
+                let similarity = vec1.cosineOfAngle(with: vec2)
+                return similarity >= threshold ? (i, i + j + 1, similarity) : nil
+            }
+        }.sorted { $0.similarity > $1.similarity }
+    }
+
+    /// Calculate average pairwise similarity as a measure of cluster cohesion.
+    ///
+    /// Computes the mean cosine similarity between all pairs of vectors in the collection.
+    /// Higher values indicate tighter, more homogeneous clusters. This metric is useful
+    /// for validating clustering quality and measuring group coherence.
+    ///
+    /// Example:
+    /// ```swift
+    /// let cluster = [
+    ///     [0.8, 0.7, 0.9],
+    ///     [0.7, 0.8, 0.8],
+    ///     [0.9, 0.6, 0.9]
+    /// ]
+    /// let cohesion = cluster.clusterCohesion()
+    /// // Returns value between 0.0 (unrelated) and 1.0 (identical)
+    /// ```
+    ///
+    /// - Returns: Average pairwise similarity (0.0 to 1.0), or 0.0 if fewer than 2 vectors
+    func clusterCohesion() -> Double {
+        guard self.count > 1 else { return 0.0 }
+
+        let similarities = self.enumerated().flatMap { i, vec in
+            self.dropFirst(i + 1).map { vec.cosineOfAngle(with: $0) }
+        }
+
+        return similarities.reduce(0.0, +) / Double(similarities.count)
+    }
 }
 
 // MARK: - Array Ranking Operations
@@ -290,6 +489,30 @@ public extension Array where Element == Double {
             .sorted { $0.score > $1.score }
             .prefix(k)
             .map { $0 }
+    }
+
+    /// Returns the indices that would sort the array in ascending order.
+    ///
+    /// This method provides functionality equivalent to NumPy's `argsort()`,
+    /// returning the indices of elements in sorted order rather than the sorted elements themselves.
+    /// This is useful when you need to maintain a mapping between sorted and original positions.
+    ///
+    /// Example:
+    /// ```swift
+    /// let values = [40.0, 10.0, 30.0, 20.0]
+    /// let indices = values.sortedIndices()
+    /// // [1, 3, 2, 0] - indices that would sort the array
+    ///
+    /// // Use indices to access elements in sorted order
+    /// let sorted = indices.map { values[$0] }
+    /// // [10.0, 20.0, 30.0, 40.0]
+    /// ```
+    ///
+    /// - Returns: Array of indices representing the sorted order
+    func sortedIndices() -> [Int] {
+        return self.enumerated()
+            .sorted { $0.element < $1.element }
+            .map { $0.offset }
     }
 
 }

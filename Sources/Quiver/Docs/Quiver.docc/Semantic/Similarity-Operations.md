@@ -1,75 +1,89 @@
 # Similarity Operations
 
-Measure semantic similarity between vectors using cosine similarity, distance metrics, and batch operations.
+Compute similarity between vectors using cosine similarity and distance metrics.
 
 ## Overview
 
-Once text is converted to numerical vectors (see <doc:Text-Processing>), we need mathematical operations to measure how similar two vectors are. Similarity metrics enable semantic search, recommendation systems, and clustering by quantifying the relationship between vector representations.
+Similarity operations measure how related two vectors are. These operations are fundamental for machine learning applications including recommendation systems, clustering, semantic search, and nearest neighbor classification.
 
-Quiver provides efficient similarity operations optimized for high-dimensional vectors commonly used in machine learning and natural language processing.
+> Tip: For selecting top-K results from similarity scores, see <doc:Selection>.
+
+## Dot product
+
+The dot product computes the sum of element-wise products between two vectors. It's the fundamental operation underlying cosine similarity and many machine learning algorithms.
+
+```swift
+let v1 = [2.0, 3.0, 4.0]
+let v2 = [1.0, 2.0, 3.0]
+
+let dotProduct = v1.dot(v2)
+// 20.0 = (2×1) + (3×2) + (4×3)
+```
+
+**Mathematical definition:**
+```
+dot(v, w) = v₁w₁ + v₂w₂ + ... + vₙwₙ
+```
+
+### When to use dot product
+
+- **Neural networks:** Forward propagation (weights × inputs)
+- **Physics:** Work calculations (force · displacement)
+- **Projection:** Computing scalar projections
+- **Normalized vectors:** Equals cosine similarity when vectors are unit length
+
+### Relationship to other operations
+
+The dot product is the foundation for other similarity metrics:
+
+```swift
+let v1 = [3.0, 4.0]
+let v2 = [5.0, 12.0]
+
+// Raw dot product
+let dot = v1.dot(v2)  // 63.0
+
+// Cosine similarity: normalized dot product
+let cosine = v1.cosineOfAngle(with: v2)
+// dot / (||v1|| × ||v2||) = 63.0 / (5.0 × 13.0) = 0.969
+```
+
+> Tip: For normalized vectors (magnitude = 1), dot product equals cosine similarity. This optimization is used in the pre-normalization technique shown later.
 
 ## Cosine similarity
 
-Cosine similarity measures the angle between two vectors, ranging from -1 (opposite directions) to 1 (identical directions). It focuses on **direction** rather than magnitude, making it ideal for comparing text embeddings where document length shouldn't affect similarity.
+Cosine similarity measures the angle between vectors, ranging from -1 (opposite) to 1 (identical). It focuses on direction rather than magnitude.
 
 ```swift
-let doc1 = [0.8, 0.6, 0.0]  // "running shoes"
-let doc2 = [0.4, 0.3, 0.0]  // "jogging sneakers" (similar direction, smaller magnitude)
+let v1 = [0.8, 0.6, 0.0]
+let v2 = [0.4, 0.3, 0.0]
 
-let similarity = doc1.cosineOfAngle(with: doc2)
-// 1.0 - identical semantic meaning despite different magnitudes
+let similarity = v1.cosineOfAngle(with: v2)
+// 1.0 - identical direction despite different magnitudes
 ```
 
-### Why cosine for text
-
-Consider two product descriptions:
-- Short: "running shoes"
-- Long: "comfortable lightweight breathable running shoes for marathon training"
-
-Both are about running shoes, but the long description has more words, resulting in a larger vector magnitude. Cosine similarity ignores magnitude and measures only directional alignment—exactly what we need for semantic comparison.
-
-### Mathematical definition
-
-For vectors v and w:
-
+**Mathematical definition:**
 ```
 cosine_similarity(v, w) = (v · w) / (||v|| × ||w||)
 ```
 
-Where:
-- `v · w` is the dot product
-- `||v||` is the magnitude of v
-- `||w||` is the magnitude of w
+### When to use cosine similarity
 
-### Practical examples
+- **Text analysis:** Document length doesn't affect similarity
+- **Recommendations:** Compare user/item preference vectors
+- **Clustering:** Group by semantic meaning
+- **Face recognition:** Compare feature vectors
 
-**High similarity (related meanings):**
-```swift
-let athletic = [0.8, 0.7, 0.9, 0.2]  // Athletic activity
-let fitness = [0.7, 0.8, 0.8, 0.3]   // Similar context
+### Range interpretation
 
-athletic.cosineOfAngle(with: fitness)  // ~0.95 (very similar)
-```
-
-**Low similarity (unrelated meanings):**
-```swift
-let running = [0.8, 0.7, 0.9, 0.2]   // Athletic activity
-let computer = [0.1, 0.2, 0.1, 0.9]  // Technology
-
-running.cosineOfAngle(with: computer)  // ~0.15 (very different)
-```
-
-**Perpendicular (orthogonal) vectors:**
-```swift
-let v1 = [1.0, 0.0]
-let v2 = [0.0, 1.0]
-
-v1.cosineOfAngle(with: v2)  // 0.0 (completely unrelated)
-```
+- `1.0`: Identical direction (very similar)
+- `0.5-0.8`: Related
+- `0.0`: Orthogonal (unrelated)
+- `-1.0`: Opposite direction
 
 ## Euclidean distance
 
-Euclidean distance measures the straight-line distance between two points in vector space. Unlike cosine similarity, distance considers both direction and magnitude.
+Euclidean distance measures straight-line distance between points. Unlike cosine, it considers both direction and magnitude.
 
 ```swift
 let point1 = [3.0, 4.0]
@@ -79,348 +93,118 @@ let dist = point1.distance(to: point2)
 // 5.0 (Pythagorean theorem: sqrt(3² + 4²))
 ```
 
-### When to use distance vs similarity
+### When to use distance
 
-**Use Euclidean distance when:**
-- Magnitude matters (physical positions, measurements)
-- Working with normalized vectors
-- Clustering spatial data
+- **Spatial data:** Physical positions, coordinates
+- **Normalized vectors:** When magnitude is standardized
+- **K-means clustering:** Centroid-based grouping
+- **Anomaly detection:** Deviation from expected values
 
-**Use cosine similarity when:**
-- Direction matters more than magnitude (text semantics)
-- Comparing variable-length documents
-- Working with word embeddings
+## Batch operations
 
-### Example: Different metrics, different results
-
-```swift
-let short = [1.0, 1.0]
-let long = [10.0, 10.0]
-
-// Cosine: same direction
-short.cosineOfAngle(with: long)  // 1.0 (identical direction)
-
-// Distance: different magnitudes
-short.distance(to: long)  // ~12.7 (far apart in space)
-```
-
-## Batch similarity operations
-
-For semantic search, we often compare one query vector against many document vectors. Batch operations process all comparisons efficiently.
+Compare one vector against many efficiently:
 
 ```swift
 let query = [0.8, 0.7, 0.9]
 
 let database = [
-    [0.8, 0.6, 0.9],  // Doc 1
-    [0.2, 0.3, 0.1],  // Doc 2
-    [0.7, 0.7, 0.8],  // Doc 3
-    [0.1, 0.1, 0.2]   // Doc 4
+    [0.8, 0.6, 0.9],  // Vector 1
+    [0.2, 0.3, 0.1],  // Vector 2
+    [0.7, 0.7, 0.8]   // Vector 3
 ]
 
 // Compute all similarities at once
 let similarities = database.cosineSimilarities(to: query)
-// [0.99, 0.42, 0.98, 0.28]
+// [0.99, 0.42, 0.98]
 ```
 
-The `.cosineSimilarities(to:)` method:
-- Computes cosine similarity between each vector in the array and the target
-- Returns array of similarity scores
-- Preserves order (result[i] is similarity of database[i] to query)
-- Efficient for large-scale searches
+**Result preservation:** `similarities[i]` is the similarity between `database[i]` and `query`.
 
-### Semantic search example
+## Common use cases
+
+### Recommendation systems
+
+Compare user preference vectors against item vectors to suggest relevant content. Higher similarity scores indicate better matches for personalized recommendations.
 
 ```swift
-import Quiver
+// User's preference vector
+let userProfile = [0.8, 0.3, 0.9, 0.2]
 
-// Load and embed documents
-let embeddings = try loadGloVe(from: "glove.6B.50d.txt")
+// Item vectors
+let items = [[0.7, 0.4, 0.8, 0.3], [0.2, 0.9, 0.1, 0.7]]
 
-let products = [
-    "lightweight running shoes for marathons",
-    "durable trail running sneakers",
-    "comfortable jogging footwear",
-    "laptop computer for programming"
-]
-
-let database = products.compactMap {
-    $0.tokenize().embed(using: embeddings).averaged()
-}
-
-// Search query
-let query = "best running shoes for training"
-guard let queryVector = query.tokenize()
-    .embed(using: embeddings)
-    .averaged() else {
-    fatalError("Unable to create query vector")
-}
-
-// Find similarities
-let similarities = database.cosineSimilarities(to: queryVector)
-// [0.87, 0.82, 0.79, 0.12]
-// First 3 products are similar (running/shoes/jogging)
-// Last product very different (laptop/computer)
+// Find similar items
+let scores = items.cosineSimilarities(to: userProfile)
+// [0.95, 0.32] - first item matches user preferences
 ```
-
-## Similarity properties
-
-### Range and interpretation
-
-**Cosine similarity:**
-- Range: -1 to 1
-- 1.0: Identical direction (perfect match)
-- 0.0: Orthogonal (unrelated)
-- -1.0: Opposite direction (antonyms)
-- Typical text: 0.0 to 1.0 (negative rare in word embeddings)
-
-**Practical thresholds:**
-- >0.8: Very similar (near-duplicates, synonyms)
-- 0.5-0.8: Related (same topic, different aspects)
-- 0.3-0.5: Weakly related (overlapping concepts)
-- <0.3: Unrelated (different topics)
-
-### Symmetry
-
-Both cosine similarity and Euclidean distance are symmetric:
-
-```swift
-v1.cosineOfAngle(with: v2) == v2.cosineOfAngle(with: v1)  // Always true
-v1.distance(to: v2) == v2.distance(to: v1)                // Always true
-```
-
-This means order doesn't matter when comparing vectors.
-
-## Performance optimization
-
-### Pre-normalization
-
-For repeated comparisons, normalize vectors once:
-
-```swift
-// Normalize documents once
-let normalizedDocs = database.map { $0.normalized }
-let normalizedQuery = query.normalized
-
-// Fast comparisons (dot product = cosine for normalized vectors)
-let similarities = normalizedDocs.map { $0.dot(normalizedQuery) }
-```
-
-When vectors are normalized (magnitude = 1), dot product equals cosine similarity, eliminating division operations.
-
-### Batch processing
-
-Process many queries efficiently:
-
-```swift
-// Multiple queries
-let queries = [
-    "running shoes",
-    "laptop computer",
-    "tennis racket"
-].compactMap { $0.tokenize().embed(using: embeddings).averaged() }
-
-// Compare all queries to all documents
-let allSimilarities = queries.map { query in
-    database.cosineSimilarities(to: query)
-}
-
-// allSimilarities[i][j] = similarity of query i to document j
-```
-
-## Practical applications
 
 ### Duplicate detection
 
-```swift
-// Find near-duplicate documents
-let threshold = 0.95
+Identify near-duplicate documents or data by computing pairwise similarities and filtering pairs above a threshold. Quiver provides a built-in method to efficiently find redundant content in large datasets.
 
-for i in 0..<documents.count {
-    for j in (i+1)..<documents.count {
-        let sim = documents[i].cosineOfAngle(with: documents[j])
-        if sim > threshold {
-            print("Documents \(i) and \(j) are duplicates (similarity: \(sim))")
-        }
-    }
+```swift
+let documents = [
+    [0.8, 0.7, 0.9],
+    [0.8, 0.7, 0.9],  // Duplicate
+    [0.1, 0.2, 0.1]
+]
+
+// Find duplicates with default threshold (0.95)
+let duplicates = documents.findDuplicates()
+
+// Or specify custom threshold
+let nearDuplicates = documents.findDuplicates(threshold: 0.90)
+
+// Results are sorted by similarity (highest first)
+duplicates.forEach { result in
+    print("Documents \(result.index1) and \(result.index2) are \(Int(result.similarity * 100))% similar")
 }
-```
-
-### Content recommendation
-
-```swift
-// Recommend similar articles to what user is reading
-let currentArticle = userReadingVector
-
-let recommendations = articleDatabase
-    .cosineSimilarities(to: currentArticle)
-    .enumerated()
-    .sorted { $0.element > $1.element }  // Descending by similarity
-    .prefix(5)  // Top 5
-    .map { (index: $0.offset, similarity: $0.element) }
 ```
 
 ### Clustering validation
 
-```swift
-// Check if items in a cluster are actually similar
-func clusterQuality(items: [[Double]]) -> Double {
-    guard items.count > 1 else { return 0 }
-
-    var totalSimilarity = 0.0
-    var count = 0
-
-    for i in 0..<items.count {
-        for j in (i+1)..<items.count {
-            totalSimilarity += items[i].cosineOfAngle(with: items[j])
-            count += 1
-        }
-    }
-
-    return totalSimilarity / Double(count)
-}
-
-let quality = clusterQuality(items: clusterItems)
-// High quality > 0.7 (items are similar)
-// Low quality < 0.5 (items are dissimilar - poor clustering)
-```
-
-## For Python developers
-
-Quiver's similarity operations match scikit-learn and SciPy:
-
-**Python (scikit-learn):**
-```python
-from sklearn.metrics.pairwise import cosine_similarity
-
-similarity = cosine_similarity([v1], [v2])[0][0]
-similarities = cosine_similarity([query], database)[0]
-```
-
-**Swift (Quiver):**
-```swift
-let similarity = v1.cosineOfAngle(with: v2)
-let similarities = database.cosineSimilarities(to: query)
-```
-
-**Python (SciPy):**
-```python
-from scipy.spatial.distance import euclidean, cosine
-
-dist = euclidean(v1, v2)
-cos_sim = 1 - cosine(v1, v2)  # SciPy returns distance, not similarity
-```
-
-**Swift (Quiver):**
-```swift
-let dist = v1.distance(to: v2)
-let cosSim = v1.cosineOfAngle(with: v2)
-```
-
-## For iOS developers
-
-### Integration with CoreML
+Measure cluster cohesion by calculating average pairwise similarity within a group. Higher values indicate tighter, more homogeneous clusters.
 
 ```swift
-import CoreML
-import Quiver
+let cluster = [
+    [0.8, 0.7, 0.9],
+    [0.7, 0.8, 0.8],
+    [0.9, 0.6, 0.9]
+]
 
-// Compare CoreML predictions
-let prediction1 = model.prediction(from: image1).featureVector
-let prediction2 = model.prediction(from: image2).featureVector
+// Calculate cluster cohesion
+let cohesion = cluster.clusterCohesion()  // 0.0 to 1.0
 
-let similarity = prediction1.cosineOfAngle(with: prediction2)
+// Compare different clusters
+let technicalDocs = [[0.8, 0.3, 0.9], [0.7, 0.4, 0.8]]
+let sportsDocs = [[0.2, 0.9, 0.1], [0.3, 0.8, 0.2]]
 
-if similarity > 0.8 {
-    print("Images contain similar content")
-}
+let techCohesion = technicalDocs.clusterCohesion()
+let sportsCohesion = sportsDocs.clusterCohesion()
+
+// Higher cohesion = better clustering quality
+print("Technical cluster quality: \(Int(techCohesion * 100))%")
+print("Sports cluster quality: \(Int(sportsCohesion * 100))%")
 ```
-
-### Vision Framework Integration
-
-```swift
-import Vision
-import Quiver
-
-// Compare image embeddings from Vision framework
-func compareImages(_ image1: UIImage, _ image2: UIImage) {
-    let request1 = VNGenerateImageFeaturePrintRequest()
-    let request2 = VNGenerateImageFeaturePrintRequest()
-
-    // ... perform requests ...
-
-    let features1 = extractFeatures(from: request1)
-    let features2 = extractFeatures(from: request2)
-
-    let similarity = features1.cosineOfAngle(with: features2)
-    print("Image similarity: \(similarity)")
-}
-```
-
-### Real-time search with SwiftUI
-
-```swift
-struct SearchResultsView: View {
-    @State private var searchText = ""
-    let documents: [[Double]]
-    let embeddings: [String: [Double]]
-
-    var filteredResults: [(index: Int, score: Double)] {
-        guard !searchText.isEmpty,
-              let query = searchText.tokenize()
-                .embed(using: embeddings)
-                .averaged() else { return [] }
-
-        return documents.cosineSimilarities(to: query)
-            .enumerated()
-            .map { (index: $0.offset, score: $0.element) }
-            .filter { $0.score > 0.3 }  // Relevance threshold
-            .sorted { $0.score > $1.score }
-    }
-
-    var body: some View {
-        List(filteredResults, id: \.index) { result in
-            HStack {
-                Text(documentTitles[result.index])
-                Spacer()
-                Text(String(format: "%.0f%%", result.score * 100))
-                    .foregroundColor(.secondary)
-            }
-        }
-        .searchable(text: $searchText)
-    }
-}
-```
-
-## Algorithm complexity
-
-| Operation | Time Complexity | Space Complexity |
-|-----------|----------------|------------------|
-| `cosineOfAngle(with:)` | O(d) | O(1) |
-| `distance(to:)` | O(d) | O(1) |
-| `cosineSimilarities(to:)` | O(n × d) | O(n) |
-
-Where:
-- `d` = vector dimensionality (e.g., 50 for GloVe 50d)
-- `n` = number of vectors in database
-
-For semantic search with 10,000 documents and 50-dimensional vectors:
-- Single similarity: ~50 operations
-- Batch similarities: ~500,000 operations
 
 ## See also
 
-- <doc:Text-Processing>
-- <doc:Ranking-Operations>
-- <doc:Operations>
-- <doc:Matrices-Operations>
+- <doc:Selection> - Select top-K largest values
+- <doc:Operations> - Vector operations
+- <doc:Matrices-Operations> - Matrix operations
 
 ## Topics
+
+### Basic operations
+- ``Swift/Array/dot(_:)``
 
 ### Similarity metrics
 - ``Swift/Array/cosineOfAngle(with:)``
 - ``Swift/Array/distance(to:)``
 
 ### Batch operations
-- ``Swift/Array/cosineSimilarities(to:)-double-array``
-- ``Swift/Array/cosineSimilarities(to:)-float-array``
+- ``Swift/Array/cosineSimilarities(to:)->[Double]``
+
+### Similarity analysis
+- ``Swift/Array/findDuplicates(threshold:)``
+- ``Swift/Array/clusterCohesion()``

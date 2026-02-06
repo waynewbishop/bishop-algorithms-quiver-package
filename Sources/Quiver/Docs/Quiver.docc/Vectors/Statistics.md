@@ -207,5 +207,4 @@ let mask2 = data.outlierMask(threshold: 3.0, mean: mean, std: std)
 
 ### Related articles
 - <doc:Operations>
-- <doc:Elements>
 - <doc:Broadcast>

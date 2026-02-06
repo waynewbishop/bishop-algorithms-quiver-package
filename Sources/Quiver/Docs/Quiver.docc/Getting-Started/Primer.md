@@ -52,26 +52,33 @@ v1.dot(v1)  // 1.0
 
 Applications include:
 - Determining if vectors are perpendicular (dot product = 0)
-- Calculating work in physics (force × distance)
+- Calculating work in physics (`force` × `distance`)
 - Finding projections of one vector onto another
 
 #### Vector Projection
 
-Projection decomposes one vector into components relative to another:
+Projection answers the fundamental question of "how much of one vector lies in the direction of another?" Imagine shining a light perpendicular to a surface—the shadow cast by one vector onto another is its projection. This geometric operation decomposes one vector into two components: the part aligned with a reference direction and the part perpendicular to it.
+
+**Three ways to express projection:**
 
 ```swift
 let force = [5.0, 5.0]  // Force vector at 45°
-let direction = [1.0, 0.0]  // Direction (right)
+let direction = [1.0, 0.0]  // Reference direction (right)
 
-// How much force is applied in this direction?
+// 1. Scalar projection: single number representing magnitude
+//    How much force is applied in this direction?
 let componentInDirection = force.scalarProjection(onto: direction)  // 5.0
 
-// Vector component in this direction
+// 2. Vector projection: the aligned component as a vector
+//    The force component in this direction
 let forceInDirection = force.vectorProjection(onto: direction)  // [5.0, 0.0]
 
-// Vector component perpendicular to direction
+// 3. Orthogonal component: what's left over (perpendicular)
+//    The force component perpendicular to this direction
 let forcePerpendicular = force.orthogonalComponent(to: direction)  // [0.0, 5.0]
 ```
+
+> Tip: These three pieces always relate: **original vector** = **projection** + **orthogonal component**. Verify: `[5.0, 5.0] = [5.0, 0.0] + [0.0, 5.0]`
 
 ### Introducing matrices
 
@@ -85,7 +92,9 @@ let matrix = [
 ]
 ```
 
-Matrices serve two primary purposes: organizing data (where rows might represent samples and columns represent features) and representing transformations (such as rotations, scaling, reflections, and shearing). 
+Matrices serve two primary purposes: organizing data (where rows might represent samples and columns represent features) and representing transformations (such as rotations, scaling, reflections, and shearing).
+
+> Tip: The term **canvas** appears throughout mathematics and computer science to represent the fundamental space where objects exist. In graph theory, the canvas is the collection of vertices (as seen in [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/)). In linear algebra, the canvas is the coordinate system defined by basis vectors. Both use "canvas" to mean the foundational structure on which everything else is built.
 
 #### Matrix Creation
 
@@ -179,39 +188,3 @@ let product2 = [3.8, 8.2, 2.9, 9.7]
 // Cosine similarity (normalized dot product)
 let similarity = product1.cosineOfAngle(with: product2)  // ~0.998
 ```
-
-See <doc:Similarity-Operations> for more on measuring vector similarity in machine learning applications.
-
-## See also
-
-### Dive deeper
-
-Ready to explore these concepts in more detail? The documentation is organized to follow a natural learning progression:
-
-**Vectors (Chapter 20):**
-- <doc:Operations>
-- <doc:Elements>
-
-**Matrices (Chapter 21):**
-- <doc:Matrices-Operations>
-- <doc:Broadcast>
-- <doc:Generation>
-
-**Transformations (Chapter 22):**
-- <doc:Transformations-Fundamentals>
-- <doc:Transformations-Common>
-- <doc:Transformations-Composition>
-
-**Semantic Search (Chapter 23):**
-- <doc:Text-Processing>
-- <doc:Similarity-Operations>
-- <doc:Ranking-Operations>
-
-## Further learning
-
-This primer introduces core concepts, but [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/) provides comprehensive coverage with step-by-step examples, visualizations, and algorithmic analysis:
-
-- [Chapter 20: Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) - Vector mathematics fundamentals
-- [Chapter 21: Matrices](https://waynewbishop.github.io/swift-algorithms/21-matrices.html) - Matrix operations and applications
-- [Chapter 22: Transformations](https://waynewbishop.github.io/swift-algorithms/22-transformations.html) - Geometric transformations
-- [Chapter 23: Semantic Search](https://waynewbishop.github.io/swift-algorithms/23-semantic-search.html) - Building search systems

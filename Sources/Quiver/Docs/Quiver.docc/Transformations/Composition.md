@@ -8,6 +8,8 @@ Individual transformations like rotation and scaling are useful, but real applic
 
 Understanding transformation composition is crucial for graphics pipelines, animation systems, and any application that chains coordinate system changes.
 
+> Note: While Quiver focuses on matrix-vector operations, understanding how **transformations** compose through matrix multiplication is essential for working with iOS frameworks like CoreGraphics and SceneKit node hierarchies. This guide teaches the mathematical principles that power these frameworks, complementing [Matrix Transformations](https://waynewbishop.github.io/swift-algorithms/22-transformations.html) in Swift Algorithms & Data Structures.
+
 ## Matrix multiplication
 
 Matrix multiplication composes transformations: the result represents applying one transformation after another. Unlike regular multiplication, **order matters**.
@@ -461,12 +463,8 @@ struct Particle {
 
 ## Topics
 
-### Matrix multiplication
-- ``Swift/Array/multiplyMatrix(_:)``
-
 ### Transformation operations
 - ``Swift/Array/transformedBy(_:)``
-- ``Swift/Array/transform(_:)``
 
 ### Matrix creation
 - ``Swift/Array/identity(_:)``

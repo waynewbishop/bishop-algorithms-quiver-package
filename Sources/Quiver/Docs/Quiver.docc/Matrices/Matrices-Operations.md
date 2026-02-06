@@ -107,6 +107,57 @@ let product = a.multiplyMatrix(b)
 // Result: [[19.0, 22.0], [43.0, 50.0]]
 ```
 
+### Determinant
+
+Calculate the determinant of a square matrix:
+
+```swift
+let matrix = [[4.0, 3.0], [6.0, 3.0]]
+let det = matrix.determinant  // -6.0
+```
+
+The determinant provides important information about a matrix:
+- `det = 0`: Matrix is singular (not invertible)
+- `det ≠ 0`: Matrix is invertible
+- Magnitude indicates volume scaling in geometric transformations
+
+**NumPy equivalent:**
+```python
+import numpy as np
+matrix = np.array([[4.0, 3.0], [6.0, 3.0]])
+det = np.linalg.det(matrix)  # -6.0
+```
+
+### Matrix inversion
+
+Compute the inverse of a matrix:
+
+```swift
+let matrix = [[4.0, 7.0], [2.0, 6.0]]
+let inverse = matrix.inverted()
+// [[0.6, -0.7], [-0.2, 0.4]]
+
+// Verify: A × A⁻¹ = I (identity)
+let identity = matrix.multiplyMatrix(inverse)
+// [[1.0, 0.0], [0.0, 1.0]]
+```
+
+The inverse matrix A⁻¹ satisfies: A × A⁻¹ = I (identity matrix)
+
+**Common uses:**
+- Solving linear systems: Ax = b becomes x = A⁻¹b
+- Reversing transformations
+- Computing least squares solutions
+
+> Important: Only non-singular matrices (determinant ≠ 0) can be inverted. Attempting to invert a singular matrix results in a fatal error.
+
+**NumPy equivalent:**
+```python
+import numpy as np
+matrix = np.array([[4.0, 7.0], [2.0, 6.0]])
+inverse = np.linalg.inv(matrix)
+```
+
 ### Working with data
 
 Matrices naturally represent tabular data:
