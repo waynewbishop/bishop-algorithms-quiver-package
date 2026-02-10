@@ -25,6 +25,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Getting started
 - <doc:Primer>
+- <doc:Statistics-Primer>
 
 ### Vectors
 - <doc:Operations>
