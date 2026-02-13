@@ -121,5 +121,72 @@ public extension Array where Element: FloatingPoint {
 
         return self.map { abs($0 - computedMean) > threshold * computedStd }
     }
+}
 
+// MARK: - Vector Array Operations
+
+public extension Array where Element == [Double] {
+    /// Calculate the mean vector by averaging corresponding elements across all vectors
+    ///
+    /// This method computes the element-wise mean of multiple vectors, useful for:
+    /// - Creating context vectors from word embeddings
+    /// - Averaging feature vectors in machine learning
+    /// - Computing centroids for clustering algorithms
+    ///
+    /// Example:
+    /// ```swift
+    /// let vectors = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
+    /// let mean = vectors.meanVector()
+    /// // Returns: [4.0, 5.0, 6.0]
+    /// ```
+    ///
+    /// - Returns: A vector containing the mean of each dimension, or nil if array is empty or vectors have inconsistent dimensions
+    func meanVector() -> [Double]? {
+        guard !isEmpty else { return nil }
+        guard let first = self.first else { return nil }
+
+        let dimensions = first.count
+
+        // Verify all vectors have the same dimensions
+        guard self.allSatisfy({ $0.count == dimensions }) else {
+            return nil
+        }
+
+        return (0..<dimensions).map { dim in
+            self.map { $0[dim] }.mean() ?? 0.0
+        }
+    }
+}
+
+public extension Array where Element == [Float] {
+    /// Calculate the mean vector by averaging corresponding elements across all vectors
+    ///
+    /// This method computes the element-wise mean of multiple vectors, useful for:
+    /// - Creating context vectors from word embeddings
+    /// - Averaging feature vectors in machine learning
+    /// - Computing centroids for clustering algorithms
+    ///
+    /// Example:
+    /// ```swift
+    /// let vectors: [[Float]] = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
+    /// let mean = vectors.meanVector()
+    /// // Returns: [4.0, 5.0, 6.0]
+    /// ```
+    ///
+    /// - Returns: A vector containing the mean of each dimension, or nil if array is empty or vectors have inconsistent dimensions
+    func meanVector() -> [Float]? {
+        guard !isEmpty else { return nil }
+        guard let first = self.first else { return nil }
+
+        let dimensions = first.count
+
+        // Verify all vectors have the same dimensions
+        guard self.allSatisfy({ $0.count == dimensions }) else {
+            return nil
+        }
+
+        return (0..<dimensions).map { dim in
+            self.map { $0[dim] }.mean() ?? 0.0
+        }
+    }
 }

@@ -183,4 +183,58 @@ final class ArrayStatisticsTests: XCTestCase {
         XCTAssertEqual(mask.last, true)
     }
 
+    // MARK: - Vector Array Operations Tests
+
+    func testMeanVectorDouble() {
+        let vectors = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
+        let mean = vectors.meanVector()
+
+        XCTAssertNotNil(mean)
+        XCTAssertEqual(mean?.count, 3)
+        XCTAssertEqual(mean![0], 4.0, accuracy: 0.001)
+        XCTAssertEqual(mean![1], 5.0, accuracy: 0.001)
+        XCTAssertEqual(mean![2], 6.0, accuracy: 0.001)
+    }
+
+    func testMeanVectorFloat() {
+        let vectors: [[Float]] = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
+        let mean = vectors.meanVector()
+
+        XCTAssertNotNil(mean)
+        XCTAssertEqual(mean?.count, 3)
+        XCTAssertEqual(mean![0], 4.0, accuracy: 0.001)
+        XCTAssertEqual(mean![1], 5.0, accuracy: 0.001)
+        XCTAssertEqual(mean![2], 6.0, accuracy: 0.001)
+    }
+
+    func testMeanVectorEmptyArray() {
+        let vectors: [[Double]] = []
+        let mean = vectors.meanVector()
+
+        XCTAssertNil(mean)
+    }
+
+    func testMeanVectorInconsistentDimensions() {
+        let vectors = [[1.0, 2.0], [3.0, 4.0, 5.0]]  // Different dimensions
+        let mean = vectors.meanVector()
+
+        XCTAssertNil(mean)
+    }
+
+    func testMeanVectorWordEmbeddings() {
+        // Simulate averaging word embeddings for context
+        let wordEmbeddings = [
+            [0.2, 0.5, -0.3, 0.8],
+            [0.1, 0.6, 0.2, -0.4]
+        ]
+        let contextVector = wordEmbeddings.meanVector()
+
+        XCTAssertNotNil(contextVector)
+        XCTAssertEqual(contextVector?.count, 4)
+        XCTAssertEqual(contextVector![0], 0.15, accuracy: 0.001)
+        XCTAssertEqual(contextVector![1], 0.55, accuracy: 0.001)
+        XCTAssertEqual(contextVector![2], -0.05, accuracy: 0.001)
+        XCTAssertEqual(contextVector![3], 0.2, accuracy: 0.001)
+    }
+
 }

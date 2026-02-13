@@ -1199,4 +1199,50 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(doubleInverse[1][0], matrix[1][0], accuracy: 1e-10)
         XCTAssertEqual(doubleInverse[1][1], matrix[1][1], accuracy: 1e-10)
     }
+
+    // MARK: - Top Indices with Labels Tests
+
+    func testTopIndicesWithLabels() {
+        let scores = [0.3, 0.9, 0.1, 0.7]
+        let words = ["the", "cat", "dog", "sat"]
+
+        let predictions = scores.topIndices(k: 2, labels: words)
+
+        XCTAssertEqual(predictions.count, 2)
+        XCTAssertEqual(predictions[0].label, "cat")
+        XCTAssertEqual(predictions[0].score, 0.9, accuracy: 0.001)
+        XCTAssertEqual(predictions[1].label, "sat")
+        XCTAssertEqual(predictions[1].score, 0.7, accuracy: 0.001)
+    }
+
+    func testTopIndicesWithLabelsAllElements() {
+        let scores = [0.5, 0.2, 0.8]
+        let labels = ["A", "B", "C"]
+
+        let results = scores.topIndices(k: 3, labels: labels)
+
+        XCTAssertEqual(results.count, 3)
+        XCTAssertEqual(results[0].label, "C")
+        XCTAssertEqual(results[0].score, 0.8, accuracy: 0.001)
+        XCTAssertEqual(results[1].label, "A")
+        XCTAssertEqual(results[1].score, 0.5, accuracy: 0.001)
+        XCTAssertEqual(results[2].label, "B")
+        XCTAssertEqual(results[2].score, 0.2, accuracy: 0.001)
+    }
+
+    func testTopIndicesWithLabelsWordPrediction() {
+        // Simulate word prediction scenario
+        let similarities = [0.92, 0.45, 0.87, 0.33, 0.78]
+        let candidateWords = ["sat", "ran", "on", "dog", "mat"]
+
+        let top3 = similarities.topIndices(k: 3, labels: candidateWords)
+
+        XCTAssertEqual(top3.count, 3)
+        XCTAssertEqual(top3[0].label, "sat")
+        XCTAssertEqual(top3[0].score, 0.92, accuracy: 0.001)
+        XCTAssertEqual(top3[1].label, "on")
+        XCTAssertEqual(top3[1].score, 0.87, accuracy: 0.001)
+        XCTAssertEqual(top3[2].label, "mat")
+        XCTAssertEqual(top3[2].score, 0.78, accuracy: 0.001)
+    }
 }

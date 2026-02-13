@@ -491,6 +491,33 @@ public extension Array where Element == Double {
             .map { $0 }
     }
 
+    /// Returns the top K highest scores with corresponding labels
+    ///
+    /// This convenience method combines top-K selection with label mapping, eliminating the need
+    /// to manually map indices back to labels. Particularly useful for word prediction, recommendation
+    /// systems, and any scenario where you need both the score and associated label.
+    ///
+    /// Example:
+    /// ```swift
+    /// let scores = [0.3, 0.9, 0.1, 0.7]
+    /// let words = ["the", "cat", "dog", "sat"]
+    ///
+    /// let predictions = scores.topIndices(k: 2, labels: words)
+    /// // Returns: [(label: "cat", score: 0.9), (label: "sat", score: 0.7)]
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - k: Number of top elements to return
+    ///   - labels: Array of labels corresponding to each score
+    /// - Returns: Array of tuples containing label and score, sorted by score (highest first)
+    func topIndices<T>(k: Int, labels: [T]) -> [(label: T, score: Double)] {
+        precondition(self.count == labels.count, "Scores and labels must have the same count")
+
+        return self.topIndices(k: k).map { result in
+            (label: labels[result.index], score: result.score)
+        }
+    }
+
     /// Returns the indices that would sort the array in ascending order.
     ///
     /// This method provides functionality equivalent to NumPy's `argsort()`,

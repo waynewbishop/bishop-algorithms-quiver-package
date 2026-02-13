@@ -183,6 +183,34 @@ guard let mean = data.mean(), let std = data.std() else {
 let mask2 = data.outlierMask(threshold: 3.0, mean: mean, std: std)
 ```
 
+### Vector averaging
+
+Calculate the mean vector by averaging corresponding elements across multiple vectors:
+
+```swift
+let vectors = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
+let mean = vectors.meanVector()
+// [4.0, 5.0, 6.0]
+```
+
+This operation computes the element-wise mean useful for:
+- Creating context vectors from word embeddings
+- Averaging feature vectors in machine learning
+- Computing centroids for clustering algorithms
+
+```swift
+// Simulate averaging word embeddings for context
+let wordEmbeddings = [
+    [0.2, 0.5, -0.3, 0.8],
+    [0.1, 0.6, 0.2, -0.4]
+]
+let contextVector = wordEmbeddings.meanVector()
+// [0.15, 0.55, -0.05, 0.2]
+```
+
+> Note: The function returns `nil` if the array is empty or if vectors have inconsistent dimensions.
+
+
 ## Topics
 
 ### Basic aggregations
@@ -204,6 +232,10 @@ let mask2 = data.outlierMask(threshold: 3.0, mean: mean, std: std)
 ### Cumulative statistics
 - ``Swift/Array/cumulativeSum()``
 - ``Swift/Array/cumulativeProduct()``
+
+### Vector operations
+- ``Swift/Array/meanVector()->[Double]?``
+- ``Swift/Array/meanVector()->[Float]?``
 
 ### Related articles
 - <doc:Operations>
