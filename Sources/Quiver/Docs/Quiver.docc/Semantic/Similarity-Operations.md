@@ -4,7 +4,7 @@ Compute similarity between vectors using cosine similarity and distance metrics.
 
 ## Overview
 
-Similarity operations measure how related two vectors are. These operations are fundamental for machine learning applications including recommendation systems, clustering, semantic search, and nearest neighbor classification.
+Similarity operations measure how **related** two vectors are. These operations are fundamental for machine learning applications including recommendation systems, word prediction, clustering, semantic search, and nearest neighbor classification.
 
 > Tip: For selecting top-K results from similarity scores, see <doc:Selection>.
 
@@ -25,13 +25,6 @@ let dotProduct = v1.dot(v2)
 dot(v, w) = v₁w₁ + v₂w₂ + ... + vₙwₙ
 ```
 
-### When to use dot product
-
-- **Neural networks:** Forward propagation (weights × inputs)
-- **Physics:** Work calculations (force · displacement)
-- **Projection:** Computing scalar projections
-- **Normalized vectors:** Equals cosine similarity when vectors are unit length
-
 ### Relationship to other operations
 
 The dot product is the foundation for other similarity metrics:
@@ -47,6 +40,26 @@ let dot = v1.dot(v2)  // 63.0
 let cosine = v1.cosineOfAngle(with: v2)
 // dot / (||v1|| × ||v2||) = 63.0 / (5.0 × 13.0) = 0.969
 ```
+
+### Magnitude vs distance
+
+Both magnitude and Euclidean distance use the Pythagorean theorem, but measure different things. `Magnitude` provides an answer to "how far am I from home (origin)" while Euclidean distance solves "how far is the coffee shop from the library".
+
+```swift
+// Magnitude: distance from origin 
+let v = [3.0, 4.0]
+let mag = v.magnitude  // 5.0 = sqrt(3² + 4²)
+
+// Euclidean distance: distance between any two vectors
+let v1 = [1.0, 2.0]
+let v2 = [4.0, 6.0]
+let dist = v1.distance(to: v2)  // 5.0 = sqrt((4-1)² + (6-2)²)
+
+// Magnitude is a special case - measurement from origin
+let equivalentDist = [0.0, 0.0].distance(to: v)  // 5.0 (same as magnitude)
+```
+
+This distinction matters for cosine similarity, which normalizes by dividing by the product of magnitudes (`||v1|| × ||v2||`).
 
 > Tip: For normalized vectors (magnitude = 1), dot product equals cosine similarity. This optimization is used in the pre-normalization technique shown later.
 
@@ -80,25 +93,6 @@ cosine_similarity(v, w) = (v · w) / (||v|| × ||w||)
 - `0.5-0.8`: Related
 - `0.0`: Orthogonal (unrelated)
 - `-1.0`: Opposite direction
-
-## Euclidean distance
-
-Euclidean distance measures straight-line distance between points. Unlike cosine, it considers both direction and magnitude.
-
-```swift
-let point1 = [3.0, 4.0]
-let point2 = [0.0, 0.0]
-
-let dist = point1.distance(to: point2)
-// 5.0 (Pythagorean theorem: sqrt(3² + 4²))
-```
-
-### When to use distance
-
-- **Spatial data:** Physical positions, coordinates
-- **Normalized vectors:** When magnitude is standardized
-- **K-means clustering:** Centroid-based grouping
-- **Anomaly detection:** Deviation from expected values
 
 ## Batch operations
 

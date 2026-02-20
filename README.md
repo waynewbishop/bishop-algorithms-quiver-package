@@ -39,30 +39,61 @@ Quiver is a Swift package that provides powerful numerical computing capabilitie
   * Broadcasting operations (scalar and vector)
   * Comparison operations and masking
 
-## Simple Example
+## Quick Start
+
+### Vector Operations
 
 ```swift
 import Quiver
 
-// Find semantically similar words using vector embeddings
-let embeddings: [String: [Double]] = [
-    "king": [0.50, 0.83, 0.32],
-    "queen": [0.58, 0.79, 0.41],
-    "man": [0.31, 0.22, 0.15],
-    "car": [0.12, 0.91, 0.67]
-]
+// Vectors are just Swift arrays with linear algebra operations
+let v = [3.0, 4.0]
 
-let query = embeddings["king", default: []]
-let candidates = ["queen", "man", "car"]
-let vectors = candidates.compactMap { embeddings[$0] }
+// Find magnitude (length) using Pythagorean theorem
+let magnitude = v.magnitude  // 5.0
 
-// Compute similarity and rank results
-let results = query
-    .cosineSimilarities(to: vectors)
-    .topIndices(k: 1, labels: candidates)
+// Create unit vector (same direction, length of 1)
+let unitVector = v.normalized  // [0.6, 0.8]
 
-print(results.first ?? (label: "", score: 0.0))
-// Output: (label: "queen", score: 0.96)
+// Practical example: RGB color adjustment
+let color = [0.8, 0.5, 0.2]  // Amber color
+let brighterColor = color * 1.2  // [0.96, 0.6, 0.24]
+
+// Physics: Calculate work done by a force
+let force = [5.0, 3.0, 2.0]
+let distance = [10.0, 0.0, 0.0]
+let work = force.dot(distance)  // 50.0 (only x-axis component matters)
+
+// Machine Learning: Compare product feature vectors
+let product1 = [4.2, 7.8, 3.1, 9.5]  // Price, rating, reviews, popularity
+let product2 = [3.8, 8.2, 2.9, 9.7]
+let similarity = product1.cosineOfAngle(with: product2)  // 0.998 (very similar!)
+```
+
+### Statistics for Swift Charts
+
+```swift
+import Quiver
+import Charts
+
+// Sales data over time
+let dailySales = [45.0, 52.0, 48.0, 61.0, 55.0, 58.0, 49.0, 67.0, 72.0, 69.0]
+
+// Statistical summary
+let avgSales = dailySales.mean  // 57.6
+let median = dailySales.median  // 56.5
+let stdDev = dailySales.standardDeviation  // 9.1
+
+// Smooth noisy data for trend visualization
+let smoothed = dailySales.rollingAverage(window: 3)
+// [45.0, 48.5, 50.3, 53.7, 58.0, 58.0, 57.3, 58.0, 62.7, 69.3]
+
+// Find outliers for highlighting in charts
+let outliers = dailySales.outlierIndices()  // [7, 8, 9] (indices of unusual spikes)
+
+// Histogram binning for distribution charts
+let binned = dailySales.histogram(bins: 5)
+// Creates frequency distribution for bar charts
 ```
 
 ## Design Philosophy
@@ -76,8 +107,7 @@ Quiver is built on several core principles:
 
 ## Data Science Framework
 
-Quiver occupies a unique niche as a Swift-native data science framework with a clean, developer-friendly API. It fills the gap between low-level frameworks and high-level tools like Core ML and Foundation Models. Overall, the framework provides the style and functionality of frameworks utilized in the Python community, reimagined for Swift's type system and modern language features.
-
+Quiver occupies a unique niche as a Swift-native data science framework with a clean, developer-friendly API. It fills the gap between low-level frameworks and high-level tools like Foundation Models. Overall, the framework provides the style and functionality of frameworks utilized in the Python community, reimagined for Swift's type system and modern language features.
 
 ## When to Use Quiver
 
@@ -104,7 +134,6 @@ Comprehensive documentation is available including:
 * Vector operation guides
 * Statistical function references
 * Linear algebra primer for beginners
-* Swift Charts integration examples
 
 ## Contributing
 
