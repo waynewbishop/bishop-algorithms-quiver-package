@@ -63,7 +63,7 @@ Variance measures the average squared distance from the mean:
 
 ```swift
 let measurements = [72.0, 68.0, 75.0, 71.0, 69.0, 73.0, 70.0]
-let variance = measurements.variance()  // 5.27
+let variance = measurements.variance()  // 4.98
 
 // Low variance = consistent measurements
 // High variance = variable measurements
@@ -90,7 +90,7 @@ let std = temperatures.std()  // 0.19°C
 // Resource consumption analysis
 let consumption = [15.0, 18.0, 16.0, 17.0, 19.0, 14.0, 16.0]  // units per hour
 let avgConsumption = consumption.mean()  // 16.4
-let consistency = consumption.std()  // 1.72
+let consistency = consumption.std()  // 1.59
 
 // Most values fall between 14.7 and 18.1 units per hour
 ```
@@ -106,7 +106,7 @@ Track measurements over time and identify trends:
 let weeklyData = [68.0, 72.0, 70.0, 69.0, 71.0, 70.0, 73.0]
 
 let baseline = weeklyData.mean()  // 70.4
-let variability = weeklyData.std()  // 1.72
+let variability = weeklyData.std()  // 1.59
 
 // Detect unusual readings (> 2 std from mean)
 let threshold = baseline + (2.0 * variability)
@@ -242,7 +242,7 @@ let improvement = ((avgB ?? 0) - (avgA ?? 0)) / (avgA ?? 0) * 100  // 31.7% incr
 
 // Compare consistency
 let stdA = variantA.std()  // 0.015
-let stdB = variantB.std()  // 0.010
+let stdB = variantB.std()  // 0.011
 // Variant B is both better AND more consistent
 ```
 

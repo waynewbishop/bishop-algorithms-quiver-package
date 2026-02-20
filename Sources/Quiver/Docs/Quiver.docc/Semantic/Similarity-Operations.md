@@ -61,7 +61,37 @@ let equivalentDist = [0.0, 0.0].distance(to: v)  // 5.0 (same as magnitude)
 
 This distinction matters for cosine similarity, which normalizes by dividing by the product of magnitudes (`||v1|| × ||v2||`).
 
-> Tip: For normalized vectors (magnitude = 1), dot product equals cosine similarity. This optimization is used in the pre-normalization technique shown later.
+### Normalization and dot product
+
+Normalization transforms the dot product into a pure directional similarity measure. Without it, the dot product mixes alignment with magnitude, making comparisons unreliable. Two vectors pointing identically but with different lengths produce vastly different dot products.
+
+```swift
+let v1 = [3.0, 4.0]
+let v2 = [6.0, 8.0]  // Same direction, 2× longer
+
+v1.dot(v2)  // 50.0
+
+// Scale both by 10×
+let v3 = [30.0, 40.0]
+let v4 = [60.0, 80.0]
+
+v3.dot(v4)  // 5000.0 (100× larger, same direction!)
+
+// Cosine similarity normalizes to measure pure direction
+v1.cosineOfAngle(with: v2)  // 1.0
+v3.cosineOfAngle(with: v4)  // 1.0 (consistent)
+```
+
+While `cosineOfAngle` is determined based on normalized vectors, you can also calculate a unit vector using the `normalized` property.
+
+```swift
+let v1 = [3.0, 4.0]
+
+// Create a unit vector (same direction, length of 1)
+let unitVector = v1.normalized  // [0.6, 0.8]
+```
+
+> Tip: For normalized vectors (magnitude = 1), dot product equals cosine similarity. You can also normalize individual vectors using the `.normalized` property.
 
 ## Cosine similarity
 

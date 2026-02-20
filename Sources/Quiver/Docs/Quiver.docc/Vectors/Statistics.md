@@ -77,14 +77,14 @@ These functions help you understand how spread out your data is:
 let data = [4.0, 7.0, 2.0, 9.0, 3.0]
 
 // Calculate the variance
-let variance = data.variance()  // 8.0
+let variance = data.variance()  // 6.8
 
 // Calculate the standard deviation
-let std = data.std()  // 2.83...
+let std = data.std()  // 2.61...
 
 // For sample statistics (n-1 denominator)
-let sampleVar = data.variance(ddof: 1)  // 10.0
-let sampleStd = data.std(ddof: 1)  // 3.16...
+let sampleVar = data.variance(ddof: 1)  // 8.5
+let sampleStd = data.std(ddof: 1)  // 2.92...
 ```
 
 > Important: The `ddof` parameter (Delta Degrees of Freedom) changes how variance is calculated. Use `ddof: 0` for population statistics and `ddof: 1` for sample statistics. Sample statistics are more commonly used when your data represents only a subset of all possible observations.
