@@ -67,29 +67,29 @@ let work = force.dot(distance)  // 50.0 (only x-axis component matters)
 // Machine Learning: Compare product feature vectors
 let product1 = [4.2, 7.8, 3.1, 9.5]  // Price, rating, reviews, popularity
 let product2 = [3.8, 8.2, 2.9, 9.7]
-let similarity = product1.cosineOfAngle(with: product2)  // 0.998 (very similar!)
+let similarity = product1.cosineOfAngle(with: product2)  // 0.999 (very similar!)
 ```
 
-### Statistics for Swift Charts
+### Statistics and Data Analysis
 
 ```swift
 import Quiver
-import Charts
 
 // Sales data over time
 let dailySales = [45.0, 52.0, 48.0, 61.0, 55.0, 58.0, 49.0, 67.0, 72.0, 69.0]
 
 // Statistical summary
-let avgSales = dailySales.mean  // 57.6
-let median = dailySales.median  // 56.5
-let stdDev = dailySales.standardDeviation  // 9.1
+let avgSales = dailySales.mean()  // 57.6
+let median = dailySales.median()  // 56.5
+let stdDev = dailySales.std()  // 8.9
 
 // Smooth noisy data for trend visualization
-let smoothed = dailySales.rollingAverage(window: 3)
-// [45.0, 48.5, 50.3, 53.7, 58.0, 58.0, 57.3, 58.0, 62.7, 69.3]
+let smoothed = dailySales.rollingMean(window: 3)
+// [45.0, 48.5, 48.3, 53.7, 54.7, 58.0, 54.0, 58.0, 62.7, 69.3]
 
-// Find outliers for highlighting in charts
-let outliers = dailySales.outlierIndices()  // [7, 8, 9] (indices of unusual spikes)
+// Find outliers for highlighting in charts (using z-score method)
+let outlierIndices = dailySales.outlierMask(threshold: 1.2).trueIndices
+// [0, 8, 9] (indices with z-score > 1.2)
 
 // Histogram binning for distribution charts
 let binned = dailySales.histogram(bins: 5)
