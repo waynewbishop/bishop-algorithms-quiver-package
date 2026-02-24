@@ -43,12 +43,90 @@ public extension Array where Element: Numeric {
         return _Vector<Element>.full2D(rows, columns, value: value)
     }
     
-    /// Creates a 2D identity matrix of size n x n
+    /// Creates an identity matrix of size n × n.
+    ///
+    /// The identity matrix is the neutral element for matrix multiplication, analogous to multiplying
+    /// by 1 in scalar arithmetic. It has ones along the main diagonal and zeros elsewhere.
+    ///
+    /// Mathematical form for n=3:
+    /// ```
+    /// [[1, 0, 0],
+    ///  [0, 1, 0],
+    ///  [0, 0, 1]]
+    /// ```
+    ///
+    /// Key properties:
+    /// - **Neutral transformation**: Leaves vectors unchanged when applied
+    /// - **Multiplication identity**: `I × M = M × I = M` for any matrix M
+    /// - **Basis vectors**: Each column represents a standard basis vector (i-hat, j-hat, k-hat, ...)
+    ///
+    /// Common uses:
+    /// - Starting point for transformation composition
+    /// - Verifying matrix inverses: `M × M⁻¹ = I`
+    /// - Representing "no transformation" in graphics pipelines
+    ///
+    /// Example:
+    /// ```swift
+    /// // Create 2D identity matrix
+    /// let identity = [Double].identity(2)
+    /// // [[1.0, 0.0],
+    /// //  [0.0, 1.0]]
+    ///
+    /// // Verify it leaves vectors unchanged
+    /// let vector = [3.0, 4.0]
+    /// let result = vector.transformedBy(identity)
+    /// // [3.0, 4.0] - unchanged
+    ///
+    /// // Math: [3, 4] = 3×[1, 0] + 4×[0, 1] = [3, 4]
+    ///
+    /// // Verify multiplication identity property
+    /// let rotation = [[0.0, -1.0], [1.0, 0.0]]
+    /// let unchanged = identity.multiplyMatrix(rotation)
+    /// // [[0.0, -1.0], [1.0, 0.0]] - same as rotation
+    /// ```
+    ///
+    /// - Parameter n: The size of the square matrix (must be positive)
+    /// - Returns: An n × n identity matrix
     static func identity(_ n: Int) -> [[Element]] {
         return _Vector<Element>.identity(n)
     }
     
-    /// Creates a diagonal matrix from a 1D array
+    /// Creates a diagonal matrix from a vector of diagonal values.
+    ///
+    /// A diagonal matrix has non-zero values only along its main diagonal (top-left to bottom-right),
+    /// with all other elements set to zero. This is fundamental for scaling transformations and
+    /// representing various linear algebra operations.
+    ///
+    /// Mathematical form for vector `[a, b, c]`:
+    /// ```
+    /// [[a, 0, 0],
+    ///  [0, b, 0],
+    ///  [0, 0, c]]
+    /// ```
+    ///
+    /// Common use cases:
+    /// - **Scaling transformations**: Apply different scale factors per axis
+    /// - **Identity matrix**: `diag([1, 1, 1])` creates the identity matrix
+    /// - **Reflection**: `diag([-1, 1])` reflects across y-axis
+    /// - **Eigenvalue matrices**: Store eigenvalues along the diagonal
+    ///
+    /// Example:
+    /// ```swift
+    /// // Create 2D scaling transformation (3× horizontal, 2× vertical)
+    /// let scale = [Double].diag([3.0, 2.0])
+    /// // [[3.0, 0.0],
+    /// //  [0.0, 2.0]]
+    ///
+    /// // Apply to vector [4, 5]
+    /// let vector = [4.0, 5.0]
+    /// let scaled = vector.transformedBy(scale)
+    /// // [12.0, 10.0]
+    ///
+    /// // Math: 4×[3, 0] + 5×[0, 2] = [12, 0] + [0, 10] = [12, 10]
+    /// ```
+    ///
+    /// - Parameter diagonal: Vector of values to place on the matrix diagonal
+    /// - Returns: Square matrix with diagonal values from input vector, zeros elsewhere
     static func diag(_ diagonal: [Element]) -> [[Element]] {
         return _Vector<Element>.diag(_Vector(elements: diagonal))
     }

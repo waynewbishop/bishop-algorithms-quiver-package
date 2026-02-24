@@ -24,8 +24,54 @@ public extension Array where Element: Numeric {
         return _Vector.dot(v1, v2)
     }
     
-    /// Transform this vector using a matrix (matrix-vector multiplication)
-    /// - Parameter matrix: The matrix to transform this vector with
+    /// Transforms this vector using a matrix (matrix-vector multiplication).
+    ///
+    /// This method applies a linear transformation to the vector by multiplying it with a matrix.
+    /// The transformation represents how the basis vectors of the coordinate system are modified,
+    /// and the vector's coordinates are recalculated in the new coordinate system.
+    ///
+    /// Mathematical operation:
+    /// ```
+    /// For matrix M and vector v:
+    /// result[i] = M[i][0]×v[0] + M[i][1]×v[1] + ... + M[i][n]×v[n]
+    /// ```
+    ///
+    /// Conceptually, a vector `[x, y]` represents:
+    /// ```
+    /// x×i-hat + y×j-hat
+    /// ```
+    /// When the matrix transforms the basis vectors, the result is:
+    /// ```
+    /// x×(transformed i-hat) + y×(transformed j-hat)
+    /// ```
+    ///
+    /// Common transformations:
+    /// - **Rotation**: Spin the vector around the origin
+    /// - **Scaling**: Stretch or compress along axes
+    /// - **Reflection**: Mirror across an axis
+    /// - **Shear**: Slant the coordinate system
+    ///
+    /// Example:
+    /// ```swift
+    /// // Rotate vector 90° counterclockwise
+    /// let rotation = [
+    ///     [0.0, -1.0],
+    ///     [1.0,  0.0]
+    /// ]
+    ///
+    /// let vector = [3.0, 4.0]
+    /// let rotated = vector.transformedBy(rotation)
+    /// // [-4.0, 3.0]
+    ///
+    /// // Math breakdown:
+    /// // [3, 4] = 3×[1, 0] + 4×[0, 1]  (original basis)
+    /// // After rotation:
+    /// // = 3×[0, 1] + 4×[-1, 0]        (transformed basis)
+    /// // = [0, 3] + [-4, 0]
+    /// // = [-4, 3]
+    /// ```
+    ///
+    /// - Parameter matrix: The transformation matrix (must have same number of columns as vector elements)
     /// - Returns: The transformed vector
     func transformedBy(_ matrix: [[Element]]) -> [Element] {
         // Check if the matrix dimensions are compatible with this vector
@@ -125,23 +171,69 @@ extension Array where Element: Collection, Element.Element: Numeric {
         return vector.transformedBy(matrixArray)
     }
 
-    /// Matrix-matrix multiplication
+    /// Multiplies this matrix by another matrix to compose transformations.
     ///
-    /// Multiplies this matrix by another matrix following standard matrix multiplication rules.
-    /// This method provides clear, descriptive naming for matrix multiplication operations.
+    /// Matrix multiplication combines two transformations into a single operation. The result
+    /// represents applying the second transformation first, then applying the first transformation.
+    /// This operation is **non-commutative**: `A × B ≠ B × A` in general.
     ///
-    /// For matrices A (n×k) and B (k×m), produces result C (n×m) where:
-    /// `C[i][j] = sum of (A[i][k] * B[k][j])` for all k
+    /// Mathematical operation for matrices A (n×k) and B (k×m):
+    /// ```
+    /// C[i][j] = A[i][0]×B[0][j] + A[i][1]×B[1][j] + ... + A[i][k]×B[k][j]
+    /// ```
+    ///
+    /// Transformation composition means:
+    /// ```
+    /// v.transformedBy(A.multiplyMatrix(B))
+    /// ```
+    /// is equivalent to:
+    /// ```
+    /// v.transformedBy(B).transformedBy(A)  // B applied first, then A
+    /// ```
+    ///
+    /// Order matters:
+    /// - **Right-to-left application**: `A.multiplyMatrix(B)` means "apply B first, then A"
+    /// - **Scale then rotate ≠ Rotate then scale**: Different orders produce different results
+    ///
+    /// Common patterns:
+    /// - **Transformation pipelines**: Object → World → Camera → Screen
+    /// - **Animation systems**: Interpolate between transformation matrices
+    /// - **Caching compositions**: Compose once, apply to many vectors efficiently
     ///
     /// Example:
     /// ```swift
-    /// let scale2x = [[2.0, 0.0], [0.0, 2.0]]
-    /// let rotate45 = [[0.707, -0.707], [0.707, 0.707]]
-    /// let combined = scale2x.multiplyMatrix(rotate45)
+    /// // Rotate 90° counterclockwise
+    /// let rotation = [
+    ///     [0.0, -1.0],
+    ///     [1.0,  0.0]
+    /// ]
+    ///
+    /// // Scale 2× horizontally, 3× vertically
+    /// let scaling = [Double].diag([2.0, 3.0])
+    ///
+    /// // Compose: rotate first, then scale
+    /// let combined = scaling.multiplyMatrix(rotation)
+    ///
+    /// // Apply to vector [1, 0]
+    /// let point = [1.0, 0.0]
+    /// let result = point.transformedBy(combined)
+    /// // [0.0, 3.0]
+    ///
+    /// // Math breakdown:
+    /// // Rotation: [1, 0] → [0, 1]
+    /// // Scaling:  [0, 1] → [0, 3]
+    ///
+    /// // Order matters:
+    /// let reversed = rotation.multiplyMatrix(scaling)
+    /// let different = point.transformedBy(reversed)
+    /// // [0.0, 2.0] - different result!
+    ///
+    /// // Scaling:  [1, 0] → [2, 0]
+    /// // Rotation: [2, 0] → [0, 2]
     /// ```
     ///
-    /// - Parameter other: The matrix to multiply with (must have compatible dimensions)
-    /// - Returns: The resulting matrix
+    /// - Parameter other: The matrix to multiply with (must have compatible dimensions: this.columns == other.rows)
+    /// - Returns: The resulting composed transformation matrix
     func multiplyMatrix(_ other: [[Element.Element]]) -> [[Element.Element]] {
         // Convert self to [[Element.Element]]
         let lhsMatrix = self.map { row -> [Element.Element] in

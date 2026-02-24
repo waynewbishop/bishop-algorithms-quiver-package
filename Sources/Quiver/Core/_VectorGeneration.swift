@@ -62,13 +62,13 @@ extension _Vector where Element: Numeric {
     /// Creates an identity matrix of size n x n
     static func identity(_ n: Int) -> [[Element]] {
         precondition(n > 0, "Matrix dimension must be positive")
-        
+
         // Create matrix of zeros
         var result = zeros2D(n, n)
-        
+
         // Set diagonal elements to one
         for i in 0..<n {
-            if let one = (1 as? Element) {
+            if let one = Element(exactly: 1) {
                 result[i][i] = one
             } else {
                 // Handle types that can't convert from Int
@@ -76,7 +76,7 @@ extension _Vector where Element: Numeric {
                 fatalError("Could not convert literal 1 to the specified Element type")
             }
         }
-        
+
         return result
     }
     
