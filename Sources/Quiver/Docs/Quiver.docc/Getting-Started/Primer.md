@@ -94,7 +94,7 @@ let matrix = [
 
 Matrices serve two primary purposes: organizing data (where rows might represent samples and columns represent features) and representing transformations (such as rotations, scaling, reflections, and shearing).
 
-> Tip: The term **canvas** appears throughout mathematics and computer science to represent the fundamental space where objects exist. In graph theory, the canvas is the collection of vertices (as seen in [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/)). In linear algebra, the canvas is the coordinate system defined by basis vectors. Both use "canvas" to mean the foundational structure on which everything else is built.
+> Tip: The term **canvas** appears throughout to represent the fundamental space where objects exist. In graph theory, the canvas is the collection of `vertices` (as seen in [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/)). In linear algebra, the canvas is the coordinate system defined by basis vectors. 
 
 #### Matrix Creation
 

@@ -91,7 +91,7 @@ let v1 = [3.0, 4.0]
 let unitVector = v1.normalized  // [0.6, 0.8]
 ```
 
-> Tip: For normalized vectors (magnitude = 1), dot product equals cosine similarity. You can also normalize individual vectors using the `.normalized` property.
+> Tip: For normalized vectors (magnitude = 1), dot product equals cosine similarity.
 
 ## Cosine similarity
 
