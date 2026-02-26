@@ -1,6 +1,6 @@
 # Determinants Primer
 
-Understand how matrices scale spacen and assess numerical stability.
+Understand how matrices scale space and assess numerical stability.
 
 ## Overview
 
@@ -87,7 +87,7 @@ dependent.determinant  // 0.0
 
 The third equation adds no new information. We have three unknowns but only two independent equations — not enough to find a unique solution.
 
-> Important: Attempting to call `.inverted()` on a singular matrix results in a fatal error. Always check the determinant first, or use `.conditionNumber` for a safer diagnostic.
+> Important: Calling `.inverted()` on a singular matrix throws a `MatrixError.singular` error. Use `try`, `try?`, or check the determinant first.
 
 ### Why this matters in practice
 
@@ -101,7 +101,7 @@ When a matrix has a non-zero determinant, we can compute its inverse. The invers
 let A = [[3.0, 1.0],
          [2.0, 5.0]]
 
-let inv = A.inverted()
+let inv = try A.inverted()
 let identity = A.multiplyMatrix(inv)
 // [[1.0, 0.0],
 //  [0.0, 1.0]]
@@ -110,8 +110,8 @@ let identity = A.multiplyMatrix(inv)
 The product A × A⁻¹ always equals the identity matrix — the transformation that leaves everything unchanged. The determinant connects directly to inversion: the determinant of the inverse equals the reciprocal of the original determinant:
 
 ```swift
-A.determinant             // 13.0
-A.inverted().determinant  // 0.0769... (1/13)
+A.determinant                  // 13.0
+try A.inverted().determinant   // 0.0769... (1/13)
 ```
 
 This makes geometric sense. If the original transformation scales area by a factor of `13`, undoing that transformation must scale area by `1/13` to restore the original size.
@@ -126,7 +126,7 @@ let A = [[3.0, 1.0],
          [2.0, 5.0]]
 let b = [10.0, 27.0]
 
-let solution = b.transformedBy(A.inverted())
+let solution = try b.transformedBy(A.inverted())
 // [1.77, 4.69]
 ```
 
@@ -151,7 +151,7 @@ nearSingular.determinant      // 0.0000001 (non-zero, technically invertible)
 nearSingular.conditionNumber  // > 1,000,000 (inversion results are unreliable)
 ```
 
-This matrix has a tiny but non-zero determinant, so `.inverted()` returns a result — but that result is numerically unreliable. The condition number catches what the determinant alone misses.
+This matrix has a tiny but non-zero determinant, so `try inverted()` returns a result — but that result is numerically unreliable. The condition number catches what the determinant alone misses.
 
 **Interpreting the condition number:**
 
@@ -178,7 +178,7 @@ let matrix = [[4.0, 1.0],
 
 let cond = matrix.conditionNumber
 if cond < 1_000 {
-    let inverse = matrix.inverted()
+    let inverse = try matrix.inverted()
     // Safe to use the inverse
 } else {
     // Matrix is ill-conditioned — consider regularization
@@ -230,12 +230,6 @@ ld.sign         // 0.0
 ld.logAbsValue  // -infinity
 ```
 
-**NumPy equivalent:**
-```python
-import numpy as np
-sign, logdet = np.linalg.slogdet(matrix)
-```
-
 ### Comparing determinants safely
 
 The log form is especially useful when comparing the determinants of multiple matrices. Instead of comparing raw values that might be astronomically large or vanishingly small, we compare their logarithms — which are ordinary, well-behaved numbers:
@@ -272,7 +266,7 @@ let ld = matrix.logDeterminant
 // ld.sign = 1.0, ld.logAbsValue ≈ 2.302
 
 // All checks pass — safe to proceed
-let inverse = matrix.inverted()
+let inverse = try matrix.inverted()
 ```
 
 For matrices that fail these diagnostics, we know to handle the situation gracefully — whether that means applying regularization, using a pseudoinverse, or simply reporting that the computation cannot be performed reliably.

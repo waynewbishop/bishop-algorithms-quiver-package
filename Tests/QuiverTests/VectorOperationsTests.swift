@@ -1117,9 +1117,9 @@ final class VectorOperationsTests: XCTestCase {
 
     // MARK: - Matrix Inverted Tests
 
-    func testInverted2x2() {
+    func testInverted2x2() throws {
         let matrix = [[4.0, 7.0], [2.0, 6.0]]
-        let inverse = matrix.inverted()
+        let inverse = try matrix.inverted()
 
         // Verify A * A^-1 = I
         let identity = matrix.multiplyMatrix(inverse)
@@ -1130,21 +1130,21 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(identity[1][1], 1.0, accuracy: 1e-10)
     }
 
-    func testInvertedIdentity() {
+    func testInvertedIdentity() throws {
         let identity = [[1.0, 0.0], [0.0, 1.0]]
-        let inverse = identity.inverted()
+        let inverse = try identity.inverted()
 
         // Inverse of identity is identity
         XCTAssertEqual(inverse, identity)
     }
 
-    func testInverted3x3() {
+    func testInverted3x3() throws {
         let matrix = [
             [1.0, 2.0, 3.0],
             [0.0, 1.0, 4.0],
             [5.0, 6.0, 0.0]
         ]
-        let inverse = matrix.inverted()
+        let inverse = try matrix.inverted()
 
         // Verify A * A^-1 = I
         let identity = matrix.multiplyMatrix(inverse)
@@ -1163,9 +1163,9 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(identity[2][1], 0.0, accuracy: 1e-10)
     }
 
-    func testInvertedScalingMatrix() {
+    func testInvertedScalingMatrix() throws {
         let scale = [[2.0, 0.0], [0.0, 3.0]]
-        let inverse = scale.inverted()
+        let inverse = try scale.inverted()
 
         // Inverse of scaling should be 1/scale
         XCTAssertEqual(inverse[0][0], 0.5, accuracy: 1e-10)
@@ -1174,10 +1174,10 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(inverse[1][0], 0.0, accuracy: 1e-10)
     }
 
-    func testInvertedSymmetric() {
+    func testInvertedSymmetric() throws {
         // Symmetric matrix
         let matrix = [[4.0, 2.0], [2.0, 3.0]]
-        let inverse = matrix.inverted()
+        let inverse = try matrix.inverted()
 
         // Verify A * A^-1 = I
         let identity = matrix.multiplyMatrix(inverse)
@@ -1188,16 +1188,32 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(identity[1][1], 1.0, accuracy: 1e-10)
     }
 
-    func testInvertedReverseOrder() {
+    func testInvertedReverseOrder() throws {
         // Verify that (A^-1)^-1 = A
         let matrix = [[3.0, 7.0], [2.0, 5.0]]
-        let inverse = matrix.inverted()
-        let doubleInverse = inverse.inverted()
+        let inverse = try matrix.inverted()
+        let doubleInverse = try inverse.inverted()
 
         XCTAssertEqual(doubleInverse[0][0], matrix[0][0], accuracy: 1e-10)
         XCTAssertEqual(doubleInverse[0][1], matrix[0][1], accuracy: 1e-10)
         XCTAssertEqual(doubleInverse[1][0], matrix[1][0], accuracy: 1e-10)
         XCTAssertEqual(doubleInverse[1][1], matrix[1][1], accuracy: 1e-10)
+    }
+
+    func testInvertedSingularThrows() {
+        let singular = [[1.0, 2.0], [2.0, 4.0]]
+        XCTAssertThrowsError(try singular.inverted()) { error in
+            XCTAssertTrue(error is MatrixError)
+            XCTAssertEqual(error as? MatrixError, .singular)
+        }
+    }
+
+    func testInvertedNonSquareThrows() {
+        let nonSquare = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+        XCTAssertThrowsError(try nonSquare.inverted()) { error in
+            XCTAssertTrue(error is MatrixError)
+            XCTAssertEqual(error as? MatrixError, .notSquare)
+        }
     }
 
     // MARK: - Top Indices with Labels Tests

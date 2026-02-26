@@ -13,6 +13,25 @@
 
 import Foundation
 
+// MARK: - Matrix Error Type
+
+/// Errors thrown by matrix operations that can fail at runtime.
+public enum MatrixError: Error, Equatable, CustomStringConvertible {
+    /// The operation requires a square matrix but received a non-square one.
+    case notSquare
+    /// The matrix is singular (determinant = 0) and cannot be inverted.
+    case singular
+
+    public var description: String {
+        switch self {
+        case .notSquare:
+            return "Matrix operation requires a square matrix"
+        case .singular:
+            return "Matrix is singular and cannot be inverted (determinant = 0)"
+        }
+    }
+}
+
 // MARK: - Log Determinant Result Type
 
 /// Represents the sign and natural logarithm of a matrix determinant.
@@ -348,15 +367,17 @@ public extension Array where Element: Collection, Element.Element: FloatingPoint
     /// ```swift
     /// let matrix = [[4.0, 7.0],
     ///               [2.0, 6.0]]
-    /// let inverse = matrix.inverted()
+    /// let inverse = try matrix.inverted()
     /// // [[0.6, -0.7], [-0.2, 0.4]]
     /// ```
     ///
     /// - Returns: The inverted matrix
-    func inverted() -> [[Element.Element]] {
+    /// - Throws: `MatrixError.notSquare` if the matrix is not square,
+    ///           `MatrixError.singular` if the matrix is singular.
+    func inverted() throws -> [[Element.Element]] {
         let matrix = self.map { $0.map { $0 } }
         guard !matrix.isEmpty, matrix.count == matrix[0].count else {
-            fatalError("Matrix inversion requires a square matrix")
+            throw MatrixError.notSquare
         }
 
         let n = matrix.count
@@ -381,7 +402,7 @@ public extension Array where Element: Collection, Element.Element: FloatingPoint
             // Check for singular matrix (nearly zero pivot)
             let epsilon = Element.Element.ulpOfOne * 1000
             if abs(A[maxRow][i]) < epsilon {
-                fatalError("Matrix is singular and cannot be inverted (determinant = 0)")
+                throw MatrixError.singular
             }
 
             if maxRow != i {

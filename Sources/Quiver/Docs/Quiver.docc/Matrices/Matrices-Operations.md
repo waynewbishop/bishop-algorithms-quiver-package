@@ -134,7 +134,7 @@ Compute the inverse of a matrix:
 
 ```swift
 let matrix = [[4.0, 7.0], [2.0, 6.0]]
-let inverse = matrix.inverted()
+let inverse = try matrix.inverted()
 // [[0.6, -0.7], [-0.2, 0.4]]
 
 // Verify: A × A⁻¹ = I (identity)
@@ -149,7 +149,7 @@ The inverse matrix A⁻¹ satisfies: A × A⁻¹ = I (identity matrix)
 - Reversing transformations
 - Computing least squares solutions
 
-> Important: Only non-singular matrices (determinant ≠ 0) can be inverted. Attempting to invert a singular matrix results in a fatal error.
+> Important: Only non-singular matrices (determinant ≠ 0) can be inverted. Calling `.inverted()` on a singular matrix throws `MatrixError.singular`.
 
 **NumPy equivalent:**
 ```python
