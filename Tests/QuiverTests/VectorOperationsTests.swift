@@ -1245,4 +1245,172 @@ final class VectorOperationsTests: XCTestCase {
         XCTAssertEqual(top3[2].label, "mat")
         XCTAssertEqual(top3[2].score, 0.78, accuracy: 0.001)
     }
+
+    // MARK: - LogDeterminant Tests
+
+    func testLogDeterminant2x2() {
+        let matrix = [[4.0, 3.0], [6.0, 3.0]]
+        let ld = matrix.logDeterminant
+
+        // det = 4*3 - 3*6 = -6
+        XCTAssertEqual(ld.sign, -1.0)
+        XCTAssertEqual(ld.logAbsValue, log(6.0), accuracy: 1e-10)
+        XCTAssertEqual(ld.value, -6.0, accuracy: 1e-10)
+    }
+
+    func testLogDeterminant1x1() {
+        let matrix = [[5.0]]
+        let ld = matrix.logDeterminant
+
+        XCTAssertEqual(ld.sign, 1.0)
+        XCTAssertEqual(ld.logAbsValue, log(5.0), accuracy: 1e-10)
+        XCTAssertEqual(ld.value, 5.0, accuracy: 1e-10)
+    }
+
+    func testLogDeterminant1x1Negative() {
+        let matrix = [[-3.0]]
+        let ld = matrix.logDeterminant
+
+        XCTAssertEqual(ld.sign, -1.0)
+        XCTAssertEqual(ld.logAbsValue, log(3.0), accuracy: 1e-10)
+        XCTAssertEqual(ld.value, -3.0, accuracy: 1e-10)
+    }
+
+    func testLogDeterminantIdentity() {
+        let identity = [[1.0, 0.0], [0.0, 1.0]]
+        let ld = identity.logDeterminant
+
+        // det(I) = 1, log(1) = 0
+        XCTAssertEqual(ld.sign, 1.0)
+        XCTAssertEqual(ld.logAbsValue, 0.0, accuracy: 1e-10)
+        XCTAssertEqual(ld.value, 1.0, accuracy: 1e-10)
+    }
+
+    func testLogDeterminantSingular() {
+        let matrix = [[1.0, 2.0], [2.0, 4.0]]
+        let ld = matrix.logDeterminant
+
+        // Singular matrix: sign = 0, logAbsValue = -infinity
+        XCTAssertEqual(ld.sign, 0.0)
+        XCTAssertTrue(ld.logAbsValue.isInfinite && ld.logAbsValue < 0)
+    }
+
+    func testLogDeterminant3x3() {
+        let matrix = [
+            [1.0, 2.0, 3.0],
+            [0.0, 1.0, 4.0],
+            [5.0, 6.0, 0.0]
+        ]
+        let ld = matrix.logDeterminant
+
+        // det = 1 (from existing test), so sign = 1 and log(1) = 0
+        XCTAssertEqual(ld.sign, 1.0)
+        XCTAssertEqual(ld.logAbsValue, 0.0, accuracy: 1e-10)
+        XCTAssertEqual(ld.value, 1.0, accuracy: 1e-10)
+    }
+
+    func testLogDeterminantConsistentWithDeterminant() {
+        // Verify that logDeterminant.value matches determinant for several matrices
+        let matrices: [[[Double]]] = [
+            [[3.0, 8.0], [4.0, 6.0]],
+            [[2.0, 0.0], [0.0, 2.0]],
+            [[1.0, 2.0, 3.0], [0.0, 1.0, 4.0], [5.0, 6.0, 0.0]],
+            [[4.0, 7.0], [2.0, 6.0]]
+        ]
+
+        for matrix in matrices {
+            let det = matrix.determinant
+            let ld = matrix.logDeterminant
+            XCTAssertEqual(ld.value, det, accuracy: 1e-10)
+        }
+    }
+
+    func testLogDeterminantLargeScaleMatrix() {
+        // A diagonal matrix with known determinant
+        // det = product of diagonal = 10 * 20 * 30 * 40 * 50 = 12,000,000
+        let matrix = [
+            [10.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 20.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 30.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 40.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 50.0]
+        ]
+        let ld = matrix.logDeterminant
+
+        let expectedLog = log(10.0) + log(20.0) + log(30.0) + log(40.0) + log(50.0)
+        XCTAssertEqual(ld.sign, 1.0)
+        XCTAssertEqual(ld.logAbsValue, expectedLog, accuracy: 1e-10)
+    }
+
+    // MARK: - Condition Number Tests
+
+    func testConditionNumberIdentity() {
+        let identity = [[1.0, 0.0], [0.0, 1.0]]
+        let cond = identity.conditionNumber
+
+        // Identity matrix is perfectly conditioned
+        XCTAssertEqual(cond, 1.0, accuracy: 1e-10)
+    }
+
+    func testConditionNumberIdentity3x3() {
+        let identity = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0]
+        ]
+        let cond = identity.conditionNumber
+
+        XCTAssertEqual(cond, 1.0, accuracy: 1e-10)
+    }
+
+    func testConditionNumberSingular() {
+        let singular = [[1.0, 2.0], [2.0, 4.0]]
+        let cond = singular.conditionNumber
+
+        XCTAssertTrue(cond.isInfinite)
+    }
+
+    func testConditionNumberDiagonal() {
+        // Diagonal matrix [[a, 0], [0, b]] has condition number max(|a|,|b|)/min(|a|,|b|)
+        let matrix = [[2.0, 0.0], [0.0, 8.0]]
+        let cond = matrix.conditionNumber
+
+        // 1-norm of A = max(2, 8) = 8
+        // 1-norm of A^-1 = max(0.5, 0.125) = 0.5
+        // condition = 8 * 0.5 = 4.0
+        XCTAssertEqual(cond, 4.0, accuracy: 1e-10)
+    }
+
+    func testConditionNumberWellConditioned() {
+        // A well-conditioned matrix should have a low condition number
+        let matrix = [[4.0, 1.0], [1.0, 3.0]]
+        let cond = matrix.conditionNumber
+
+        // Should be reasonably small (well-conditioned)
+        XCTAssertLessThan(cond, 10.0)
+        XCTAssertGreaterThanOrEqual(cond, 1.0)
+    }
+
+    func testConditionNumberIllConditioned() {
+        // Nearly singular matrix should have a very large condition number
+        let matrix = [
+            [1.0, 1.0],
+            [1.0, 1.0000001]
+        ]
+        let cond = matrix.conditionNumber
+
+        // Should be very large
+        XCTAssertGreaterThan(cond, 1_000_000.0)
+    }
+
+    func testConditionNumberScaling() {
+        // Scaling a matrix by a constant should not change the condition number
+        let matrix = [[4.0, 1.0], [1.0, 3.0]]
+        let scaled = [[8.0, 2.0], [2.0, 6.0]]
+
+        let cond1 = matrix.conditionNumber
+        let cond2 = scaled.conditionNumber
+
+        XCTAssertEqual(cond1, cond2, accuracy: 1e-10)
+    }
 }

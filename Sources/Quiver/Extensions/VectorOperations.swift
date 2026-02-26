@@ -13,6 +13,29 @@
 
 import Foundation
 
+// MARK: - Log Determinant Result Type
+
+/// Represents the sign and natural logarithm of a matrix determinant.
+///
+/// This type enables numerically stable determinant computations for large matrices
+/// where the raw determinant value would overflow or underflow floating-point range.
+///
+/// The determinant can be reconstructed via the `value` property, which computes
+/// `sign * exp(logAbsValue)`.
+public struct LogDeterminant {
+
+    /// The sign of the determinant: -1, 0, or 1
+    public let sign: Double
+
+    /// The natural logarithm of the absolute determinant value
+    public let logAbsValue: Double
+
+    /// Reconstructs the determinant value (sign times exp of log absolute value)
+    public var value: Double {
+        sign * Foundation.exp(logAbsValue)
+    }
+}
+
 // MARK: - Standard Numeric Vector Operations
 
 public extension Array where Element: Numeric {
@@ -374,6 +397,204 @@ public extension Array where Element: Collection, Element.Element: FloatingPoint
             }
 
             // Eliminate column
+            for k in 0..<n where k != i {
+                let factor = A[k][i]
+                for j in 0..<n {
+                    A[k][j] -= factor * A[i][j]
+                    inv[k][j] -= factor * inv[i][j]
+                }
+            }
+        }
+
+        return inv
+    }
+
+}
+
+// MARK: - Matrix Diagnostics (Double)
+
+public extension Array where Element == [Double] {
+
+    /// Returns the sign and natural logarithm of the absolute determinant.
+    ///
+    /// For large matrices, the determinant can overflow or underflow Double's range.
+    /// This method works in log-space to avoid that problem, returning the sign
+    /// separately from the logarithm of the absolute value.
+    ///
+    /// The determinant can be reconstructed as `sign * exp(logAbsValue)`, but for
+    /// many applications (comparing determinants, checking singularity thresholds)
+    /// the log form is more useful directly.
+    ///
+    /// Example:
+    /// ```swift
+    /// let matrix = [[4.0, 3.0],
+    ///               [6.0, 3.0]]
+    /// let ld = matrix.logDeterminant
+    /// // ld.sign == -1.0
+    /// // ld.logAbsValue == log(6.0) ≈ 1.7918
+    /// // ld.value == -6.0 (reconstructed)
+    /// ```
+    ///
+    /// - Returns: A `LogDeterminant` containing the sign (-1, 0, or 1) and log of the absolute determinant
+    var logDeterminant: LogDeterminant {
+        guard !self.isEmpty, self.count == self[0].count else {
+            fatalError("Log determinant requires a square matrix")
+        }
+
+        let n = self.count
+
+        // Base cases
+        if n == 1 {
+            let val = self[0][0]
+            if val == 0 {
+                return LogDeterminant(sign: 0, logAbsValue: -.infinity)
+            }
+            return LogDeterminant(sign: val < 0 ? -1.0 : 1.0, logAbsValue: Foundation.log(abs(val)))
+        }
+        if n == 2 {
+            let val = self[0][0] * self[1][1] - self[0][1] * self[1][0]
+            if val == 0 {
+                return LogDeterminant(sign: 0, logAbsValue: -.infinity)
+            }
+            return LogDeterminant(sign: val < 0 ? -1.0 : 1.0, logAbsValue: Foundation.log(abs(val)))
+        }
+
+        // LU decomposition accumulating in log-space
+        var A = self
+        var sign: Double = 1
+        var logAbsDet: Double = 0
+
+        for i in 0..<n {
+            // Find pivot
+            var maxRow = i
+            for k in (i+1)..<n {
+                if abs(A[k][i]) > abs(A[maxRow][i]) {
+                    maxRow = k
+                }
+            }
+
+            // Check for singular matrix
+            let epsilon = Double.ulpOfOne * 1000
+            if abs(A[maxRow][i]) < epsilon {
+                return LogDeterminant(sign: 0, logAbsValue: -.infinity)
+            }
+
+            if maxRow != i {
+                A.swapAt(i, maxRow)
+                sign = -sign
+            }
+
+            let pivot = A[i][i]
+            if pivot < 0 {
+                sign = -sign
+            }
+            logAbsDet += Foundation.log(abs(pivot))
+
+            // Eliminate column
+            for k in (i+1)..<n {
+                let factor = A[k][i] / A[i][i]
+                for j in (i+1)..<n {
+                    A[k][j] -= factor * A[i][j]
+                }
+            }
+        }
+
+        return LogDeterminant(sign: sign, logAbsValue: logAbsDet)
+    }
+
+    /// Returns the condition number of the matrix using the 1-norm.
+    ///
+    /// The condition number measures how sensitive the matrix inverse is to
+    /// numerical perturbations. A large condition number indicates an
+    /// ill-conditioned matrix where small input changes produce large output changes.
+    ///
+    /// Interpretation:
+    /// - Near 1.0: Well-conditioned, safe to invert
+    /// - 10³–10⁶: Moderate conditioning, results may lose precision
+    /// - Above 10⁶: Ill-conditioned, inversion results are unreliable
+    /// - Infinity: Singular matrix, no inverse exists
+    ///
+    /// Example:
+    /// ```swift
+    /// let identity = [[1.0, 0.0],
+    ///                 [0.0, 1.0]]
+    /// identity.conditionNumber  // 1.0 (perfectly conditioned)
+    ///
+    /// let illConditioned = [[1.0, 1.0],
+    ///                       [1.0, 1.0000001]]
+    /// illConditioned.conditionNumber  // Very large (near-singular)
+    /// ```
+    ///
+    /// - Returns: The 1-norm condition number, or `.infinity` for singular matrices
+    var conditionNumber: Double {
+        guard !self.isEmpty, self.count == self[0].count else {
+            fatalError("Condition number requires a square matrix")
+        }
+
+        let n = self.count
+
+        // Compute 1-norm of the original matrix (max absolute column sum)
+        let norm1A = _matrixNorm1(self, size: n)
+
+        // Attempt inversion without fatalError
+        guard let inv = _tryInvert(self, size: n) else {
+            return .infinity
+        }
+
+        // Compute 1-norm of the inverse
+        let norm1Inv = _matrixNorm1(inv, size: n)
+
+        return norm1A * norm1Inv
+    }
+
+    // Computes the 1-norm of a square matrix (max absolute column sum)
+    private func _matrixNorm1(_ matrix: [[Double]], size n: Int) -> Double {
+        var maxColSum: Double = 0
+        for j in 0..<n {
+            var colSum: Double = 0
+            for i in 0..<n {
+                colSum += abs(matrix[i][j])
+            }
+            if colSum > maxColSum {
+                maxColSum = colSum
+            }
+        }
+        return maxColSum
+    }
+
+    // Non-fatal matrix inversion (returns nil for singular matrices)
+    private func _tryInvert(_ matrix: [[Double]], size n: Int) -> [[Double]]? {
+        var A = matrix
+        var inv = [[Double]](repeating: [Double](repeating: 0, count: n), count: n)
+
+        for i in 0..<n {
+            inv[i][i] = 1
+        }
+
+        for i in 0..<n {
+            var maxRow = i
+            for k in (i+1)..<n {
+                if abs(A[k][i]) > abs(A[maxRow][i]) {
+                    maxRow = k
+                }
+            }
+
+            let epsilon = Double.ulpOfOne * 1000
+            if abs(A[maxRow][i]) < epsilon {
+                return nil
+            }
+
+            if maxRow != i {
+                A.swapAt(i, maxRow)
+                inv.swapAt(i, maxRow)
+            }
+
+            let pivot = A[i][i]
+            for j in 0..<n {
+                A[i][j] /= pivot
+                inv[i][j] /= pivot
+            }
+
             for k in 0..<n where k != i {
                 let factor = A[k][i]
                 for j in 0..<n {
