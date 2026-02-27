@@ -4,19 +4,19 @@ Transform raw data into actionable insights using statistical operations.
 
 ## Overview
 
-iOS and macOS developers constantly work with data—user metrics, sensor readings, time-series measurements, and performance analytics. Statistics provides the tools to understand patterns, identify outliers, and make data-driven decisions. This primer teaches you practical statistical thinking using Quiver's operations.
+iOS and macOS developers constantly work with data—user metrics, sensor readings, time-series measurements, and performance analytics. Statistics provides the tools to understand patterns, identify outliers, and make data-driven decisions. This primer teaches practical statistical thinking using Quiver's operations.
 
-## Understanding your data
+## Understanding the data
 
-Every dataset tells a story. Statistical measures help you listen to that story by answering fundamental questions about your data.
+Every dataset tells a story. Statistical measures help us listen to that story by answering fundamental questions about the data.
 
 ### Central tendency
 
-Central tendency measures identify the "typical" or "middle" value in your data. These are the first questions to ask when exploring any dataset.
+Central tendency measures identify the "typical" or "middle" value in a dataset. These are the first questions to ask when exploring any data.
 
 #### Mean (average)
 
-The mean represents the balance point of your data:
+The mean represents the balance point of the data:
 
 ```swift
 let sessionDurations = [45.0, 120.0, 30.0, 90.0, 60.0, 75.0]
@@ -29,7 +29,7 @@ let avgValue = dailyValues.mean()  // 9240.0
 
 **When to use mean:**
 - Evenly distributed data without extreme outliers
-- When you want the mathematical center of your data
+- When we want the mathematical center of the data
 - Calculating rates, averages, and expectations
 
 #### Median (middle value)
@@ -49,13 +49,13 @@ let typicalDuration = durations.median()  // 4.0 minutes
 **When to use median:**
 - Data with outliers (very high or low values)
 - Skewed distributions
-- When you want the "typical" user experience
+- When we want the "typical" user experience
 
-> Important: If mean and median are very different, your data has outliers or is skewed.
+> Important: If mean and median are very different, the data has outliers or is skewed.
 
 ### Dispersion
 
-Dispersion measures tell you how spread out your data is. Two datasets can have the same mean but very different spreads.
+Dispersion measures tell us how spread out the data is. Two datasets can have the same mean but very different spreads.
 
 #### Variance
 
@@ -71,7 +71,7 @@ let variance = measurements.variance()  // 4.98
 
 #### Standard deviation
 
-Standard deviation is the square root of variance, measured in the same units as your data:
+Standard deviation is the square root of variance, measured in the same units as the data:
 
 ```swift
 let temperatures = [20.5, 21.0, 20.8, 20.6, 20.9]
@@ -142,9 +142,10 @@ let sessions = [3.0, 15.0, 8.0, 5.0, 12.0, 180.0, 7.0, 10.0]
 let typical = sessions.median()  // 9.0 minutes
 
 // Identify extreme values (> 2 std above mean)
-guard let avg = sessions.mean(), let std = sessions.std() else { return }
-let extremeThreshold = avg + (2.0 * std)
-let extremeValues = sessions.isGreaterThan(extremeThreshold)
+if let avg = sessions.mean(), let std = sessions.std() {
+    let extremeThreshold = avg + (2.0 * std)
+    let extremeValues = sessions.isGreaterThan(extremeThreshold)
+}
 ```
 
 ### Performance metrics
@@ -274,13 +275,11 @@ Standardize data to have mean=0 and std=1:
 // Rating scores from different scales
 let ratings = [3.5, 4.2, 3.8, 4.5, 3.9, 4.1]
 
-guard let mean = ratings.mean(), let std = ratings.std() else { return }
-
-// Normalize: (value - mean) / std
-let normalized = ratings.map { ($0 - mean) / std }
-// Now centered at 0 with std of 1
-
-// Useful for comparing different metrics on same scale
+if let mean = ratings.mean(), let std = ratings.std() {
+    // Normalize: (value - mean) / std
+    let normalized = ratings.map { ($0 - mean) / std }
+    // Now centered at 0 with std of 1
+}
 ```
 
 ### Min-max scaling
@@ -291,13 +290,11 @@ Scale data to a specific range (e.g., 0-1):
 // Usage metrics with different scales
 let usage = [2.5, 15.0, 8.3, 12.5, 5.0, 20.0, 3.5]
 
-guard let min = usage.min(), let max = usage.max() else { return }
-
-// Scale to 0-1 range
-let scaled = usage.map { ($0 - min) / (max - min) }
-// [0.0, 0.71, 0.33, 0.57, 0.14, 1.0, 0.06]
-
-// Useful for visualization and comparing different metrics
+if let min = usage.min(), let max = usage.max() {
+    // Scale to 0-1 range
+    let scaled = usage.map { ($0 - min) / (max - min) }
+    // [0.0, 0.71, 0.33, 0.57, 0.14, 1.0, 0.06]
+}
 ```
 
 ## Cumulative statistics

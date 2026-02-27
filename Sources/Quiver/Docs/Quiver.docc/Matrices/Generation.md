@@ -4,7 +4,7 @@ Create arrays with specific patterns and values for numerical computing tasks.
 
 ## Overview
 
-Quiver provides a set of static methods to generate arrays with specific values, sequences, and patterns. These generation functions help you create arrays filled with zeros, ones, or custom values, as well as evenly spaced sequences or identity matrices.
+Quiver provides a set of static methods to generate arrays with specific values, sequences, and patterns. These generation functions create arrays filled with zeros, ones, or custom values, as well as evenly spaced sequences or identity matrices.
 
 ### Basic array creation
 
@@ -31,7 +31,7 @@ let linear = [Double].linspace(0, 10, num: 5)  // [0.0, 2.5, 5.0, 7.5, 10.0]
 let range = [Double].arange(0, 10, step: 2.5)  // [0.0, 2.5, 5.0, 7.5]
 ```
 
-> Note: The `linspace` function includes both endpoints, while `arange` includes the start value but excludes the end value, similar to Python's NumPy.
+> Note: The `linspace` function includes both endpoints, while `arange` includes the start value but excludes the end value.
 
 ### Creating matrices
 
@@ -86,6 +86,8 @@ let factors = [Double].ones(n)
 ### Creating test data
 
 ```swift
+import Foundation
+
 // Generate x-coordinates for plotting
 let x = [Double].linspace(0, 2 * Double.pi, num: 100)
 

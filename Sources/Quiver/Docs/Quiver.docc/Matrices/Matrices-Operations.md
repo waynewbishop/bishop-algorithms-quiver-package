@@ -43,7 +43,7 @@ let product = m1 * m2     // [[5.0, 12.0], [21.0, 32.0]] (Hadamard)
 let quotient = m1 / m2    // [[0.2, 0.33...], [0.42..., 0.5]]
 ```
 
-> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For [dot product](<doc:Fundamentals>) matrix multiplication, use `.multiplyMatrix()`.
+> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`. See <doc:Fundamentals> for how matrix-vector multiplication uses the dot product internally.
 
 ### Scalar broadcasting
 
@@ -98,7 +98,7 @@ let transposed = matrix.transpose()
 
 ### Matrix multiplication
 
-For true matrix multiplication (dot product), use `.multiplyMatrix()`:
+For matrix multiplication, use `.multiplyMatrix()`:
 
 ```swift
 let a = [[1.0, 2.0], [3.0, 4.0]]
@@ -120,13 +120,6 @@ The determinant provides important information about a matrix:
 - `det = 0`: Matrix is singular (not invertible)
 - `det ≠ 0`: Matrix is invertible
 - Magnitude indicates volume scaling in geometric transformations
-
-**NumPy equivalent:**
-```python
-import numpy as np
-matrix = np.array([[4.0, 3.0], [6.0, 3.0]])
-det = np.linalg.det(matrix)  # -6.0
-```
 
 ### Matrix inversion
 
@@ -150,13 +143,6 @@ The inverse matrix A⁻¹ satisfies: A × A⁻¹ = I (identity matrix)
 - Computing least squares solutions
 
 > Important: Only non-singular matrices (determinant ≠ 0) can be inverted. Calling `.inverted()` on a singular matrix throws `MatrixError.singular`.
-
-**NumPy equivalent:**
-```python
-import numpy as np
-matrix = np.array([[4.0, 7.0], [2.0, 6.0]])
-inverse = np.linalg.inv(matrix)
-```
 
 ### Working with data
 
@@ -216,15 +202,6 @@ let result2 = floatMatrix * 2.0
 - **Matrix multiplication**: Inner dimensions must match (n×k) × (k×m)
 - **Division**: Divisor cannot contain zero elements
 - **Column access**: Index must be within column count
-
-### NumPy Compatibility
-
-Quiver's matrix operations match NumPy's behavior:
-- Element-wise operations are the default for `+`, `-`, `*`, `/`
-- Scalar broadcasting works automatically
-- Clean operator syntax without method calls
-
-This makes Quiver familiar to data science practitioners transitioning from Python to Swift.
 
 ## See also
 

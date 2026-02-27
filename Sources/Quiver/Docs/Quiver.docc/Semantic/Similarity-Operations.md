@@ -82,7 +82,7 @@ v1.cosineOfAngle(with: v2)  // 1.0
 v3.cosineOfAngle(with: v4)  // 1.0 (consistent)
 ```
 
-While `cosineOfAngle` is determined based on normalized vectors, you can also calculate a unit vector using the `normalized` property.
+While `cosineOfAngle` is determined based on normalized vectors, we can also calculate a unit vector using the `normalized` property.
 
 ```swift
 let v1 = [3.0, 4.0]
@@ -169,11 +169,11 @@ Identify near-duplicate documents or data by computing pairwise similarities and
 ```swift
 let documents = [
     [0.8, 0.7, 0.9],
-    [0.8, 0.7, 0.9],  // Duplicate
+    [0.81, 0.69, 0.91],  // Near-duplicate of document 0
     [0.1, 0.2, 0.1]
 ]
 
-// Find duplicates with default threshold (0.95)
+// Find near-duplicates with default threshold (0.95)
 let duplicates = documents.findDuplicates()
 
 // Or specify custom threshold

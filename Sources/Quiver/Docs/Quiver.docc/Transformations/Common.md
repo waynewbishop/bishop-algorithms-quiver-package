@@ -6,31 +6,19 @@ Apply rotation, scaling, reflection, and shear transformations using transformat
 
 After understanding how transformation matrices work (see <doc:Fundamentals>), we can construct specific matrices for common geometric operations. These transformations are fundamental to graphics programming, game development, computer vision, and spatial computing.
 
-Each transformation has a characteristic matrix form that describes how it moves the basis vectors (i-hat and j-hat). Understanding these patterns lets you create custom transformations and predict how vectors will move.
+Each transformation has a characteristic matrix form that describes how it moves the basis vectors (i-hat and j-hat). Understanding these patterns enables creating custom transformations and predicting how vectors will move.
 
 ## Rotation
 
 Rotation transforms rotate vectors around the origin by a specified angle. In 2D, rotation is counterclockwise for positive angles.
 
-**Rotation by θ (theta):**
-```swift
-import Foundation
-
-func rotationMatrix(angle: Double) -> [[Double]] {
-    let cos_theta = cos(angle)
-    let sin_theta = sin(angle)
-
-    return [
-        [cos_theta, -sin_theta],
-        [sin_theta,  cos_theta]
-    ]
-}
-```
-
 ### Common rotations
 
 **90° counterclockwise:**
 ```swift
+import Quiver
+
+// 90° counterclockwise rotation
 let rotate90 = [
     [0.0, -1.0],
     [1.0,  0.0]
@@ -40,30 +28,57 @@ let rotate90 = [
 // i-hat [1,0] → [0,1] (right → up)
 // j-hat [0,1] → [-1,0] (up → left)
 
-[1.0, 0.0].transformedBy(rotate90)  // [0.0, 1.0]
-[0.0, 1.0].transformedBy(rotate90)  // [-1.0, 0.0]
+[1.0, 0.0].transformedBy(rotate90)
+// Row 1: [0, -1] • [1, 0] = (0×1 + (-1)×0) = 0
+// Row 2: [1,  0] • [1, 0] = (1×1 +   0×0)  = 1
+// Result: [0.0, 1.0]
+
+[0.0, 1.0].transformedBy(rotate90)
+// Row 1: [0, -1] • [0, 1] = (0×0 + (-1)×1) = -1
+// Row 2: [1,  0] • [0, 1] = (1×0 +   0×1)  =  0
+// Result: [-1.0, 0.0]
 ```
 
 **180° (flip):**
 ```swift
+// 180° rotation
 let rotate180 = [
     [-1.0,  0.0],
     [ 0.0, -1.0]
 ]
 
-[3.0, 4.0].transformedBy(rotate180)  // [-3.0, -4.0]
+[3.0, 4.0].transformedBy(rotate180)
+// Row 1: [-1, 0] • [3, 4] = ((-1)×3 + 0×4) = -3
+// Row 2: [0, -1] • [3, 4] = (0×3 + (-1)×4) = -4
+// Result: [-3.0, -4.0]
 ```
 
 **45° counterclockwise:**
 ```swift
-let sqrt2_2 = sqrt(2.0) / 2.0  // ≈ 0.707
+// 45° counterclockwise rotation
 let rotate45 = [
-    [sqrt2_2, -sqrt2_2],
-    [sqrt2_2,  sqrt2_2]
+    [0.707, -0.707],
+    [0.707,  0.707]
 ]
 
 [1.0, 0.0].transformedBy(rotate45)
-// [0.707, 0.707] - 45° between x and y axes
+// Row 1: [0.707, -0.707] • [1, 0] = (0.707×1 + (-0.707)×0) = 0.707
+// Row 2: [0.707,  0.707] • [1, 0] = (0.707×1 +   0.707×0)  = 0.707
+// Result: [0.707, 0.707] — 45° between x and y axes
+```
+
+**90° clockwise:**
+```swift
+// 90° clockwise rotation (negative angle flips the sign of sin)
+let rotate90cw = [
+    [ 0.0, 1.0],
+    [-1.0, 0.0]
+]
+
+[1.0, 0.0].transformedBy(rotate90cw)
+// Row 1: [0,  1] • [1, 0] = (0×1 + 1×0)    =  0
+// Row 2: [-1, 0] • [1, 0] = ((-1)×1 + 0×0) = -1
+// Result: [0.0, -1.0] — vector now points down
 ```
 
 ### Practical examples
@@ -84,13 +99,21 @@ let facingLeft = facingRight.transformedBy(rotate180)
 
 **Circular motion:**
 ```swift
+import Foundation
+
 // Object moving in circle, angle increases over time
 let time: Double = 0.0  // Seconds
 let angularSpeed = Double.pi / 2  // 90° per second
 let angle = time * angularSpeed
+let radius = 5.0
 
-let position = [radius, 0.0]
-    .transformedBy(rotationMatrix(angle: angle))
+// Build rotation matrix from computed angle
+let rotation = [
+    [cos(angle), -sin(angle)],
+    [sin(angle),  cos(angle)]
+]
+
+let position = [radius, 0.0].transformedBy(rotation)
 ```
 
 ## Scaling
@@ -99,29 +122,29 @@ Scaling transformations change the magnitude of vectors. Uniform scaling multipl
 
 **Uniform scaling (same factor all directions):**
 ```swift
-func uniformScale(_ factor: Double) -> [[Double]] {
-    // Creates diagonal matrix with factor on diagonal, zeros elsewhere
-    [Double].diag([factor, factor])
-}
-
-// Scale by 2
-let scale2x = uniformScale(2.0)
+// Scale by 2 — diagonal matrix with factor on diagonal
+let scale2x = [Double].diag([2.0, 2.0])
 // [[2.0, 0.0],
 //  [0.0, 2.0]]
 
-[3.0, 4.0].transformedBy(scale2x)  // [6.0, 8.0]
+[3.0, 4.0].transformedBy(scale2x)
+// Row 1: [2, 0] • [3, 4] = (2×3 + 0×4) = 6
+// Row 2: [0, 2] • [3, 4] = (0×3 + 2×4) = 8
+// Result: [6.0, 8.0]
 ```
 
 **Non-uniform scaling (different per axis):**
 ```swift
-// Stretch horizontally, compress vertically
+// Stretch horizontally (3×), compress vertically (0.5×)
 let stretch = [
     [3.0, 0.0],
     [0.0, 0.5]
 ]
 
 [2.0, 4.0].transformedBy(stretch)
-// [6.0, 2.0] - 3× wider, half as tall
+// Row 1: [3, 0]   • [2, 4] = (3×2 + 0×4)   = 6
+// Row 2: [0, 0.5] • [2, 4] = (0×2 + 0.5×4) = 2
+// Result: [6.0, 2.0] — 3× wider, half as tall
 ```
 
 ### Practical examples
@@ -129,8 +152,12 @@ let stretch = [
 **Sprite scaling:**
 ```swift
 // Make sprite twice as large
-let sprite = [spriteWidth, spriteHeight]
-let scaled = sprite.transformedBy(uniformScale(2.0))
+let scale2x = [Double].diag([2.0, 2.0])
+let spriteSize = [32.0, 48.0]  // Width × height in points
+let scaled = spriteSize.transformedBy(scale2x)
+// Row 1: [2, 0] • [32, 48] = (2×32 + 0×48) = 64
+// Row 2: [0, 2] • [32, 48] = (0×32 + 2×48) = 96
+// Result: [64.0, 96.0]
 ```
 
 **Aspect ratio correction:**
@@ -141,16 +168,24 @@ let aspectCorrection = [
     [0.0, 16.0/9.0]
 ]
 
-let squareCoords = wideScreenCoords.transformedBy(aspectCorrection)
+let wideScreen = [16.0, 9.0]
+let squareCoords = wideScreen.transformedBy(aspectCorrection)
+// Row 1: [1, 0]     • [16, 9] = (1×16 + 0×9)         = 16
+// Row 2: [0, 1.778] • [16, 9] = (0×16 + 1.778×9) ≈ 16
+// Result: [16.0, 16.0]
 ```
 
 **Zoom effect:**
 ```swift
 // Zoom level 1.0-3.0
 let zoomLevel = 1.5
-let zoom = uniformScale(zoomLevel)
+let zoom = [Double].diag([zoomLevel, zoomLevel])
 
-let zoomedView = cameraPosition.transformedBy(zoom)
+let cameraCenter = [100.0, 75.0]
+let zoomedView = cameraCenter.transformedBy(zoom)
+// Row 1: [1.5, 0]   • [100, 75] = (1.5×100 + 0×75) = 150
+// Row 2: [0,   1.5] • [100, 75] = (0×100 + 1.5×75)  = 112.5
+// Result: [150.0, 112.5]
 ```
 
 ## Reflection
@@ -165,7 +200,9 @@ let reflectX = [
 ]
 
 [3.0, 4.0].transformedBy(reflectX)
-// [3.0, -4.0] - x stays same, y inverted
+// Row 1: [1,  0] • [3, 4] = (1×3 +  0×4) =  3
+// Row 2: [0, -1] • [3, 4] = (0×3 + (-1)×4) = -4
+// Result: [3.0, -4.0] — x stays same, y inverted
 ```
 
 **Reflect across y-axis (vertical flip):**
@@ -176,7 +213,9 @@ let reflectY = [
 ]
 
 [3.0, 4.0].transformedBy(reflectY)
-// [-3.0, 4.0] - y stays same, x inverted
+// Row 1: [-1, 0] • [3, 4] = ((-1)×3 + 0×4) = -3
+// Row 2: [ 0, 1] • [3, 4] = (0×3 + 1×4)    =  4
+// Result: [-3.0, 4.0] — y stays same, x inverted
 ```
 
 **Reflect across diagonal (y=x):**
@@ -187,7 +226,9 @@ let reflectDiagonal = [
 ]
 
 [3.0, 4.0].transformedBy(reflectDiagonal)
-// [4.0, 3.0] - x and y swapped (this is transpose!)
+// Row 1: [0, 1] • [3, 4] = (0×3 + 1×4) = 4
+// Row 2: [1, 0] • [3, 4] = (1×3 + 0×4) = 3
+// Result: [4.0, 3.0] — x and y swapped (this is transpose!)
 ```
 
 ### Practical examples
@@ -214,50 +255,62 @@ Shear transformations "slant" the coordinate system, shifting one axis proportio
 
 **Horizontal shear (x depends on y):**
 ```swift
-func shearX(_ factor: Double) -> [[Double]] {
-    return [
-        [1.0, factor],
-        [0.0, 1.0]
-    ]
-}
+// Horizontal shear with factor 0.5
+let shearH = [
+    [1.0, 0.5],
+    [0.0, 1.0]
+]
 
-let shear = shearX(0.5)
-[2.0, 4.0].transformedBy(shear)
-// [2 + 0.5×4, 4]
-// [4.0, 4.0]
+[2.0, 4.0].transformedBy(shearH)
+// Row 1: [1, 0.5] • [2, 4] = (1×2 + 0.5×4) = 4
+// Row 2: [0, 1]   • [2, 4] = (0×2 + 1×4)   = 4
+// Result: [4.0, 4.0]
 ```
 
 **Vertical shear (y depends on x):**
 ```swift
-func shearY(_ factor: Double) -> [[Double]] {
-    return [
-        [1.0, 0.0],
-        [factor, 1.0]
-    ]
-}
+// Vertical shear with factor 0.5
+let shearV = [
+    [1.0, 0.0],
+    [0.5, 1.0]
+]
 
-let shear = shearY(0.5)
-[2.0, 4.0].transformedBy(shear)
-// [2, 4 + 0.5×2]
-// [2.0, 5.0]
+[2.0, 4.0].transformedBy(shearV)
+// Row 1: [1,   0] • [2, 4] = (1×2 + 0×4)   = 2
+// Row 2: [0.5, 1] • [2, 4] = (0.5×2 + 1×4) = 5
+// Result: [2.0, 5.0]
 ```
 
 ### Practical examples
 
 **Italic text effect:**
 ```swift
-// Lean letters to the right
-let italicShear = shearX(0.3)
-let letterPosition = [x, y]
+// Lean letters to the right with horizontal shear
+let italicShear = [
+    [1.0, 0.3],
+    [0.0, 1.0]
+]
+
+let letterPosition = [10.0, 20.0]
 let italicPosition = letterPosition.transformedBy(italicShear)
+// Row 1: [1, 0.3] • [10, 20] = (1×10 + 0.3×20) = 16
+// Row 2: [0, 1]   • [10, 20] = (0×10 + 1×20)    = 20
+// Result: [16.0, 20.0]
 ```
 
 **Perspective projection:**
 ```swift
 // Simple perspective (farther = more shifted)
-let perspective = shearX(0.2)
-let objectDepth = [x, z]  // z is depth
+let perspective = [
+    [1.0, 0.2],
+    [0.0, 1.0]
+]
+
+let objectDepth = [5.0, 10.0]  // x position and z depth
 let screenPosition = objectDepth.transformedBy(perspective)
+// Row 1: [1, 0.2] • [5, 10] = (1×5 + 0.2×10) = 7
+// Row 2: [0, 1]   • [5, 10] = (0×5 + 1×10)   = 10
+// Result: [7.0, 10.0]
 ```
 
 ## Combining transformation properties

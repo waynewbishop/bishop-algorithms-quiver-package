@@ -4,7 +4,7 @@ Understand how matrices scale space and assess numerical stability.
 
 ## Overview
 
-Every square matrix has a single number associated with it called the **determinant**. This value answers a geometric question: when the matrix transforms space, how much does the area (or volume) change? A determinant of `2` means the transformation doubles all areas. A determinant of `-1` means areas stay the same size but orientation flips. A determinant of `0` means the transformation crushes space down to a lower dimension — and that has serious consequences for whether we can undo the transformation.
+Every square matrix has a single number associated with it called the **determinant**. This value answers a geometric question: when the matrix transforms space, how much does the area (or volume) change? The determinant tells us whether a transformation is reversible and how it scales the space it acts on.
 
 > Note: This primer builds on concepts from the <doc:Primer>. Familiarity with vectors, matrices, and transformations will help, but the examples are self-contained.
 
@@ -87,7 +87,24 @@ dependent.determinant  // 0.0
 
 The third equation adds no new information. We have three unknowns but only two independent equations — not enough to find a unique solution.
 
-> Important: Calling `.inverted()` on a singular matrix throws a `MatrixError.singular` error. Use `try`, `try?`, or check the determinant first.
+> Important: Calling `.inverted()` on a singular matrix throws a `MatrixError.singular` error. Handle this with `do-catch`, `try?`, or check the determinant first:
+
+```swift
+import Quiver
+
+// Safe inversion with error handling
+let matrix = [[1.0, 2.0],
+              [2.0, 4.0]]
+
+do {
+    let inverse = try matrix.inverted()
+} catch {
+    print("Matrix is singular — no inverse exists")
+}
+
+// Or use try? for optional result
+let maybeInverse = try? matrix.inverted()  // nil for singular matrices
+```
 
 ### Why this matters in practice
 
@@ -166,7 +183,7 @@ let singular = [[1.0, 2.0],
 singular.conditionNumber  // .infinity
 ```
 
-Quiver computes the condition number using the **1-norm** (maximum absolute column sum), which is the same approach used by LAPACK and NumPy.
+Quiver computes the condition number using the **1-norm** (maximum absolute column sum).
 
 ### When to check the condition number
 

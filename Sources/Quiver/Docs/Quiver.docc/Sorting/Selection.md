@@ -4,7 +4,7 @@ Select top-K largest or smallest elements from arrays by value.
 
 ## Overview
 
-Sorting operations identify the highest or lowest-scoring elements in an array and return their indices with values. The `.topIndices(k:)` method provides efficient top-K selection analogous to NumPy's `argpartition` combined with sorting.
+Sorting operations identify the highest or lowest-scoring elements in an array and return their indices with values. The `.topIndices(k:)` method provides efficient top-K selection, returning results sorted by score in descending order.
 
 > Tip: For computing scores to sort (like cosine similarity or distance), see <doc:Similarity-Operations>.
 
@@ -25,22 +25,15 @@ let sorted = indices.map { values[$0] }
 **Returns:**
 - Array of indices representing sorted order
 - Original array remains unchanged
-- Useful when you need to sort multiple related arrays by the same order
+- Useful for sorting multiple related arrays by the same order
 
 ### When to use sortedIndices
 
-Use `sortedIndices()` when you need to:
+Use `sortedIndices()` when we need to:
 - Sort one array and apply the same ordering to related arrays
 - Track the original positions of sorted elements
 - Implement custom sorting algorithms that work with indices
 - Maintain correspondence between parallel arrays
-
-**NumPy equivalent:**
-```python
-import numpy as np
-values = np.array([40.0, 10.0, 30.0, 20.0])
-indices = np.argsort(values)  # [1 3 2 0]
-```
 
 ## Top-K selection
 
@@ -63,7 +56,7 @@ let top3 = scores.topIndices(k: 3)
 
 ## When to use top-K
 
-For large arrays (n = 1M) where you need only a small result set (k = 10), top-K selection is more efficient than full sorting when using heap-based implementations.
+For large arrays (n = 1M) where only a small result set is needed (k = 10), top-K selection is more efficient than full sorting when using heap-based implementations.
 
 **Current implementation:** `O(n log n)`
 **Heap-based optimization:** `O(n log k)` - future improvement
@@ -172,59 +165,6 @@ let top2 = values.topIndices(k: 2)
         )
     }
 // [DataPoint(5.7, "second"), DataPoint(4.2, "fourth")]
-```
-
-## For Python developers
-
-Quiver's `topIndices(k:)` combines NumPy's `argsort` with array slicing:
-
-**Python (NumPy):**
-```python
-import numpy as np
-
-scores = np.array([0.3, 0.9, 0.1, 0.7, 0.5])
-
-# Get top-K indices (requires reverse and slice)
-top_k_indices = np.argsort(scores)[::-1][:3]
-# [1, 3, 4]
-
-# Get values
-top_k_values = scores[top_k_indices]
-# [0.9, 0.7, 0.5]
-
-# Create tuples manually
-results = [(idx, scores[idx]) for idx in top_k_indices]
-# [(1, 0.9), (3, 0.7), (4, 0.5)]
-```
-
-**Swift (Quiver):**
-```swift
-let scores = [0.3, 0.9, 0.1, 0.7, 0.5]
-
-let results = scores.topIndices(k: 3)
-// [(index: 1, score: 0.9),
-//  (index: 3, score: 0.7),
-//  (index: 4, score: 0.5)]
-```
-
-NumPy's `argpartition` provides `O(n)` partitioning without full sorting, similar to Quiver's future heap-based optimization:
-
-**Python (argpartition):**
-```python
-# Partition: elements < k-th are before, elements > k-th are after
-indices = np.argpartition(scores, -3)[-3:]  # Last 3 indices
-# Not guaranteed sorted: [4, 1, 3] or [3, 4, 1], etc.
-
-# Sort the partition
-sorted_indices = indices[np.argsort(scores[indices])][::-1]
-# [1, 3, 4]
-```
-
-**Swift (Quiver future optimization):**
-```swift
-// Future O(n log k) heap-based implementation
-let results = scores.topIndices(k: 3)
-// Already returns sorted results
 ```
 
 ## Algorithm complexity

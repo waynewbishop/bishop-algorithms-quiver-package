@@ -10,7 +10,7 @@ Quiver provides a comprehensive set of vector operations that treat `arrays` as 
 
 ### Basic vector properties
 
-Quiver enables you to calculate fundamental vector properties. A `vector` is a mathematical object that represents both `magnitude` and direction. Unlike a scalar value, which represents only size (like temperature or weight), a `vector` captures directional information alongside its size:
+Quiver enables calculating fundamental vector properties. A `vector` is a mathematical object that represents both `magnitude` and direction. Unlike a scalar value, which represents only size (like temperature or weight), a `vector` captures directional information alongside its size:
 
 ```swift
 let vector = [3.0, 4.0]
@@ -41,6 +41,18 @@ v1.angleInDegrees(with: v2)  // 90.0 degrees
 ```
 
 > Tip: The dot product is zero when vectors are perpendicular and equals the product of their magnitudes when they're parallel.
+
+### Vector averaging
+
+Compute the element-wise average of two vectors:
+
+```swift
+let v1 = [2.0, 8.0]
+let v2 = [6.0, 4.0]
+
+// Average corresponding elements
+let avg = v1.averaged(with: v2)  // [4.0, 6.0]
+```
 
 ### Vector projections
 
@@ -77,7 +89,7 @@ let transformed = vector.transformedBy(matrix)  // [-2.0, 1.0]
 let transformed2 = matrix.transform(vector)     // [-2.0, 1.0]
 ```
 
-> Tip: Use `matrix.transform(vector)` when you want to emphasize the matrix acting on the vector, matching mathematical notation Mv = w. Use `vector.transformedBy(matrix)` when you want to emphasize the vector being transformed.
+> Tip: Use `matrix.transform(vector)` to emphasize the matrix acting on the vector, matching mathematical notation Mv = w. Use `vector.transformedBy(matrix)` to emphasize the vector being transformed.
 
 Matrix transformations are powerful tools for implementing rotations, scaling, and other geometric operations.
 
@@ -96,7 +108,7 @@ let product = m1 * m2    // Hadamard product (element-wise): [[5.0, 12.0], [21.0
 let quotient = m1 / m2   // Element-wise division: [[0.2, 0.33...], [0.42..., 0.5]]
 ```
 
-> Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication (dot product), use `.multiplyMatrix()`.
+> Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`.
 
 **Scalar broadcasting with matrices:**
 ```swift
@@ -146,7 +158,7 @@ Vector operations in Quiver are implemented as extensions to the `Array` type wi
 - Dot product is available when elements conform to `Numeric`
 - Angle calculations use the mathematical relationship between dot product and vector magnitudes
 
-This approach means you can use these operations directly on standard Swift arrays without conversion to special types.
+This approach means these operations work directly on standard Swift arrays without conversion to special types.
 
 ## Topics
 

@@ -4,13 +4,13 @@ Calculate common statistical measures from arrays of numerical data.
 
 ## Overview
 
-Quiver extends Swift arrays with powerful statistical functions that let you calculate summary statistics like sum, mean, median, variance, and standard deviation. These operations support both exploratory data analysis and algorithmic computations.
+Quiver extends Swift arrays with powerful statistical functions for calculating summary statistics like sum, mean, median, variance, and standard deviation. These operations support both exploratory data analysis and algorithmic computations.
 
-Statistical functions form the foundation of data analysis and are essential for understanding the characteristics of your numerical data.
+Statistical functions form the foundation of data analysis and are essential for understanding the characteristics of numerical data.
 
 ### Quick data overview
 
-For a comprehensive overview of your data including both shape information and key statistics, use the `info()` method:
+For a comprehensive overview of data including both shape information and key statistics, use the `info()` method:
 
 ```swift
 let data = [12.5, 18.3, 9.8, 15.2, 13.7, 10.1, 19.4]
@@ -32,6 +32,8 @@ print(data.info())
 // [4]: 13.7
 ```
 
+The shape `(7, 0)` indicates a 1D array with 7 elements. For a 2D matrix, the shape would show both dimensions — for example, `(3, 4)` for a 3-row, 4-column matrix.
+
 ### Aggregation functions
 
 Quiver also provides functions to calculate basic aggregations on arrays:
@@ -51,11 +53,11 @@ let minIndex = data.argmin()  // 2
 let maxIndex = data.argmax()  // 3
 ```
 
-> Tip: Use `argmin()` and `argmax()` when you need to know not just the extreme values but also where they occur in your data.
+> Tip: Use `argmin()` and `argmax()` to find not just the extreme values but also where they occur in the data.
 
 ### Central tendency
 
-These functions help you find the "center" of your data distribution:
+These functions find the "center" of a data distribution:
 
 ```swift
 let data = [4.0, 7.0, 2.0, 9.0, 3.0]
@@ -71,7 +73,7 @@ let median = data.median()  // 4.0
 
 ### Dispersion and variation
 
-These functions help you understand how spread out your data is:
+These functions measure how spread out the data is:
 
 ```swift
 let data = [4.0, 7.0, 2.0, 9.0, 3.0]
@@ -87,11 +89,11 @@ let sampleVar = data.variance(ddof: 1)  // 8.5
 let sampleStd = data.std(ddof: 1)  // 2.92...
 ```
 
-> Important: The `ddof` parameter (Delta Degrees of Freedom) changes how variance is calculated. Use `ddof: 0` for population statistics and `ddof: 1` for sample statistics. Sample statistics are more commonly used when your data represents only a subset of all possible observations.
+> Important: The `ddof` parameter (Delta Degrees of Freedom) changes how variance is calculated. Use `ddof: 0` for population statistics and `ddof: 1` for sample statistics. Sample statistics are more commonly used when the data represents only a subset of all possible observations.
 
 ### Cumulative operations
 
-Calculate cumulative statistics across your array:
+Calculate cumulative statistics across an array:
 
 ```swift
 let data = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -122,7 +124,7 @@ let doubles = [1.0, 2.0, 3.0, 4.0, 5.0]
 let mean = doubles.mean()  // 3.0
 ```
 
-> Note: If you need to perform statistical operations on integer data, consider converting to a floating-point type first to avoid precision loss.
+> Note: To perform statistical operations on integer data, consider converting to a floating-point type first to avoid precision loss.
 
 ## Common use cases
 
@@ -160,7 +162,7 @@ let increased = temperatures.broadcast(multiplyingBy: 1.1)
 
 > Tip: Custom broadcasting with closures is particularly useful for complex transformations that combine multiple operations or include conditional logic. Learn more about <doc:Broadcast>.
 
-> Note: The second parameter in the custom broadcasting closure is a placeholder in this example (hence the `_`), but you can use it for operations that require a specific value.
+> Note: The second parameter in the custom broadcasting closure is a placeholder in this example (hence the `_`), but it can be used for operations that require a specific value.
 
 ### Anomaly detection
 

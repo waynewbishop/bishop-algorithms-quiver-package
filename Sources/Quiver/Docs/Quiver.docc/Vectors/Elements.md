@@ -13,6 +13,8 @@ Quiver extends Swift's `Array` type to support element-wise arithmetic operation
 Element-wise operations between two vectors:
 
 ```swift
+import Quiver
+
 let a = [1.0, 2.0, 3.0]
 let b = [4.0, 5.0, 6.0]
 let sum = a + b  // [5.0, 7.0, 9.0]
@@ -180,9 +182,9 @@ let ageEligible = ages.isGreaterThanOrEqual(18)
 let eligible = ageEligible.and(hasLicense)
 
 let eligibleAges = ages.masked(by: eligible)
-// [22, 45, 33, 19, 28, 55]
+// [22, 45, 33, 19, 55]
 
-let eligibleCount = eligible.trueIndices.count  // 6
+let eligibleCount = eligible.trueIndices.count  // 5
 ```
 
 ### Sensor data validation
@@ -243,7 +245,7 @@ This approach offers several advantages:
 - Familiar Swift syntax and behavior
 - Full support for Swift's type system and generics
 
-**Important:** The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication (dot product), use `.multiplyMatrix()`.
+**Important:** The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`.
 
 ## Topics
 

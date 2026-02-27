@@ -8,15 +8,21 @@ Individual transformations like rotation and scaling are useful, but real applic
 
 Understanding transformation composition is crucial for graphics pipelines, animation systems, and any application that chains coordinate system changes.
 
-> Note: While Quiver focuses on matrix-vector operations, understanding how **transformations** compose through matrix multiplication is essential for working with iOS frameworks like CoreGraphics and SceneKit node hierarchies. This guide teaches the mathematical principles that power these frameworks, complementing [Matrix Transformations](https://waynewbishop.github.io/swift-algorithms/22-matrix-transformations.html) in Swift Algorithms & Data Structures.
+> Tip: For geometric intuition about how transformations compose, including visual examples of rotation, scaling, and chained operations, see [Matrix Transformations](https://waynewbishop.github.io/swift-algorithms/22-matrix-transformations.html) in Swift Algorithms & Data Structures.
 
 ## Matrix multiplication
 
 Matrix multiplication composes transformations: the result represents applying one transformation after another. Unlike regular multiplication, **order matters**.
 
 ```swift
-let rotation = rotationMatrix(angle: .pi / 4)  // Rotate 45°
-let scaling = [Double].diag([2.0, 2.0])        // Scale 2×
+import Quiver
+
+// 45° counterclockwise rotation and scaling matrices
+let rotation = [
+    [0.707, -0.707],
+    [0.707,  0.707]
+]
+let scaling = [Double].diag([2.0, 2.0])
 
 // Multiply matrices to compose transformations
 let combined = rotation.multiplyMatrix(scaling)
@@ -48,8 +54,14 @@ Both produce the same result, but composition is more efficient when applying th
 Matrix multiplication is **not commutative**: `A × B ≠ B × A` in general.
 
 ```swift
-let rotate90 = rotationMatrix(angle: .pi / 2)
-let scale2x = [Double].diag([2.0, 1.0])  // Scale x by 2
+import Foundation
+
+// 90° counterclockwise rotation and scaling matrices
+let rotate90 = [
+    [0.0, -1.0],
+    [1.0,  0.0]
+]
+let scale2x = [Double].diag([2.0, 1.0])
 
 let v = [1.0, 0.0]
 
@@ -95,10 +107,15 @@ v.transformedBy(combined)
 ```swift
 // Make sprite 2× larger, then rotate 45°
 let scale = [Double].diag([2.0, 2.0])
-let rotate = rotationMatrix(angle: .pi / 4)
 
+// 45° counterclockwise rotation
+let rotate = [
+    [0.707, -0.707],
+    [0.707,  0.707]
+]
+
+// Compose: scale first, then rotate
 let scaleRotate = rotate.multiplyMatrix(scale)
-// Scales sprite, then rotates it
 ```
 
 **Why this order?**
@@ -114,37 +131,44 @@ To rotate around a point other than origin:
 3. Translate back
 
 ```swift
-// Rotate around point (px, py)
-func rotateAround(point: [Double], angle: Double) -> [[Double]] {
-    // This requires translation, which needs 3×3 matrices in 2D
-    // Or apply as sequence:
-    // 1. Shift to origin: v - point
-    // 2. Rotate: result.transformedBy(rotation)
-    // 3. Shift back: result + point
-}
-
-// Usage:
+// Rotate around pivot point using a 3-step sequence
 let pivot = [5.0, 5.0]
-let angle = Double.pi / 2
+let vector = [6.0, 5.0]
 
+// 90° rotation: [[0, -1], [1, 0]]
+let rotate90 = [
+    [0.0, -1.0],
+    [1.0,  0.0]
+]
+
+// 1. Shift to origin, 2. Rotate, 3. Shift back
 let rotated = (vector - pivot)
-    .transformedBy(rotationMatrix(angle: angle))
+    .transformedBy(rotate90)
     + pivot
+// (vector - pivot) = [1, 0]
+// Row 1: [0, -1] • [1, 0] = (0×1 + (-1)×0) = 0
+// Row 2: [1,  0] • [1, 0] = (1×1 +   0×0)  = 1
+// Rotated: [0, 1] + [5, 5] = [5.0, 6.0]
 ```
 
 ### Multiple rotations
 
 ```swift
 // Rotate 30° three times = 90° total
-let rotate30 = rotationMatrix(angle: .pi / 6)
+// 30° counterclockwise rotation
+let rotate30 = [
+    [0.866, -0.5],
+    [0.5,    0.866]
+]
 
+// Compose three 30° rotations
 let rotate90 = rotate30
     .multiplyMatrix(rotate30)
     .multiplyMatrix(rotate30)
 
 // Verify
 [1.0, 0.0].transformedBy(rotate90)
-// [0, 1] (approximately, within floating-point precision)
+// ≈ [0, 1] (within floating-point precision)
 ```
 
 ### Combining different transformations
@@ -152,13 +176,24 @@ let rotate90 = rotate30
 ```swift
 // Complex transformation: scale, shear, then rotate
 let scale = [Double].diag([2.0, 1.5])
-let shear = shearX(0.3)
-let rotate = rotationMatrix(angle: .pi / 6)
+
+// Horizontal shear with factor 0.3
+let shear = [
+    [1.0, 0.3],
+    [0.0, 1.0]
+]
+
+// 30° counterclockwise rotation
+let rotate = [
+    [0.866, -0.5],
+    [0.5,    0.866]
+]
 
 // Compose (remember: rightmost applied first)
 let complex = rotate.multiplyMatrix(shear).multiplyMatrix(scale)
 
 // Apply to many vectors efficiently
+let vectors = [[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]]
 let transformed = vectors.map { $0.transformedBy(complex) }
 ```
 
@@ -179,8 +214,8 @@ let result = [
 
 Example:
 ```swift
-let A = [[2, 0], [0, 3]]  // Scale
-let B = [[0,-1], [1, 0]]  // Rotate 90°
+let A = [[2.0, 0.0], [0.0, 3.0]]  // Scale
+let B = [[0.0, -1.0], [1.0, 0.0]]  // Rotate 90°
 
 let C = A.multiplyMatrix(B)
 // [[2*0 + 0*1, 2*(-1) + 0*0],
@@ -190,9 +225,9 @@ let C = A.multiplyMatrix(B)
 
 Verify:
 ```swift
-[1, 0].transformedBy(B)        // [0, 1] - rotated
-[0, 1].transformedBy(A)        // [0, 3] - scaled
-[1, 0].transformedBy(C)        // [0, 3] - rotate then scale ✓
+[1.0, 0.0].transformedBy(B)        // [0, 1] - rotated
+[0.0, 1.0].transformedBy(A)        // [0, 3] - scaled
+[1.0, 0.0].transformedBy(C)        // [0, 3] - rotate then scale
 ```
 
 ## Transformation pipelines
@@ -232,9 +267,17 @@ Some transformations can be reversed:
 
 **Rotation inverse:**
 ```swift
-// Rotate θ, then rotate -θ returns to original
-let rotate = rotationMatrix(angle: theta)
-let unrotate = rotationMatrix(angle: -theta)
+// Rotate 90°, then rotate -90° returns to original
+let rotate = [
+    [0.0, -1.0],
+    [1.0,  0.0]
+]
+
+// -90° rotation (clockwise)
+let unrotate = [
+    [ 0.0, 1.0],
+    [-1.0, 0.0]
+]
 
 let identity = rotate.multiplyMatrix(unrotate)
 // ≈ [[1,0],[0,1]] (within floating-point precision)
@@ -306,7 +349,11 @@ transform = transform.scaledBy(x: 2.0, y: 2.0)
 
 **Quiver (explicit math):**
 ```swift
-let rotate = rotationMatrix(angle: .pi / 4)
+// 45° counterclockwise rotation
+let rotate = [
+    [0.707, -0.707],
+    [0.707,  0.707]
+]
 let scale = [Double].diag([2.0, 2.0])
 let combined = scale.multiplyMatrix(rotate)
 ```
@@ -329,47 +376,22 @@ let worldPosition = localPosition.transformedBy(worldTransform)
 ### Custom camera system
 
 ```swift
+import Foundation
+
 // Build camera transformation
+let zoomLevel = 2.0
+let cameraAngle = Double.pi / 6  // 30°
+
 let zoom = [Double].diag([zoomLevel, zoomLevel])
-let rotation = rotationMatrix(angle: cameraAngle)
-let offset = // translation (requires 3×3 matrix in 2D)
 
-// Compose: zoom, rotate, then translate
-let cameraTransform = offset
-    .multiplyMatrix(rotation)
-    .multiplyMatrix(zoom)
-```
+// Build rotation from computed angle
+let rotation = [
+    [cos(cameraAngle), -sin(cameraAngle)],
+    [sin(cameraAngle),  cos(cameraAngle)]
+]
 
-## For Python developers
-
-Quiver's composition matches NumPy:
-
-**NumPy:**
-```python
-import numpy as np
-
-A = np.array([[2, 0], [0, 3]])
-B = np.array([[0, -1], [1, 0]])
-
-# Compose transformations
-C = A @ B
-
-# Apply to vector
-v = np.array([1, 0])
-result = C @ v
-```
-
-**Quiver:**
-```swift
-let A = [[2.0, 0.0], [0.0, 3.0]]
-let B = [[0.0, -1.0], [1.0, 0.0]]
-
-// Compose transformations
-let C = A.multiplyMatrix(B)
-
-// Apply to vector
-let v = [1.0, 0.0]
-let result = v.transformedBy(C)
+// Compose zoom and rotation
+let cameraTransform = rotation.multiplyMatrix(zoom)
 ```
 
 ## Practical applications
@@ -392,7 +414,14 @@ func interpolate(from start: [[Double]],
 
 // Animate rotation from 0° to 90° over time
 let startRotation = [Double].identity(2)
-let endRotation = rotationMatrix(angle: .pi / 2)
+
+// 90° rotation: [[0, -1], [1, 0]]
+let endRotation = [
+    [0.0, -1.0],
+    [1.0,  0.0]
+]
+
+let animationProgress = 0.5
 let currentRotation = interpolate(from: startRotation,
                                   to: endRotation,
                                   t: animationProgress)
@@ -401,28 +430,54 @@ let currentRotation = interpolate(from: startRotation,
 ### Skeletal animation
 
 ```swift
+import Foundation
+
 // Bone hierarchy: shoulder → elbow → hand
-let shoulderRotation = rotationMatrix(angle: shoulderAngle)
-let elbowRotation = rotationMatrix(angle: elbowAngle)
-let handRotation = rotationMatrix(angle: handAngle)
+let shoulderAngle = Double.pi / 6   // 30°
+let elbowAngle = Double.pi / 4      // 45°
+let handAngle = Double.pi / 12      // 15°
+
+// Build each rotation from its angle
+let shoulderRotation = [
+    [cos(shoulderAngle), -sin(shoulderAngle)],
+    [sin(shoulderAngle),  cos(shoulderAngle)]
+]
+let elbowRotation = [
+    [cos(elbowAngle), -sin(elbowAngle)],
+    [sin(elbowAngle),  cos(elbowAngle)]
+]
+let handRotation = [
+    [cos(handAngle), -sin(handAngle)],
+    [sin(handAngle),  cos(handAngle)]
+]
 
 // Hand's world transformation
 let handWorld = shoulderRotation
     .multiplyMatrix(elbowRotation)
     .multiplyMatrix(handRotation)
 
+let handLocalPosition = [1.0, 0.0]
 let handPosition = handLocalPosition.transformedBy(handWorld)
 ```
 
 ### Particle system
 
 ```swift
+import Foundation
+
 // Each particle has: position, velocity, rotation, scale
 struct Particle {
     var transform: [[Double]]
+    var angularVelocity: Double
+    var growth: Double
 
     mutating func update(deltaTime: Double) {
-        let rotation = rotationMatrix(angle: angularVelocity * deltaTime)
+        // Build rotation from computed angle
+        let angle = angularVelocity * deltaTime
+        let rotation = [
+            [cos(angle), -sin(angle)],
+            [sin(angle),  cos(angle)]
+        ]
         let scale = [Double].diag([growth, growth])
 
         // Compose with current transform
@@ -458,7 +513,6 @@ struct Particle {
 
 - <doc:Fundamentals>
 - <doc:Common>
-- <doc:Operations>
 - <doc:Operations>
 
 ## Topics

@@ -107,7 +107,7 @@ Quiver is built on several core principles:
 
 ## Data Science Framework
 
-Quiver occupies a unique niche as a Swift-native data science framework with a clean, developer-friendly API. It fills the gap between low-level frameworks and high-level tools like Foundation Models. Overall, the framework provides the style and functionality of frameworks utilized in the Python community, reimagined for Swift's type system and modern language features.
+Quiver occupies a unique niche as a Swift-native data science framework with a clean, developer-friendly API. It fills the gap between low-level frameworks and high-level tools. Overall, the framework provides the style and functionality of frameworks utilized in the Python community, reimagined for Swift's type system and modern language features.
 
 ## When to Use Quiver
 

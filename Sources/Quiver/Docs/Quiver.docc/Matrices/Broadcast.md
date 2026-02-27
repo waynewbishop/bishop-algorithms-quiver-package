@@ -4,11 +4,11 @@ Apply operations between arrays and scalars or between arrays of different dimen
 
 ## Overview
 
-Quiver provides **broadcasting** capabilities that let you perform operations between arrays and scalars, or between arrays of different shapes. Broadcasting allows you to write cleaner, more expressive code by eliminating explicit loops for common element-wise operations. 
+Quiver provides **broadcasting** capabilities that enable operations between arrays and scalars, or between arrays of different shapes. Broadcasting produces cleaner, more expressive code by eliminating explicit loops for common element-wise operations. 
 
 ### Why broadcasting?
 
-Swift already provides powerful functional methods like `map`, `reduce`, and `filter` for transforming arrays. Broadcasting is borrowed from NumPy and the Python data science ecosystem, where it has become the standard approach for mathematical operations on arrays. While Swift's functional methods are excellent for general-purpose transformations, broadcasting provides a more declarative, mathematical syntax specifically designed for numerical computing.
+Swift already provides powerful functional methods like `map`, `reduce`, and `filter` for transforming arrays. Broadcasting is a standard approach for mathematical operations on arrays, providing a more declarative syntax specifically designed for numerical computing. While Swift's functional methods are excellent for general-purpose transformations, broadcasting reads more like mathematical notation.
 
 **Swift's map (functional approach):**
 ```swift
@@ -32,7 +32,7 @@ let celsiusAlt = temperatures.broadcast(subtracting: 32.0)
 
 **When to use broadcasting vs map:**
 
-Broadcasting is ideal when you need to apply scalar mathematical operations to arrays. It makes the code read like mathematical notation and clearly separates each transformation step. Use `map` when you need custom logic, complex transformations, or non-mathematical operations where broadcasting doesn't apply.
+Broadcasting is ideal for applying scalar mathematical operations to arrays. It makes the code read like mathematical notation and clearly separates each transformation step. Use `map` for custom logic, complex transformations, or non-mathematical operations where broadcasting doesn't apply.
 
 ```swift
 // Broadcasting excels at mathematical operations
@@ -68,7 +68,7 @@ let divided = vector.broadcast(dividingBy: 2.0)  // [0.5, 1.0, 1.5, 2.0]
 
 ### Operator-based broadcasting
 
-Scalar broadcasting is available through standard arithmetic operators, providing cleaner NumPy-style syntax:
+Scalar broadcasting is also available through standard arithmetic operators:
 
 **Vector broadcasting:**
 ```swift
@@ -100,7 +100,7 @@ let result3 = matrix + 10.0
 let result4 = (matrix - 5.0) / 2.0  // Complex expressions
 ```
 
-The operator syntax is recommended for new code as it matches NumPy conventions and improves readability. The method-based syntax remains available for compatibility and for cases requiring custom operations via closures.
+The operator syntax is recommended for new code as it improves readability. The method-based syntax remains available for compatibility and for cases requiring custom operations via closures.
 
 ### Matrix-vector broadcasting
 
@@ -165,9 +165,9 @@ let customRowOperation = matrix.broadcast(withRowVector: rowVector) { matrixElem
 //  [44, 505, 6006]]
 ```
 
-> Important: In the closure, the first parameter always represents the element from the array/matrix, and the second parameter represents the scalar value or the corresponding element from the vector you're broadcasting with.
+> Important: In the closure, the first parameter always represents the element from the array/matrix, and the second parameter represents the scalar value or the corresponding element from the broadcast vector.
 
-> Tip: Choose descriptive parameter names in your closure that reflect the specific operation you're performing, rather than using generic names like "a" and "b".
+> Tip: Choose descriptive parameter names in closures that reflect the specific operation being performed, rather than using generic names like "a" and "b".
 
 ### Use cases
 

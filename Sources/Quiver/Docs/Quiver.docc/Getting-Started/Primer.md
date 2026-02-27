@@ -6,13 +6,15 @@ A concise introduction to essential linear algebra concepts using Quiver.
 
 Linear algebra forms the mathematical foundation for many fields including computer graphics, machine learning, data analysis, and physics simulations. This primer introduces key concepts through practical Swift code examples using Quiver.
 
-> Note: You don't need advanced mathematical knowledge to get started—if you can work with Swift arrays, you can begin applying linear algebra concepts in your code.
+> Note: Advanced mathematical knowledge is not required to get started—working with Swift arrays is enough to begin applying linear algebra concepts in code.
 
 ### Introducing vectors
 
 In programming, we often use arrays to store collections of values. In linear algebra, these become **vectors** which represent quantities with both `magnitude` (size) and direction. See <doc:Operations> for comprehensive vector operations.
 
 ```swift
+import Quiver
+
 // A 2D vector representing a point or direction
 let v = [3.0, 4.0]
 
