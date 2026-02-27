@@ -233,7 +233,7 @@ let large = [
     [0.0, 0.0, 0.0, 0.0, 50.0]
 ]
 let ld = large.logDeterminant
-ld.logAbsValue  // 16.52 (manageable)
+ld.logAbsValue  // ~16.3 (manageable)
 ld.value        // 12000000 (reconstructed)
 ```
 

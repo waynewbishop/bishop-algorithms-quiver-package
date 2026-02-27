@@ -154,17 +154,14 @@ let rotated = (vector - pivot)
 ### Multiple rotations
 
 ```swift
-// Rotate 30° three times = 90° total
-// 30° counterclockwise rotation
-let rotate30 = [
-    [0.866, -0.5],
-    [0.5,    0.866]
+// Rotate 45° twice = 90° total
+let rotate45 = [
+    [0.707, -0.707],
+    [0.707,  0.707]
 ]
 
-// Compose three 30° rotations
-let rotate90 = rotate30
-    .multiplyMatrix(rotate30)
-    .multiplyMatrix(rotate30)
+// Compose two 45° rotations
+let rotate90 = rotate45.multiplyMatrix(rotate45)
 
 // Verify
 [1.0, 0.0].transformedBy(rotate90)
@@ -183,10 +180,10 @@ let shear = [
     [0.0, 1.0]
 ]
 
-// 30° counterclockwise rotation
+// 90° counterclockwise rotation
 let rotate = [
-    [0.866, -0.5],
-    [0.5,    0.866]
+    [0.0, -1.0],
+    [1.0,  0.0]
 ]
 
 // Compose (remember: rightmost applied first)
@@ -285,9 +282,9 @@ let identity = rotate.multiplyMatrix(unrotate)
 
 **Scaling inverse:**
 ```swift
-// Scale by s, then scale by 1/s returns to original
-let scale = [Double].diag([s, s])
-let unscale = [Double].diag([1/s, 1/s])
+// Scale by 2, then scale by 1/2 returns to original
+let scale = [Double].diag([2.0, 2.0])
+let unscale = [Double].diag([0.5, 0.5])
 
 let identity = scale.multiplyMatrix(unscale)
 // [[1,0],[0,1]]
@@ -376,18 +373,13 @@ let worldPosition = localPosition.transformedBy(worldTransform)
 ### Custom camera system
 
 ```swift
-import Foundation
-
 // Build camera transformation
-let zoomLevel = 2.0
-let cameraAngle = Double.pi / 6  // 30°
+let zoom = [Double].diag([2.0, 2.0])
 
-let zoom = [Double].diag([zoomLevel, zoomLevel])
-
-// Build rotation from computed angle
+// 45° counterclockwise rotation
 let rotation = [
-    [cos(cameraAngle), -sin(cameraAngle)],
-    [sin(cameraAngle),  cos(cameraAngle)]
+    [0.707, -0.707],
+    [0.707,  0.707]
 ]
 
 // Compose zoom and rotation
@@ -430,25 +422,23 @@ let currentRotation = interpolate(from: startRotation,
 ### Skeletal animation
 
 ```swift
-import Foundation
-
 // Bone hierarchy: shoulder → elbow → hand
-let shoulderAngle = Double.pi / 6   // 30°
-let elbowAngle = Double.pi / 4      // 45°
-let handAngle = Double.pi / 12      // 15°
-
-// Build each rotation from its angle
+// 90° shoulder rotation
 let shoulderRotation = [
-    [cos(shoulderAngle), -sin(shoulderAngle)],
-    [sin(shoulderAngle),  cos(shoulderAngle)]
+    [0.0, -1.0],
+    [1.0,  0.0]
 ]
+
+// 45° elbow rotation
 let elbowRotation = [
-    [cos(elbowAngle), -sin(elbowAngle)],
-    [sin(elbowAngle),  cos(elbowAngle)]
+    [0.707, -0.707],
+    [0.707,  0.707]
 ]
+
+// 90° hand rotation
 let handRotation = [
-    [cos(handAngle), -sin(handAngle)],
-    [sin(handAngle),  cos(handAngle)]
+    [0.0, -1.0],
+    [1.0,  0.0]
 ]
 
 // Hand's world transformation
@@ -463,22 +453,17 @@ let handPosition = handLocalPosition.transformedBy(handWorld)
 ### Particle system
 
 ```swift
-import Foundation
-
-// Each particle has: position, velocity, rotation, scale
+// Each particle has a transform that updates per frame
 struct Particle {
     var transform: [[Double]]
-    var angularVelocity: Double
-    var growth: Double
 
-    mutating func update(deltaTime: Double) {
-        // Build rotation from computed angle
-        let angle = angularVelocity * deltaTime
+    mutating func update() {
+        // 45° rotation per frame
         let rotation = [
-            [cos(angle), -sin(angle)],
-            [sin(angle),  cos(angle)]
+            [0.707, -0.707],
+            [0.707,  0.707]
         ]
-        let scale = [Double].diag([growth, growth])
+        let scale = [Double].diag([1.01, 1.01])
 
         // Compose with current transform
         transform = transform

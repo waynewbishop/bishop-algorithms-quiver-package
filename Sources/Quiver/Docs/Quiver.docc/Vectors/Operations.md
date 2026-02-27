@@ -51,7 +51,7 @@ let v1 = [2.0, 8.0]
 let v2 = [6.0, 4.0]
 
 // Average corresponding elements
-let avg = v1.averaged(with: v2)  // [4.0, 6.0]
+let avg = [v1, v2].averaged()  // [4.0, 6.0]
 ```
 
 ### Vector projections

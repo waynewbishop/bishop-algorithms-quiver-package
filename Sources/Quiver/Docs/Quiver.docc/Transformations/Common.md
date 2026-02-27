@@ -99,21 +99,12 @@ let facingLeft = facingRight.transformedBy(rotate180)
 
 **Circular motion:**
 ```swift
-import Foundation
-
-// Object moving in circle, angle increases over time
-let time: Double = 0.0  // Seconds
-let angularSpeed = Double.pi / 2  // 90° per second
-let angle = time * angularSpeed
+// Object at radius 5, rotated 90° around the origin
 let radius = 5.0
-
-// Build rotation matrix from computed angle
-let rotation = [
-    [cos(angle), -sin(angle)],
-    [sin(angle),  cos(angle)]
-]
-
-let position = [radius, 0.0].transformedBy(rotation)
+let position = [radius, 0.0].transformedBy(rotate90)
+// Row 1: [0, -1] • [5, 0] = (0×5 + (-1)×0) = 0
+// Row 2: [1,  0] • [5, 0] = (1×5 +   0×0)  = 5
+// Result: [0.0, 5.0]
 ```
 
 ## Scaling
