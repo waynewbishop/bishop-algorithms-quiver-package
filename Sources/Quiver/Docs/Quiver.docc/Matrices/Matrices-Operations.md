@@ -43,7 +43,7 @@ let product = m1 * m2     // [[5.0, 12.0], [21.0, 32.0]] (Hadamard)
 let quotient = m1 / m2    // [[0.2, 0.33...], [0.42..., 0.5]]
 ```
 
-> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`. See <doc:Fundamentals> for how matrix-vector multiplication uses the dot product internally.
+> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`. See <doc:Transformation-Basics> for how matrix-vector multiplication uses the dot product internally.
 
 ### Scalar broadcasting
 
@@ -142,6 +142,16 @@ The inverse matrix A⁻¹ satisfies: A × A⁻¹ = I (identity matrix)
 - Reversing transformations
 - Computing least squares solutions
 
+For educational clarity, convert results to fractional form with `asFractions()`:
+
+```swift
+let inverse = try matrix.inverted()
+inverse.asFractions()
+// [[3/5, -7/10], [-1/5, 2/5]]
+```
+
+This reveals the rational structure behind decimal results. See <doc:Determinants-Primer> for a deeper look at why inverse matrices produce clean fractions.
+
 > Important: Only non-singular matrices (determinant ≠ 0) can be inverted. Calling `.inverted()` on a singular matrix throws `MatrixError.singular`.
 
 ### Working with data
@@ -206,3 +216,6 @@ let result2 = floatMatrix * 2.0
 ## See also
 
 - <doc:Operations>
+- <doc:Determinants-Primer>
+- <doc:Transformation-Basics>
+- <doc:Composition>

@@ -13,6 +13,8 @@ Statistical functions form the foundation of data analysis and are essential for
 For a comprehensive overview of data including both shape information and key statistics, use the `info()` method:
 
 ```swift
+import Quiver
+
 let data = [12.5, 18.3, 9.8, 15.2, 13.7, 10.1, 19.4]
 print(data.info())
 // Output:
@@ -184,6 +186,8 @@ guard let mean = data.mean(), let std = data.std() else {
 }
 let mask2 = data.outlierMask(threshold: 3.0, mean: mean, std: std)
 ```
+
+> Important: When all values are identical (zero standard deviation), `outlierMask` defaults the standard deviation to `1.0` and no values are flagged as outliers.
 
 ### Vector averaging
 

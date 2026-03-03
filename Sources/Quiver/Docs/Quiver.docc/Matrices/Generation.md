@@ -11,6 +11,8 @@ Quiver provides a set of static methods to generate arrays with specific values,
 Create arrays filled with specific values:
 
 ```swift
+import Quiver
+
 // Create 1D arrays
 let zeros = [Double].zeros(5)        // [0.0, 0.0, 0.0, 0.0, 0.0]
 let ones = [Int].ones(3)             // [1, 1, 1]
@@ -67,7 +69,7 @@ let diag = [Int].diag([1, 2, 3])
 
 Identity and diagonal matrices are commonly used in linear algebra operations and transformations.
 
-> Tip: For a deep understanding of identity matrices and their role in transformations, see <doc:Fundamentals>.
+> Tip: For a deep understanding of identity matrices and their role in transformations, see <doc:Transformation-Basics>.
 
 ## Common patterns
 
@@ -131,4 +133,4 @@ The array generation functions in Quiver are implemented as static methods on Ar
 
 ### Related articles
 - <doc:Matrices-Operations>
-- <doc:Fundamentals>
+- <doc:Transformation-Basics>

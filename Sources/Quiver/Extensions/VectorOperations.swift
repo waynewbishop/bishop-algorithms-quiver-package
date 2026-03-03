@@ -306,9 +306,8 @@ public extension Array where Element: Collection, Element.Element: FloatingPoint
     /// - Returns: The determinant value
     var determinant: Element.Element {
         let matrix = self.map { $0.map { $0 } }
-        guard !matrix.isEmpty, matrix.count == matrix[0].count else {
-            fatalError("Determinant requires a square matrix")
-        }
+        precondition(!matrix.isEmpty && matrix.count == matrix[0].count,
+                     "Determinant requires a square matrix")
 
         let n = matrix.count
 
@@ -458,9 +457,8 @@ public extension Array where Element == [Double] {
     ///
     /// - Returns: A `LogDeterminant` containing the sign (-1, 0, or 1) and log of the absolute determinant
     var logDeterminant: LogDeterminant {
-        guard !self.isEmpty, self.count == self[0].count else {
-            fatalError("Log determinant requires a square matrix")
-        }
+        precondition(!self.isEmpty && self.count == self[0].count,
+                     "Log determinant requires a square matrix")
 
         let n = self.count
 
@@ -548,9 +546,8 @@ public extension Array where Element == [Double] {
     ///
     /// - Returns: The 1-norm condition number, or `.infinity` for singular matrices
     var conditionNumber: Double {
-        guard !self.isEmpty, self.count == self[0].count else {
-            fatalError("Condition number requires a square matrix")
-        }
+        precondition(!self.isEmpty && self.count == self[0].count,
+                     "Condition number requires a square matrix")
 
         let n = self.count
 
@@ -651,11 +648,11 @@ public extension Array where Element: FloatingPoint {
     }
         
     /// Returns the cosine of the angle between two vectors
+    /// Returns 0.0 if either vector has zero magnitude
     func cosineOfAngle(with other: [Element]) -> Element {
         let dotProduct = self.dot(other)
         let magnitudeProduct = self.magnitude * other.magnitude
-        
-        precondition(magnitudeProduct > 0, "Cannot calculate angle with zero vector")
+        guard magnitudeProduct > 0 else { return Element.zero }
         return dotProduct / magnitudeProduct
     }
 

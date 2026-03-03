@@ -4,9 +4,9 @@ Generate arrays of random values for testing, simulation, and initialization.
 
 ## Overview
 
-Quiver provides methods to generate arrays filled with random values between 0 and 1. These functions are essential for creating test data, running simulations, initializing weight matrices, and any application that requires random numbers in array form.
+Quiver provides methods to generate arrays filled with random values. These functions support uniform distributions (default or custom range), normal (Gaussian) distributions, and random integers — the three most common random generation patterns in numerical computing.
 
-### Generating random arrays
+### Uniform random arrays
 
 Create arrays with uniformly distributed random values:
 
@@ -27,125 +27,145 @@ let randomMatrix = [Double].random(3, 2)
 
 > Note: Each call produces different random values. The examples above show possible outputs.
 
-### Float and double support
+### Custom range
 
-Random generation works with both `Float` and `Double` types:
-
-```swift
-// Generate an array of random Float values
-let randomFloats = [Float].random(3)
-// Example: [0.23, 0.68, 0.91]
-
-// Generate an array of random Double values
-let randomDoubles = [Double].random(3)
-// Example: [0.45, 0.27, 0.84]
-```
-
-### Scaling to custom ranges
-
-Random values in the `[0, 1]` range can be scaled to any desired range through simple arithmetic:
+Generate values in any range using the `in:` parameter:
 
 ```swift
-// Random test scores between 0 and 100
-let testScores = [Double].random(10).map { $0 * 100 }
-// Example: [45.2, 87.3, 32.9, 76.1, 94.5, 21.8, 65.3, 50.9, 88.2, 12.7]
+// Random values between -1 and 1
+let centered = [Double].random(5, in: -1.0...1.0)
+// Example: [-0.34, 0.71, -0.89, 0.12, 0.55]
 
 // Random temperatures between -10 and 40
-let temperatures = [Double].random(7).map { -10.0 + $0 * 50.0 }
+let temperatures = [Double].random(7, in: -10.0...40.0)
 // Example: [12.5, -3.2, 28.7, 5.1, 35.8, -8.4, 19.3]
+
+// 2D matrix with custom range
+let data = [Double].random(3, 4, in: 0.0...100.0)
 ```
 
-> Tip: The formula for scaling to range [min, max] is: `min + random * (max - min)`.
+### Normal distribution
+
+Generate values from a Gaussian (bell curve) distribution using the Box-Muller transform:
+
+```swift
+// Standard normal: mean = 0, std = 1
+let standardNormal = [Double].randomNormal(1000)
+
+// Custom mean and standard deviation
+let heights = [Double].randomNormal(500, mean: 170.0, std: 10.0)
+// Example: values clustered around 170, mostly between 150-190
+
+// 2D matrix of normal values
+let noiseMatrix = [Double].randomNormal(3, 4, mean: 0.0, std: 0.1)
+```
+
+### Random integers
+
+Generate arrays of random integers in a half-open range:
+
+```swift
+// Random integers from 0 to 9
+let digits = [Int].random(10, in: 0..<10)
+// Example: [3, 7, 1, 9, 0, 4, 6, 2, 8, 5]
+
+// Random dice rolls (1 to 6)
+let diceRolls = [Int].random(100, in: 1..<7)
+
+// 2D matrix of random integers
+let labels = [Int].random(5, 3, in: 0..<4)
+```
+
+### Float and double support
+
+All uniform and normal generation methods work with both `Float` and `Double` types:
+
+```swift
+// Float variants
+let floatValues = [Float].random(3)
+let floatNormal = [Float].randomNormal(100, mean: 0.0, std: 1.0)
+let floatRange = [Float].random(5, in: 0.0...10.0)
+```
 
 ## Common use cases
 
-### Monte Carlo simulation
+### Random vectors and transformations
 
-Estimate the area of a circle using random sampling — a classic Monte Carlo technique:
+Generate random vectors and apply the matrix transformations covered in <doc:Transformation-Basics>:
 
 ```swift
-// Generate random points in a unit square
-let n = 10000
-let xs = [Double].random(n)
-let ys = [Double].random(n)
+// Create a random 2D position
+let position = [Double].random(2, in: -10.0...10.0)
+// Example: [3.7, -6.2]
 
-// Count points falling inside the unit circle (x² + y² ≤ 1)
-var insideCircle = 0
-for i in 0..<n {
-    if xs[i] * xs[i] + ys[i] * ys[i] <= 1.0 {
-        insideCircle += 1
-    }
+// Apply a 90° rotation
+let rotate90 = [
+    [0.0, -1.0],
+    [1.0,  0.0]
+]
+let rotated = position.transformedBy(rotate90)
+```
+
+### Testing statistical operations
+
+Generate datasets with known characteristics to verify Quiver's statistics functions:
+
+```swift
+// Uniform data — mean should be near the midpoint
+let uniform = [Double].random(100, in: 50.0...70.0)
+let avg = uniform.mean()     // Approximately 60.0
+let std = uniform.std()      // Approximately 5.8
+
+// Normal data — verify the distribution matches expectations
+let normal = [Double].randomNormal(1000, mean: 100.0, std: 15.0)
+let median = normal.median()  // Approximately 100.0
+```
+
+### Similarity with random embeddings
+
+Generate random embedding vectors to test the similarity operations from <doc:Similarity-Operations>:
+
+```swift
+// Simulate three document embeddings (3 dimensions each)
+let docs = [Double].random(3, 3, in: -1.0...1.0)
+let query = [Double].random(3, in: -1.0...1.0)
+
+// Rank documents by cosine similarity to the query
+let scores = docs.cosineSimilarities(to: query)
+let ranked = scores.topIndices(k: 2)
+```
+
+### Random matrix operations
+
+Generate matrices to explore determinants and invertibility from <doc:Determinants-Primer>:
+
+```swift
+// Random 2×2 matrix — most will be invertible
+let matrix = [Double].random(2, 2, in: -5.0...5.0)
+let det = matrix.determinant
+
+if det != 0.0 {
+    let inverse = try matrix.inverted()
+    // Verify: matrix × inverse ≈ identity
+    let identity = matrix.multiplyMatrix(inverse)
 }
-
-// Estimate π: ratio of circle area to square area × 4
-let piEstimate = 4.0 * Double(insideCircle) / Double(n)
-// Approximately 3.14
-```
-
-### Initializing weight matrices
-
-Random initialization is common when setting up neural network layers or testing matrix operations:
-
-```swift
-// Initialize a 3×4 weight matrix with small random values
-let weights = [Double].random(3, 4).map { row in
-    row.map { $0 * 0.1 }  // Scale to [-0.05, 0.05] range
-}
-
-// Create a random bias vector
-let bias = [Double].random(4).map { $0 * 0.01 }
-```
-
-### Simple simulation
-
-Use random values for a basic coin flip simulation:
-
-```swift
-// Simulate 20 coin flips (values < 0.5 are tails, >= 0.5 are heads)
-let coinFlips = [Double].random(20).map { $0 < 0.5 ? "Tails" : "Heads" }
-// Example: ["Heads", "Tails", "Heads", "Heads", "Tails", ...]
-
-// Count the number of heads
-let headsCount = coinFlips.filter { $0 == "Heads" }.count
-```
-
-### Random selection
-
-Randomly select items from an array:
-
-```swift
-let fruits = ["Apple", "Banana", "Cherry", "Date", "Fig"]
-
-// Generate a safe random index within bounds
-let randomValue = [Double].random(1)[0]
-let randomIndex = min(Int(randomValue * Double(fruits.count)), fruits.count - 1)
-let selectedFruit = fruits[randomIndex]
-// Selects a random fruit from the array
-```
-
-### Generating test datasets
-
-Create synthetic data for testing statistical operations:
-
-```swift
-// Generate a dataset with known characteristics
-let baseline = [Double].random(100).map { $0 * 20.0 + 50.0 }
-// Values between 50 and 70
-
-// Compute statistics on the random data
-let avg = baseline.mean()     // Approximately 60.0
-let std = baseline.std()      // Approximately 5.8
 ```
 
 ### Implementation details
 
-The random number generation in Quiver uses Swift's built-in random functions. These functions return high-quality random values uniformly distributed between 0 and 1. We can scale these values to any desired range by simple multiplication and addition.
+Uniform random generation uses Swift's built-in `Double.random(in:)` and `Float.random(in:)` functions. Normal distribution values are generated using the Box-Muller transform, which converts pairs of uniform random values into independent standard normal samples. Integer generation uses Swift's `Int.random(in:)` with a half-open range.
+
+## See also
+
+- <doc:Statistics>
+- <doc:Generation>
 
 ## Topics
 
-### Random array generation
+### Uniform random generation
 - ``Swift/Array/random(_:)-6ulik``
 - ``Swift/Array/random(_:_:)-9gsef``
 
-### Related articles
-- <doc:Statistics>
+### Normal distribution
+- ``Swift/Array/randomNormal(_:mean:std:)->[Double]``
+- ``Swift/Array/randomNormal(_:_:mean:std:)->[[Double]]``

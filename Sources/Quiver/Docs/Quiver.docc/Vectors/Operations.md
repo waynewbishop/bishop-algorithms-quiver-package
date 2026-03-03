@@ -13,6 +13,8 @@ Quiver provides a comprehensive set of vector operations that treat `arrays` as 
 Quiver enables calculating fundamental vector properties. A `vector` is a mathematical object that represents both `magnitude` and direction. Unlike a scalar value, which represents only size (like temperature or weight), a `vector` captures directional information alongside its size:
 
 ```swift
+import Quiver
+
 let vector = [3.0, 4.0]
 
 // Calculate the magnitude (length) of the vector
@@ -20,9 +22,14 @@ vector.magnitude  // 5.0
 
 // Create a normalized version (unit vector)
 vector.normalized  // [0.6, 0.8]
+
+// See the rational form
+vector.normalized.asFractions()  // [3/5, 4/5]
 ```
 
 > Note: These vector properties are only available for arrays with elements that conform to `FloatingPoint` (like `Double` or `Float`).
+
+> Important: Calling `normalized` on a zero vector returns a zero vector, and `cosineOfAngle(with:)` returns `0.0` if either vector has zero magnitude.
 
 ### Vector relationships
 
@@ -93,37 +100,6 @@ let transformed2 = matrix.transform(vector)     // [-2.0, 1.0]
 
 Matrix transformations are powerful tools for implementing rotations, scaling, and other geometric operations.
 
-### Matrix arithmetic
-
-Quiver supports element-wise arithmetic operations on 2D arrays (matrices):
-
-```swift
-let m1 = [[1.0, 2.0], [3.0, 4.0]]
-let m2 = [[5.0, 6.0], [7.0, 8.0]]
-
-// Element-wise operations
-let sum = m1 + m2        // Addition: [[6.0, 8.0], [10.0, 12.0]]
-let diff = m1 - m2       // Subtraction: [[-4.0, -4.0], [-4.0, -4.0]]
-let product = m1 * m2    // Hadamard product (element-wise): [[5.0, 12.0], [21.0, 32.0]]
-let quotient = m1 / m2   // Element-wise division: [[0.2, 0.33...], [0.42..., 0.5]]
-```
-
-> Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`.
-
-**Scalar broadcasting with matrices:**
-```swift
-let matrix = [[100.0, 200.0], [300.0, 400.0]]
-
-// Data standardization (z-score)
-let standardized = (matrix - 250.0) / 150.0
-
-// Scaling and offset
-let scaled = matrix * 0.5      // [[50.0, 100.0], [150.0, 200.0]]
-let adjusted = matrix + 10.0   // [[110.0, 210.0], [310.0, 410.0]]
-```
-
-Matrix operations maintain the same preconditions as vector operations: dimensions must match for element-wise operations between matrices.
-
 ### Mathematical foundation
 
 Vector operations in Quiver are based on well-established mathematical principles:
@@ -135,20 +111,6 @@ Vector operations in Quiver are based on well-established mathematical principle
 - **Vector projection**: proj_u(v) = (v·u / u·u) × u
 
 > Note: Quiver follows standard mathematical conventions for vector operations, making it easier to translate mathematical formulas directly into code.
-
-#### Broadcasting: Simplifying Operations
-
-Broadcasting allows operations between arrays of different shapes:
-
-```swift
-let matrix = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
-let rowVector = [10.0, 20.0, 30.0]
-
-// Add the row vector to each row in the matrix
-let result = matrix.broadcast(addingToEachRow: rowVector)
-// [[11.0, 22.0, 33.0], [14.0, 25.0, 36.0]]
-```
-> Tip: Broadcasting eliminates the need for explicit loops when operating between arrays of compatible shapes.
 
 ### Implementation details
 
@@ -184,4 +146,6 @@ This approach means these operations work directly on standard Swift arrays with
 ### Related articles
 - <doc:Primer>
 - <doc:Similarity-Operations>
-- <doc:Fundamentals>
+- <doc:Transformation-Basics>
+- <doc:Matrices-Operations>
+- <doc:Broadcast>

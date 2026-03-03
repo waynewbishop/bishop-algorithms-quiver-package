@@ -35,12 +35,19 @@ public extension Array where Element: FloatingPoint {
         var result: [Element] = []
         result.reserveCapacity(count)
 
+        // Sliding window: maintain running sum instead of recalculating each iteration
+        var runningSum = Element.zero
+
         for i in 0..<count {
-            let start = Swift.max(0, i - window + 1)
-            let slice = Array(self[start...i])
-            let sliceSum = slice.reduce(Element.zero, +)
-            let sliceMean = sliceSum / Element(slice.count)
-            result.append(sliceMean)
+            runningSum += self[i]
+
+            // Remove the element that just fell out of the window
+            if i >= window {
+                runningSum -= self[i - window]
+            }
+
+            let windowSize = Swift.min(i + 1, window)
+            result.append(runningSum / Element(windowSize))
         }
 
         return result
@@ -89,7 +96,7 @@ public extension Array where Element: FloatingPoint {
     /// Calculate histogram bins for the data
     /// - Parameter bins: Number of bins to create
     /// - Returns: Array of tuples containing (midpoint, count) for each bin
-    func histogram(bins: Int) -> [(midpoint: Element, count: Int)] {
+    func histogram(bins: Int) -> [(midpoint: Element, count: Int)] where Element: BinaryFloatingPoint {
         guard bins > 0 && !isEmpty else { return [] }
 
         guard let minVal = self.min(), let maxVal = self.max() else {
@@ -102,22 +109,22 @@ public extension Array where Element: FloatingPoint {
         }
 
         let binWidth = (maxVal - minVal) / Element(bins)
-        var result: [(Element, Int)] = []
 
+        // Single pass: assign each element to its bin using arithmetic
+        var counts = [Int](repeating: 0, count: bins)
+        for value in self {
+            var index = Int((value - minVal) / binWidth)
+            // Clamp the max value into the last bin
+            if index >= bins { index = bins - 1 }
+            counts[index] += 1
+        }
+
+        // Build result with midpoints
+        var result: [(Element, Int)] = []
         for i in 0..<bins {
             let lower = minVal + Element(i) * binWidth
-            let upper = lower + binWidth
-            let midpoint = (lower + upper) / Element(2)
-
-            // For last bin, include upper boundary
-            let binCount: Int
-            if i == bins - 1 {
-                binCount = self.filter { $0 >= lower && $0 <= upper }.count
-            } else {
-                binCount = self.filter { $0 >= lower && $0 < upper }.count
-            }
-
-            result.append((midpoint, binCount))
+            let midpoint = lower + binWidth / Element(2)
+            result.append((midpoint, counts[i]))
         }
 
         return result
@@ -165,8 +172,16 @@ public extension Array where Element: FloatingPoint {
     func percentileRank(of value: Element) -> Element {
         guard !isEmpty else { return .zero }
 
-        let belowCount = self.filter { $0 < value }.count
-        let equalCount = self.filter { $0 == value }.count
+        // Single pass: count below and equal simultaneously
+        var belowCount = 0
+        var equalCount = 0
+        for element in self {
+            if element < value {
+                belowCount += 1
+            } else if element == value {
+                equalCount += 1
+            }
+        }
 
         let rank = (Element(belowCount) + Element(equalCount) / Element(2)) / Element(count) * Element(100)
         return rank
@@ -175,7 +190,33 @@ public extension Array where Element: FloatingPoint {
     /// Calculate percentile ranks for all values in the array
     /// - Returns: Array of percentile ranks corresponding to each value
     func percentileRanks() -> [Element] {
-        return map { percentileRank(of: $0) }
+        guard !isEmpty else { return [] }
+
+        // Sort once and compute all ranks in a single pass
+        let sorted = self.enumerated().sorted { $0.element < $1.element }
+        var ranks = [Element](repeating: .zero, count: count)
+
+        var i = 0
+        while i < sorted.count {
+            // Find the range of equal values
+            var j = i
+            while j < sorted.count && sorted[j].element == sorted[i].element {
+                j += 1
+            }
+
+            // All equal values share the same rank
+            let belowCount = i
+            let equalCount = j - i
+            let rank = (Element(belowCount) + Element(equalCount) / Element(2)) / Element(count) * Element(100)
+
+            for k in i..<j {
+                ranks[sorted[k].offset] = rank
+            }
+
+            i = j
+        }
+
+        return ranks
     }
 
     // MARK: - Normalization and Scaling

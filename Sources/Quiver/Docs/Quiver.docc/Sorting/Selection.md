@@ -13,6 +13,8 @@ Sorting operations identify the highest or lowest-scoring elements in an array a
 Get the indices that would sort an array without modifying the original:
 
 ```swift
+import Quiver
+
 let values = [40.0, 10.0, 30.0, 20.0]
 let indices = values.sortedIndices()
 // [1, 3, 2, 0]

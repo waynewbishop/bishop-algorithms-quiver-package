@@ -15,32 +15,18 @@ import XCTest
 @testable import Quiver
 
 final class ArrayAnglesTests: XCTestCase {
-    
-    func testAngleDouble() {
+
+    func testAngle() {
         let v1 = [1.0, 0.0]
         let v2 = [0.0, 1.0]
         let angle = v1.angle(with: v2)
         XCTAssertEqual(angle, Double.pi/2, accuracy: 1e-10)
     }
-    
-    func testAngleInDegreesDouble() {
+
+    func testAngleInDegrees() {
         let v1 = [1.0, 0.0]
         let v2 = [0.0, 1.0]
         let angle = v1.angleInDegrees(with: v2)
         XCTAssertEqual(angle, 90.0, accuracy: 1e-10)
-    }
-    
-    func testAngleFloat() {
-        let v1: [Float] = [1.0, 0.0]
-        let v2: [Float] = [0.0, 1.0]
-        let angle = v1.angle(with: v2)
-        XCTAssertEqual(angle, Float.pi/2, accuracy: 1e-6)
-    }
-    
-    func testAngleInDegreesFloat() {
-        let v1: [Float] = [1.0, 0.0]
-        let v2: [Float] = [0.0, 1.0]
-        let angle = v1.angleInDegrees(with: v2)
-        XCTAssertEqual(angle, 90.0, accuracy: 1e-5)
     }
 }

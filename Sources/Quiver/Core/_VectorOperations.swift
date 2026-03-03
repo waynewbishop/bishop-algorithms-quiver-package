@@ -184,10 +184,13 @@ extension _Vector where Element: FloatingPoint {
     }
     
     /// Returns a normalized version of the vector (unit vector)
+    /// Returns a zero vector if the input has zero magnitude
     func normalized() -> _Vector<Element> {
         let mag = magnitude()
-        precondition(mag > 0, "Cannot normalize a zero vector")
-        
+        guard mag > 0 else {
+            return _Vector(elements: Array(repeating: Element.zero, count: elements.count))
+        }
+
         var normalizedElements = [Element]()
         for element in elements {
             normalizedElements.append(element / mag)

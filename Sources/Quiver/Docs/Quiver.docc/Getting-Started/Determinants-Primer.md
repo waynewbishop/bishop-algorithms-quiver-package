@@ -133,6 +133,24 @@ try A.inverted().determinant   // 0.0769... (1/13)
 
 This makes geometric sense. If the original transformation scales area by a factor of `13`, undoing that transformation must scale area by `1/13` to restore the original size.
 
+### Fractional display
+
+The decimal result `0.0769...` obscures the underlying relationship — the denominator is `13` because the determinant is `13`. The `asFractions()` method reveals this structure:
+
+```swift
+let A = [[3.0, 1.0],
+         [2.0, 5.0]]
+
+let inverse = try A.inverted()
+inverse.asFractions()
+// [[5/13, -1/13],
+//  [-2/13, 3/13]]
+
+A.determinant.asFraction()  // 13
+```
+
+Every element shares the determinant as its denominator — a pattern hidden by decimal representation. The `Fraction` type is presentation-only; all operations continue to use standard `Double` values internally. Use `asFractions()` on any `[Double]` or `[[Double]]` result, or `asFraction()` on a single `Double`.
+
 ### Solving linear systems
 
 One of the most practical applications of matrix inversion is solving systems of linear equations. Given the system Ax = b, the solution is x = A⁻¹b:
@@ -291,6 +309,6 @@ For matrices that fail these diagnostics, we know to handle the situation gracef
 ## See also
 
 - <doc:Matrices-Operations> - Matrix arithmetic, transpose, and multiplication
-- <doc:Fundamentals> - Matrix-vector transformations and basis vectors
+- <doc:Transformation-Basics> - Matrix-vector transformations and basis vectors
 - <doc:Composition> - Composing multiple transformations
 - <doc:Primer> - Linear algebra fundamentals

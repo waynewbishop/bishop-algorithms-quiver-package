@@ -19,6 +19,8 @@ Central tendency measures identify the "typical" or "middle" value in a dataset.
 The mean represents the balance point of the data:
 
 ```swift
+import Quiver
+
 let sessionDurations = [45.0, 120.0, 30.0, 90.0, 60.0, 75.0]
 let average = sessionDurations.mean()  // 70.0 seconds
 

@@ -17,6 +17,10 @@ A Swift package that provides vector mathematics, numerical computing, and stati
 
 As Swift continues to expand beyond app development into domains like server-side computing, machine learning, and data analysis, the need for robust mathematical tools becomes increasingly important. Quiver serves as a foundation for data science workflows in Swift, enabling operations that are fundamental to fields like computer vision, game development, machine learning, and scientific computing.
 
+### Why Quiver
+
+As a pure Swift library with zero external dependencies, Quiver runs on every Apple platform — iOS, macOS, watchOS, tvOS, and visionOS — as well as server-side Swift with frameworks like Vapor, Linux environments, and containerized deployments. As a lightweight framework, Quiver is ideal for teaching environments, on-device processing, and any context where minimal dependencies and platform portability matter.
+ 
 ### Learn by example
 
 This framework is companion to [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/), a comprehensive guide that teaches algorithmic thinking through hands-on Swift examples. 
@@ -40,8 +44,8 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Random>
 
 ### Transformations
-- <doc:Fundamentals>
-- <doc:Common>
+- <doc:Transformation-Basics>
+- <doc:Transformation-Common>
 - <doc:Composition>
 
 ### Similarity and Distance

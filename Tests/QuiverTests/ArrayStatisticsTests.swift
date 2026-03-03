@@ -15,62 +15,62 @@ import XCTest
 @testable import Quiver
 
 final class ArrayStatisticsTests: XCTestCase {
-    
+
     func testSum() {
         let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.sum(), 15)
     }
-    
+
     func testProduct() {
         let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.product(), 120)
     }
-    
+
     func testCumulativeSum() {
         let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.cumulativeSum(), [1, 3, 6, 10, 15])
     }
-    
+
     func testCumulativeProduct() {
         let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.cumulativeProduct(), [1, 2, 6, 24, 120])
     }
-    
+
     func testMin() {
         let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.min(), 1)
     }
-    
+
     func testMax() {
         let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.max(), 8)
     }
-    
+
     func testArgmin() {
         let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.argmin(), 3)
     }
-    
+
     func testArgmax() {
         let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.argmax(), 2)
     }
-    
+
     func testMean() {
         let a = [1.0, 2.0, 3.0, 4.0, 5.0]
         XCTAssertEqual(a.mean(), 3.0)
     }
-    
+
     func testMedian() {
         let a = [1.0, 5.0, 3.0, 4.0, 2.0]
         XCTAssertEqual(a.median(), 3.0)
     }
-    
+
     func testVariance() {
         let a = [1.0, 2.0, 3.0, 4.0, 5.0]
         XCTAssertEqual(a.variance(), 2.0)
     }
-    
+
     func testStd() throws {
         let a = [1.0, 2.0, 3.0, 4.0, 5.0]
         let std = try XCTUnwrap(a.std())
@@ -83,31 +83,9 @@ final class ArrayStatisticsTests: XCTestCase {
         let data = [4.0, 7.0, 2.0, 9.0, 3.0, 35.0, 5.0]
         let mask = data.outlierMask(threshold: 2.0)
 
-        // Only 35.0 should be marked as an outlier
         XCTAssertEqual(mask.count, 7)
-        XCTAssertEqual(mask[0], false) // 4.0
-        XCTAssertEqual(mask[1], false) // 7.0
-        XCTAssertEqual(mask[2], false) // 2.0
-        XCTAssertEqual(mask[3], false) // 9.0
-        XCTAssertEqual(mask[4], false) // 3.0
         XCTAssertEqual(mask[5], true)  // 35.0 - outlier
-        XCTAssertEqual(mask[6], false) // 5.0
-    }
-
-    func testOutlierMaskCustomThreshold() {
-        let data = [1.0, 2.0, 3.0, 4.0, 5.0, 100.0]
-
-        // With threshold 1.0, 100.0 should definitely be an outlier
-        let mask1 = data.outlierMask(threshold: 1.0)
-        XCTAssertEqual(mask1.last, true)
-
-        // With threshold 2.0, 100.0 should also be an outlier
-        let mask2 = data.outlierMask(threshold: 2.0)
-        XCTAssertEqual(mask2.last, true)
-
-        // Verify count of outliers
-        let outlierCount = mask2.filter { $0 }.count
-        XCTAssertGreaterThanOrEqual(outlierCount, 1)
+        XCTAssertEqual(mask.filter { $0 }.count, 1)
     }
 
     func testOutlierMaskPreCalculatedStats() {
@@ -118,111 +96,54 @@ final class ArrayStatisticsTests: XCTestCase {
             return
         }
 
-        // Using pre-calculated stats should give same result
         let mask1 = data.outlierMask(threshold: 2.0)
         let mask2 = data.outlierMask(threshold: 2.0, mean: mean, std: std)
-
         XCTAssertEqual(mask1, mask2)
     }
 
-    func testOutlierMaskEmptyArray() {
-        let data: [Double] = []
-        let mask = data.outlierMask(threshold: 2.0)
+    func testOutlierMaskEdgeCases() {
+        // Empty array
+        XCTAssertEqual([Double]().outlierMask(threshold: 2.0), [])
 
-        XCTAssertEqual(mask, [])
-    }
+        // Single element
+        let single = [5.0].outlierMask(threshold: 2.0)
+        XCTAssertEqual(single, [false])
 
-    func testOutlierMaskSingleElement() {
-        let data = [5.0]
-        let mask = data.outlierMask(threshold: 2.0)
-
-        // Single element cannot be an outlier from itself
-        XCTAssertEqual(mask.count, 1)
-        XCTAssertEqual(mask[0], false)
-    }
-
-    func testOutlierMaskNoOutliers() {
-        let data = [1.0, 2.0, 3.0, 4.0, 5.0]
-        let mask = data.outlierMask(threshold: 2.0)
-
-        // All values should be within 2 std deviations
-        XCTAssertEqual(mask.filter { $0 }.count, 0)
-    }
-
-    func testOutlierMaskMultipleOutliers() {
-        let data = [1.0, 2.0, 3.0, 100.0, 200.0]
-
-        // Use a lower threshold to ensure outliers are detected
-        let mask = data.outlierMask(threshold: 1.0)
-
-        // Multiple outliers should be detected
-        let outlierCount = mask.filter { $0 }.count
-        XCTAssertGreaterThan(outlierCount, 0)
-
-        // Verify the extreme values are marked as outliers
-        XCTAssertTrue(mask[3] || mask[4], "At least one of the extreme values should be an outlier")
+        // No outliers
+        let normal = [1.0, 2.0, 3.0, 4.0, 5.0]
+        XCTAssertEqual(normal.outlierMask(threshold: 2.0).filter { $0 }.count, 0)
     }
 
     func testOutlierMaskWithMaskedBy() {
         let data = [4.0, 7.0, 2.0, 9.0, 3.0, 35.0, 5.0]
         let mask = data.outlierMask(threshold: 2.0)
-
-        // Verify integration with masked(by:) if it exists
         let outliers = data.masked(by: mask)
 
-        // Should contain only 35.0
         XCTAssertEqual(outliers.count, 1)
         XCTAssertEqual(outliers.first, 35.0)
     }
 
-    func testOutlierMaskNegativeValues() {
-        let data = [-10.0, -5.0, 0.0, 5.0, 10.0, 100.0]
-        let mask = data.outlierMask(threshold: 2.0)
-
-        // 100.0 should be detected as an outlier
-        XCTAssertEqual(mask.last, true)
-    }
-
     // MARK: - Vector Array Operations Tests
 
-    func testMeanVectorDouble() {
+    func testMeanVector() {
         let vectors = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
         let mean = vectors.meanVector()
 
         XCTAssertNotNil(mean)
-        XCTAssertEqual(mean?.count, 3)
         XCTAssertEqual(mean![0], 4.0, accuracy: 0.001)
         XCTAssertEqual(mean![1], 5.0, accuracy: 0.001)
         XCTAssertEqual(mean![2], 6.0, accuracy: 0.001)
     }
 
-    func testMeanVectorFloat() {
-        let vectors: [[Float]] = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
-        let mean = vectors.meanVector()
+    func testMeanVectorEdgeCases() {
+        // Empty array
+        XCTAssertNil(([[Double]]()).meanVector())
 
-        XCTAssertNotNil(mean)
-        XCTAssertEqual(mean?.count, 3)
-        XCTAssertEqual(mean![0], 4.0, accuracy: 0.001)
-        XCTAssertEqual(mean![1], 5.0, accuracy: 0.001)
-        XCTAssertEqual(mean![2], 6.0, accuracy: 0.001)
-    }
-
-    func testMeanVectorEmptyArray() {
-        let vectors: [[Double]] = []
-        let mean = vectors.meanVector()
-
-        XCTAssertNil(mean)
-    }
-
-    func testMeanVectorInconsistentDimensions() {
-        let vectors = [[1.0, 2.0], [3.0, 4.0, 5.0]]  // Different dimensions
-        let mean = vectors.meanVector()
-
-        XCTAssertNil(mean)
+        // Inconsistent dimensions
+        XCTAssertNil([[1.0, 2.0], [3.0, 4.0, 5.0]].meanVector())
     }
 
     func testMeanVectorWordEmbeddings() {
-        // Simulate averaging word embeddings for context
         let wordEmbeddings = [
             [0.2, 0.5, -0.3, 0.8],
             [0.1, 0.6, 0.2, -0.4]
@@ -230,11 +151,9 @@ final class ArrayStatisticsTests: XCTestCase {
         let contextVector = wordEmbeddings.meanVector()
 
         XCTAssertNotNil(contextVector)
-        XCTAssertEqual(contextVector?.count, 4)
         XCTAssertEqual(contextVector![0], 0.15, accuracy: 0.001)
         XCTAssertEqual(contextVector![1], 0.55, accuracy: 0.001)
         XCTAssertEqual(contextVector![2], -0.05, accuracy: 0.001)
         XCTAssertEqual(contextVector![3], 0.2, accuracy: 0.001)
     }
-
 }

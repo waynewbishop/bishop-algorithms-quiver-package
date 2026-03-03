@@ -110,6 +110,8 @@ let similarity = v1.cosineOfAngle(with: v2)
 cosine_similarity(v, w) = (v · w) / (||v|| × ||w||)
 ```
 
+> Important: `cosineOfAngle(with:)` returns `0.0` if either vector has zero magnitude. Check for zero vectors before interpreting results.
+
 ### When to use cosine similarity
 
 - **Text analysis:** Document length doesn't affect similarity
@@ -210,6 +212,31 @@ let sportsCohesion = sportsDocs.clusterCohesion()
 print("Technical cluster quality: \(Int(techCohesion * 100))%")
 print("Sports cluster quality: \(Int(sportsCohesion * 100))%")
 ```
+
+### Semantic search
+
+Find relevant content by comparing the meaning of a query against a collection of documents. Unlike keyword search, semantic search surfaces results based on conceptual similarity — a query for "running shoes" can match documents about "athletic footwear" if their embeddings are close.
+
+```swift
+import Quiver
+
+// Query and document embeddings (pre-computed from a language model)
+let query = [0.8, 0.7, 0.2]
+
+let documents = [
+    [0.7, 0.6, 0.3],  // "Athletic Footwear Guide"
+    [0.1, 0.1, 0.9],  // "Best Cooking Recipes"
+    [0.8, 0.8, 0.2]   // "Running Shoe Reviews"
+]
+
+// Rank all documents by similarity to the query
+let scores = documents.cosineSimilarities(to: query)
+let results = scores.topIndices(k: 2, labels: ["Athletic Footwear", "Cooking Recipes", "Running Shoes"])
+
+// results: [("Running Shoes", 0.99), ("Athletic Footwear", 0.96)]
+```
+
+The `topIndices(k:labels:)` method pairs each score with its original label, making it straightforward to map similarity results back to content.
 
 ## See also
 
