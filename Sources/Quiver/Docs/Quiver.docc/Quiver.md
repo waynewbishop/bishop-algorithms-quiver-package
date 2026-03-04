@@ -3,6 +3,11 @@
 @Metadata {
     @PageKind(article)
     @SupportedLanguage(swift)
+    @Available(iOS, introduced: "15.0")
+    @Available(macOS, introduced: "12.0")
+    @Available(tvOS, introduced: "15.0")
+    @Available(watchOS, introduced: "8.0")
+    @Available(visionOS, introduced: "1.0")
 }
 
 @Options(scope: local)
@@ -50,6 +55,29 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Similarity and Distance
 - <doc:Similarity-Operations>
+- <doc:Semantic-Search>
 
 ### Sorting and Selection
 - <doc:Selection>
+
+### Quick Reference
+- ``Swift/Array/dot(_:)``
+- ``Swift/Array/magnitude``
+- ``Swift/Array/cosineOfAngle(with:)``
+- ``Swift/Array/transformedBy(_:)``
+
+### Data Analysis
+- ``Swift/Array/rollingMean(window:)``
+- ``Swift/Array/histogram(bins:)``
+- ``Swift/Array/quartiles()``
+- ``Swift/Array/correlationMatrix()``
+
+### Text and Embeddings
+- ``Swift/String/tokenize()``
+- ``Swift/Array/embed(using:)``
+
+### Supporting Types
+- ``Fraction``
+- ``LogDeterminant``
+- ``AggregationMethod``
+- ``MatrixError``

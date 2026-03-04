@@ -25,9 +25,29 @@ public extension Array where Element: FloatingPoint {
 
     // MARK: - Time Series Operations
 
-    /// Calculate rolling mean (moving average) over a specified window
-    /// - Parameter window: The size of the rolling window
-    /// - Returns: Array of rolling means with same length as input
+    /// Calculates a rolling mean (moving average) over a specified window.
+    ///
+    /// The rolling mean smooths noisy data by replacing each value with the average of its
+    /// surrounding values within the window. This is essential for identifying trends in
+    /// time-series data by filtering out short-term fluctuations. The result has the same
+    /// length as the input, with early values averaged over a smaller partial window.
+    ///
+    /// Common uses:
+    /// - **Stock prices**: Smooth daily volatility to reveal weekly or monthly trends
+    /// - **Sensor data**: Filter noise from temperature, pressure, or motion readings
+    /// - **Performance metrics**: Identify sustained patterns in latency or throughput
+    ///
+    /// Example:
+    /// ```swift
+    /// let dailySales = [120.0, 95.0, 140.0, 110.0, 130.0, 85.0, 150.0]
+    ///
+    /// let trend = dailySales.rollingMean(window: 3)
+    /// // [120.0, 107.5, 118.33, 115.0, 126.67, 108.33, 121.67]
+    /// // Each value is the average of itself and up to 2 prior values
+    /// ```
+    ///
+    /// - Parameter window: The number of consecutive elements to average together
+    /// - Returns: Array of rolling means with the same length as the input
     func rollingMean(window: Int) -> [Element] {
         guard window > 0 && !isEmpty else { return [] }
         guard window <= count else { return Array(repeating: mean() ?? .zero, count: count) }
@@ -93,9 +113,31 @@ public extension Array where Element: FloatingPoint {
 
     // MARK: - Distribution Analysis
 
-    /// Calculate histogram bins for the data
-    /// - Parameter bins: Number of bins to create
-    /// - Returns: Array of tuples containing (midpoint, count) for each bin
+    /// Divides data into evenly spaced bins and counts the frequency of values in each.
+    ///
+    /// A histogram reveals the shape of a data distribution — whether values cluster around
+    /// a central peak, spread uniformly, or skew toward one end. Each bin spans an equal
+    /// range, and the result provides the midpoint and count for every bin, ready for
+    /// visualization or further analysis.
+    ///
+    /// Common uses:
+    /// - **Data exploration**: Understand the distribution before applying statistical models
+    /// - **Quality control**: Detect bimodal patterns or unexpected outliers
+    /// - **Feature engineering**: Identify natural breakpoints for discretizing continuous data
+    ///
+    /// Example:
+    /// ```swift
+    /// let scores = [72.0, 85.0, 90.0, 78.0, 92.0, 88.0, 76.0, 95.0, 81.0, 87.0]
+    ///
+    /// let distribution = scores.histogram(bins: 4)
+    /// // [(midpoint: 74.875, count: 3),
+    /// //  (midpoint: 80.625, count: 2),
+    /// //  (midpoint: 86.375, count: 2),
+    /// //  (midpoint: 92.125, count: 3)]
+    /// ```
+    ///
+    /// - Parameter bins: The number of equal-width bins to create
+    /// - Returns: Array of tuples containing the midpoint and count for each bin
     func histogram(bins: Int) -> [(midpoint: Element, count: Int)] where Element: BinaryFloatingPoint {
         guard bins > 0 && !isEmpty else { return [] }
 
@@ -130,8 +172,35 @@ public extension Array where Element: FloatingPoint {
         return result
     }
 
-    /// Calculate quartiles (Q1, median, Q3) and interquartile range
-    /// - Returns: Tuple containing min, Q1, median, Q3, max, and IQR, or nil if empty
+    /// Calculates the five-number summary and interquartile range of the data.
+    ///
+    /// Quartiles divide sorted data into four equal parts, providing a robust summary
+    /// that is resistant to outliers. The interquartile range (IQR) — the distance between
+    /// Q1 and Q3 — captures where the middle 50% of values fall, making it a reliable
+    /// measure of spread for skewed distributions.
+    ///
+    /// Returned values:
+    /// - **min / max**: The smallest and largest values
+    /// - **q1**: The 25th percentile (lower quartile)
+    /// - **median**: The 50th percentile (middle value)
+    /// - **q3**: The 75th percentile (upper quartile)
+    /// - **iqr**: The interquartile range (q3 - q1)
+    ///
+    /// Example:
+    /// ```swift
+    /// let responseTimes = [12.0, 15.0, 18.0, 22.0, 25.0, 30.0, 45.0, 120.0]
+    ///
+    /// if let stats = responseTimes.quartiles() {
+    ///     // stats.min     = 12.0
+    ///     // stats.q1      = 16.5
+    ///     // stats.median  = 23.5
+    ///     // stats.q3      = 37.5
+    ///     // stats.max     = 120.0
+    ///     // stats.iqr     = 21.0
+    /// }
+    /// ```
+    ///
+    /// - Returns: A tuple containing the five-number summary and IQR, or nil if the array is empty
     func quartiles() -> (min: Element, q1: Element, median: Element, q3: Element, max: Element, iqr: Element)? where Element: BinaryFloatingPoint {
         guard !isEmpty else { return nil }
 
@@ -375,8 +444,32 @@ public extension Array where Element == [Double] {
         return result
     }
 
-    /// Calculate correlation matrix for multiple series
-    /// - Returns: 2D array representing correlation coefficients between all series pairs
+    /// Calculates the Pearson correlation matrix for multiple data series.
+    ///
+    /// The correlation matrix measures the linear relationship between every pair of series,
+    /// with each cell containing a Pearson correlation coefficient. This reveals which
+    /// variables move together (positive correlation), move inversely (negative correlation),
+    /// or behave independently (near zero). The diagonal is always 1.0 since each series
+    /// correlates perfectly with itself.
+    ///
+    /// Interpretation:
+    /// - **1.0**: Perfect positive correlation (both rise and fall together)
+    /// - **0.0**: No linear relationship
+    /// - **-1.0**: Perfect negative correlation (one rises as the other falls)
+    ///
+    /// Example:
+    /// ```swift
+    /// let temperature = [30.0, 32.0, 35.0, 28.0, 33.0]
+    /// let iceCream    = [200.0, 220.0, 260.0, 180.0, 230.0]
+    /// let hotCocoa    = [150.0, 130.0, 100.0, 170.0, 120.0]
+    ///
+    /// let matrix = [temperature, iceCream, hotCocoa].correlationMatrix()
+    /// // [[1.0,   0.99, -0.99],   // temperature
+    /// //  [0.99,  1.0,  -0.98],   // ice cream
+    /// //  [-0.99, -0.98, 1.0]]    // hot cocoa
+    /// ```
+    ///
+    /// - Returns: A 2D array of Pearson correlation coefficients between all series pairs
     func correlationMatrix() -> [[Double]] {
         guard !isEmpty else { return [] }
 

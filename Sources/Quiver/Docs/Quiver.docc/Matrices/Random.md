@@ -123,7 +123,7 @@ let median = normal.median()  // Approximately 100.0
 
 ### Similarity with random embeddings
 
-Generate random embedding vectors to test the similarity operations from <doc:Similarity-Operations>:
+Generate random embedding vectors to test the similarity operations from <doc:Similarity-Operations>. For a complete text-to-results pipeline using real embeddings, see <doc:Semantic-Search>.
 
 ```swift
 // Simulate three document embeddings (3 dimensions each)

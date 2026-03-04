@@ -59,7 +59,37 @@ public struct LogDeterminant {
 
 public extension Array where Element: Numeric {
 
-    /// Calculates the dot product of two vectors
+    /// Calculates the dot product of two vectors.
+    ///
+    /// The dot product multiplies corresponding elements of two vectors and sums the results.
+    /// It measures how much two vectors point in the same direction and is foundational to
+    /// operations like cosine similarity, projections, and matrix transformations.
+    ///
+    /// Mathematical operation:
+    /// ```
+    /// dot(a, b) = a[0]×b[0] + a[1]×b[1] + ... + a[n]×b[n]
+    /// ```
+    ///
+    /// Key properties:
+    /// - **Positive result**: Vectors point in similar directions
+    /// - **Zero result**: Vectors are perpendicular (orthogonal)
+    /// - **Negative result**: Vectors point in opposing directions
+    ///
+    /// Example:
+    /// ```swift
+    /// let ratings = [5.0, 3.0, 4.0, 1.0]
+    /// let weights = [0.4, 0.3, 0.2, 0.1]
+    /// let score = ratings.dot(weights)
+    /// // 3.8 (weighted average of ratings)
+    ///
+    /// let a = [1.0, 0.0]
+    /// let b = [0.0, 1.0]
+    /// let perpendicular = a.dot(b)
+    /// // 0.0 (vectors are orthogonal)
+    /// ```
+    ///
+    /// - Parameter other: The vector to compute the dot product with (must have the same number of elements)
+    /// - Returns: The scalar dot product of the two vectors
     func dot(_ other: [Element]) -> Element {
         let v1 = _Vector(elements: self)
         let v2 = _Vector(elements: other)
@@ -630,7 +660,32 @@ public extension Array where Element == [Double] {
 // MARK: - FloatingPoint Vector Operations
 
 public extension Array where Element: FloatingPoint {
-    /// Calculates the magnitude (length) of the vector
+    /// Calculates the magnitude (length) of the vector.
+    ///
+    /// The magnitude represents the Euclidean length of the vector, computed as the
+    /// square root of the sum of squared elements. It quantifies the "size" of a vector
+    /// independent of its direction.
+    ///
+    /// Mathematical operation:
+    /// ```
+    /// magnitude = √(x² + y² + z² + ...)
+    /// ```
+    ///
+    /// Common uses:
+    /// - **Normalization**: Divide by magnitude to get a unit vector
+    /// - **Distance**: The magnitude of `a - b` gives the Euclidean distance between two points
+    /// - **Similarity**: Used in the denominator of cosine similarity
+    ///
+    /// Example:
+    /// ```swift
+    /// let velocity = [3.0, 4.0]
+    /// let speed = velocity.magnitude
+    /// // 5.0 (classic 3-4-5 right triangle)
+    ///
+    /// let features = [1.0, 2.0, 2.0]
+    /// let length = features.magnitude
+    /// // 3.0
+    /// ```
     var magnitude: Element {
         let v = _Vector(elements: self)
         return v.magnitude()
@@ -647,8 +702,40 @@ public extension Array where Element: FloatingPoint {
         return (self - other).magnitude
     }
         
-    /// Returns the cosine of the angle between two vectors
-    /// Returns 0.0 if either vector has zero magnitude
+    /// Returns the cosine of the angle between two vectors.
+    ///
+    /// Cosine similarity measures how closely two vectors align in direction, regardless of
+    /// their magnitude. Values range from -1 (opposite directions) through 0 (perpendicular)
+    /// to 1 (same direction). This makes it ideal for comparing items represented as vectors,
+    /// such as documents, user preferences, or feature embeddings.
+    ///
+    /// Mathematical operation:
+    /// ```
+    /// cosine(a, b) = dot(a, b) / (|a| × |b|)
+    /// ```
+    ///
+    /// Interpretation:
+    /// - **1.0**: Vectors point in the same direction (identical orientation)
+    /// - **0.0**: Vectors are perpendicular (no similarity)
+    /// - **-1.0**: Vectors point in opposite directions
+    ///
+    /// Example:
+    /// ```swift
+    /// let userA = [5.0, 1.0, 4.0]  // action fan
+    /// let userB = [4.0, 2.0, 5.0]  // similar taste
+    /// let userC = [1.0, 5.0, 1.0]  // drama fan
+    ///
+    /// let similarTaste = userA.cosineOfAngle(with: userB)
+    /// // 0.965 (very similar preferences)
+    ///
+    /// let differentTaste = userA.cosineOfAngle(with: userC)
+    /// // 0.497 (low similarity)
+    /// ```
+    ///
+    /// Returns 0.0 if either vector has zero magnitude.
+    ///
+    /// - Parameter other: The vector to compare against
+    /// - Returns: The cosine of the angle between the two vectors, in the range [-1, 1]
     func cosineOfAngle(with other: [Element]) -> Element {
         let dotProduct = self.dot(other)
         let magnitudeProduct = self.magnitude * other.magnitude

@@ -216,6 +216,8 @@ let contextVector = wordEmbeddings.meanVector()
 
 > Note: The function returns `nil` if the array is empty or if vectors have inconsistent dimensions.
 
+> Tip: The `meanVector()` method is a key step in building semantic search systems — it combines multiple word vectors into a single document vector for similarity comparison. See <doc:Semantic-Search> for a complete walkthrough.
+
 
 ## Topics
 

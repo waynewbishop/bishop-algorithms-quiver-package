@@ -4,7 +4,7 @@ Compute similarity between vectors using cosine similarity and distance metrics.
 
 ## Overview
 
-Similarity operations measure how **related** two vectors are. These operations are fundamental for machine learning applications including recommendation systems, word prediction, clustering, semantic search, and nearest neighbor classification.
+Similarity operations measure how **related** two vectors are. These operations are fundamental for machine learning applications including recommendation systems, word prediction, clustering, <doc:Semantic-Search>, and nearest neighbor classification.
 
 > Tip: For selecting top-K results from similarity scores, see <doc:Selection>.
 
@@ -118,6 +118,21 @@ cosine_similarity(v, w) = (v · w) / (||v|| × ||w||)
 - **Recommendations:** Compare user/item preference vectors
 - **Clustering:** Group by semantic meaning
 - **Face recognition:** Compare feature vectors
+
+### From similarity to angle
+
+Cosine similarity and angle measurement are the same algorithm at different stages. The `cosineOfAngle(with:)` method returns the raw cosine value — the number between -1 and 1 used for similarity comparisons. The `angle(with:)` method applies `acos()` to that value to produce the actual angle in radians, and `angleInDegrees(with:)` converts to degrees:
+
+```swift
+let v1 = [3.0, 4.0]
+let v2 = [5.0, 12.0]
+
+v1.cosineOfAngle(with: v2)    // 0.969 (similarity score)
+v1.angle(with: v2)            // 0.253 radians
+v1.angleInDegrees(with: v2)   // 14.5 degrees
+```
+
+In machine learning and information retrieval, the raw cosine value is typically all that's needed — "document A is 0.92 similar to document B." In physics and graphics, the actual angle matters — "rotate 45 degrees" or "the force acts at 30 degrees." See <doc:Operations> for more on angle calculations and vector projections.
 
 ### Range interpretation
 
@@ -238,8 +253,11 @@ let results = scores.topIndices(k: 2, labels: ["Athletic Footwear", "Cooking Rec
 
 The `topIndices(k:labels:)` method pairs each score with its original label, making it straightforward to map similarity results back to content.
 
+> Tip: For a complete pipeline that starts from raw text — including tokenization, embedding lookup, and document vector averaging — see <doc:Semantic-Search>.
+
 ## See also
 
+- <doc:Semantic-Search> - Full text-to-results pipeline using tokenization, embeddings, and similarity
 - <doc:Selection> - Select top-K largest values
 - <doc:Operations> - Vector operations
 - <doc:Matrices-Operations> - Matrix operations
