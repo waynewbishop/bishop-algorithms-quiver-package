@@ -21,6 +21,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build DocC
+        env:
+          BASE_PATH: bishop-algorithms-quiver-package
         run: |
           xcodebuild docbuild \
             -scheme Quiver \
@@ -31,8 +33,17 @@ jobs:
           ARCHIVE=$(find /tmp/docbuild -name 'Quiver.doccarchive' | head -1)
 
           $(xcrun --find docc) process-archive transform-for-static-hosting "$ARCHIVE" \
-            --hosting-base-path bishop-algorithms-quiver-package \
+            --hosting-base-path "$BASE_PATH" \
             --output-path ./docs
+
+          # Fix asset paths — docc does not rewrite CSS/JS/baseUrl for hosting-base-path
+          find ./docs -name 'index.html' -exec sed -i '' \
+            -e "s|baseUrl = \"/\"|baseUrl = \"/${BASE_PATH}/\"|g" \
+            -e "s|href=\"/css/|href=\"/${BASE_PATH}/css/|g" \
+            -e "s|href=\"/img/|href=\"/${BASE_PATH}/img/|g" \
+            -e "s|src=\"/js/|src=\"/${BASE_PATH}/js/|g" \
+            -e "s|href=\"/favicon|href=\"/${BASE_PATH}/favicon|g" \
+            {} \;
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
