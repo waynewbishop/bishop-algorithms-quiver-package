@@ -45,6 +45,11 @@ jobs:
             -e "s|href=\"/favicon|href=\"/${BASE_PATH}/favicon|g" \
             {} \;
 
+          # Fix webpack public path placeholder in JS bundles
+          find ./docs/js -name '*.js' -exec sed -i '' \
+            "s|{{BASE_PATH}}|/${BASE_PATH}|g" \
+            {} \;
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
