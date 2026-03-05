@@ -22,11 +22,15 @@ jobs:
 
       - name: Build DocC
         run: |
-          swift package resolve
-          swift package generate-documentation \
-            --target Quiver \
-            --disable-indexing \
-            --transform-for-static-hosting \
+          xcodebuild docbuild \
+            -scheme Quiver \
+            -derivedDataPath /tmp/docbuild \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO
+
+          ARCHIVE=$(find /tmp/docbuild -name 'Quiver.doccarchive' | head -1)
+
+          $(xcrun --find docc) process-archive transform-for-static-hosting "$ARCHIVE" \
             --hosting-base-path bishop-algorithms-quiver-package \
             --output-path ./docs
 
