@@ -1,7 +1,17 @@
 {
+  "meta": {
+    "title": "Quiver"
+  },
   "theme": {
     "color": {},
-    "typography": {}
+    "typography": {},
+    "border-radius": "12px",
+    "code": {
+      "border-radius": "12px"
+    },
+    "aside": {
+      "border-radius": "12px"
+    }
   },
   "features": {
     "docs": {
