@@ -1,14 +1,16 @@
 {
   "theme": {
-    "color": {
-      "standard-blue": {
-        "light": "#0066cc",
-        "dark": "#2997ff"
+    "color": {},
+    "typography": {}
+  },
+  "features": {
+    "docs": {
+      "quickNavigation": {
+        "enable": true
+      },
+      "onThisPageNavigator": {
+        "enable": true
       }
-    },
-    "typography": {
-      "html-font": "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-      "html-font-mono": "'SF Mono', Monaco, Menlo, Consolas, 'Courier New', monospace"
     }
   }
 }
