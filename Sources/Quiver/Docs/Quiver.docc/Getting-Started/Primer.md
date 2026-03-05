@@ -23,6 +23,9 @@ let magnitude = v.magnitude  // 5.0
 
 // Create a unit vector (same direction, length of 1)
 let unitVector = v.normalized  // [0.6, 0.8]
+
+// See the rational form
+unitVector.asFractions()  // [3/5, 4/5]
 ```
 
 > Tip: The Pythagorean theorem is used to calculate vector magnitude: √(3² + 4²) = 5

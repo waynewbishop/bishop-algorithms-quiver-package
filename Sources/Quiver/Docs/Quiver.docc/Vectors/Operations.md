@@ -29,7 +29,7 @@ vector.normalized.asFractions()  // [3/5, 4/5]
 
 > Note: These vector properties are only available for arrays with elements that conform to `FloatingPoint` (like `Double` or `Float`).
 
-> Important: Calling `normalized` on a zero vector returns a zero vector, and `cosineOfAngle(with:)` returns `0.0` if either vector has zero magnitude.
+> Important: Calling `normalized` on a zero vector returns a zero vector.
 
 ### Vector relationships
 
@@ -47,7 +47,7 @@ v1.angle(with: v2)        // π/2 radians (90 degrees)
 v1.angleInDegrees(with: v2)  // 90.0 degrees
 ```
 
-These angle functions work with vectors of any dimension — 2D, 3D, or higher. The underlying formula `cos(θ) = (v1·v2) / (||v1|| × ||v2||)` generalizes to any number of dimensions, which is why the same math powers cosine similarity in machine learning when comparing 300-dimensional word embeddings. The `cosineOfAngle(with:)` method returns that raw cosine value directly, while `angle(with:)` applies `acos()` to produce the angle in radians. See <doc:Similarity-Operations> for how cosine similarity applies to recommendations and clustering, and <doc:Semantic-Search> for a complete text-to-results pipeline.
+These angle functions work with vectors of any dimension. The `cosineOfAngle(with:)` method returns the raw cosine value, while `angle(with:)` applies `acos()` to produce the angle in radians.
 
 > Tip: The dot product is zero when vectors are perpendicular and equals the product of their magnitudes when they're parallel.
 

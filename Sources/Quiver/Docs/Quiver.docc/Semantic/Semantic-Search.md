@@ -14,7 +14,7 @@ The core idea behind semantic search is that words can be represented as arrays 
 
 Consider how we might represent a small vocabulary. Words related to athletics cluster together, while unrelated words sit far apart:
 
-> Remark: The vector values throughout this article are hypothetical, chosen to illustrate the math. In practice, these values could come from a trained language model, a domain-specific dataset (e.g. home prices versus property features), or any source that maps items to numeric vectors.
+> Important: The vector values throughout this article are hypothetical, chosen to illustrate the math. In practice, these values could come from a trained language model, a domain-specific dataset (e.g. home prices versus property features), or any source that maps items to numeric vectors.
 
 ```swift
 import Quiver
@@ -31,7 +31,7 @@ running.cosineOfAngle(with: computer)  // ~0.47 (unrelated concepts)
 
 The similarity score tells us "running" and "jogging" are nearly interchangeable, while "running" and "computer" share little in common. This is what makes semantic search possible — comparing vectors is effectively comparing meaning.
 
-> Important: Cosine similarity measures **direction**, not magnitude — a word vector scaled to any length still produces the same similarity score. For details on why this matters, see the `normalization` discussion in <doc:Similarity-Operations>.
+> Tip: Cosine similarity measures **direction**, not magnitude — a word vector scaled to any length still produces the same similarity score. For details on why this matters, see the `normalization` discussion in <doc:Similarity-Operations>.
 
 ## Vector arithmetic captures relationships
 
