@@ -50,6 +50,12 @@ jobs:
             "s|{{BASE_PATH}}|/${BASE_PATH}|g" \
             {} \;
 
+          # Inject custom CSS
+          cp Sources/Quiver/Docs/Quiver.docc/custom.css ./docs/css/custom.css
+          find ./docs -name 'index.html' -exec sed -i '' \
+            "s|</head>|<link href=\"/${BASE_PATH}/css/custom.css\" rel=\"stylesheet\"></head>|g" \
+            {} \;
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
