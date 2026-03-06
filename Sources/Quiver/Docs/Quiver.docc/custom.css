@@ -15,13 +15,53 @@
   display: none !important;
 }
 
-/* Typography — tighten letter-spacing to match the book */
-h1, h2, h3 {
+/* Sidebar nav — match book's 15px nav-link size */
+.navigator .leaf-link {
+  font-size: 15px !important;
+}
+
+/* Sidebar width — default is 250px. Adjust with:
+   .adjustable-sidebar-width .aside { width: <N>px !important; } */
+
+/* Typography — match book's SF Pro font and sizing */
+h1, h2, h3, h4 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   font-weight: 700 !important;
   letter-spacing: -0.005em !important;
 }
 
-/* Aside callouts — match Xcode's subtle colored glow instead of left-bar shadow */
+h3 {
+  font-size: 22px !important;
+  line-height: 1.18182 !important;
+}
+
+h4 {
+  font-size: 20px !important;
+  line-height: 1.19048 !important;
+}
+
+/* Inline code — 85% of surrounding text, matching the book */
+code {
+  font-size: 0.85em !important;
+}
+
+/* Code blocks — match book styling */
+.code-listing {
+  border: none !important;
+}
+
+.code-listing pre {
+  padding: 20px 24px !important;
+}
+
+.code-listing pre > code {
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 14.5px !important;
+  line-height: 1.5 !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Aside callouts — Xcode-style thin colored border */
 aside.note {
   box-shadow: 0 0 1px 0 var(--color-aside-note-border) inset,
               0 0 1px 0 var(--color-aside-note-border) !important;

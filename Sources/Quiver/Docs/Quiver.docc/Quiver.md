@@ -33,6 +33,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 ## Topics
 
 ### Getting started
+- <doc:Installation>
 - <doc:Primer>
 - <doc:Statistics-Primer>
 - <doc:Determinants-Primer>
