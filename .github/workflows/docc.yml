@@ -50,6 +50,32 @@ jobs:
             "s|{{BASE_PATH}}|/${BASE_PATH}|g" \
             {} \;
 
+          # Inject page header colors into JSON data
+          # DocC only sets standardColorIdentifier when @PageColor is used.
+          # We inject it based on page role so every page gets the right color.
+          python3 - ./docs/data <<'PYEOF'
+import json, glob, sys
+role_colors = {
+    "collection": "blue",       # Framework / API Collection
+    "collectionGroup": "purple", # API Collection groups
+    "article": "green",         # Articles / primers
+    "symbol": "purple",         # Symbols (structs, enums, etc.)
+}
+for path in glob.glob(f"{sys.argv[1]}/**/*.json", recursive=True):
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        meta = data.get("metadata", {})
+        role = meta.get("role", "")
+        color = role_colors.get(role)
+        if color and "color" not in meta:
+            meta["color"] = {"standardColorIdentifier": color}
+            with open(path, "w") as f:
+                json.dump(data, f, separators=(",", ":"))
+    except (json.JSONDecodeError, KeyError):
+        pass
+PYEOF
+
           # Inject custom CSS
           cp Sources/Quiver/Docs/Quiver.docc/custom.css ./docs/css/custom.css
           find ./docs -name 'index.html' -exec sed -i '' \

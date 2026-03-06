@@ -1,5 +1,20 @@
 /* Custom styles for Quiver documentation */
 
+/* ========================================
+   Hero header gradient
+   Open-source DocC sets :after background to transparent.
+   Xcode uses var(--color-fill) at 85% opacity, which layers
+   the page background over the accent color for a soft wash.
+   ======================================== */
+.documentation-hero::after {
+  background: var(--color-fill, #fff) !important;
+}
+
+/* Hide the large faded icon in the hero header */
+.documentation-hero .background-icon {
+  display: none !important;
+}
+
 /* Typography — tighten letter-spacing to match the book */
 h1, h2, h3 {
   font-weight: 700 !important;

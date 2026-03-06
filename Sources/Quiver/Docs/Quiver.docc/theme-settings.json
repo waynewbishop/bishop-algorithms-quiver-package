@@ -75,46 +75,6 @@
       "aside-deprecated-border": {
         "light": "#cc3300",
         "dark": "#ff6600"
-      },
-      "standard-blue": {
-        "light": "#9cf",
-        "dark": "#002d75"
-      },
-      "standard-gray": {
-        "light": "#f5f5f7",
-        "dark": "#1d1d1f"
-      },
-      "standard-green": {
-        "light": "#9cc",
-        "dark": "#023b2d"
-      },
-      "standard-orange": {
-        "light": "#fc9",
-        "dark": "#8b4000"
-      },
-      "standard-purple": {
-        "light": "#ccf",
-        "dark": "#512b55"
-      },
-      "standard-red": {
-        "light": "#ffc2c2",
-        "dark": "#8b0000"
-      },
-      "standard-yellow": {
-        "light": "#ffe0a3",
-        "dark": "#8f7200"
-      },
-      "standard-sky": {
-        "light": "#06c",
-        "dark": "#6bf"
-      },
-      "standard-teal": {
-        "light": "#509ca3",
-        "dark": "#7dffe4"
-      },
-      "standard-pink": {
-        "light": "#d82797",
-        "dark": "#ff6ec7"
       }
     },
     "typography": {},
