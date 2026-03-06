@@ -3,7 +3,80 @@
     "title": "Quiver"
   },
   "theme": {
-    "color": {},
+    "color": {
+      "aside-note": {
+        "light": "#666666",
+        "dark": "#b0b0b0"
+      },
+      "aside-note-background": {
+        "light": "#f5f5f7",
+        "dark": "#323232"
+      },
+      "aside-note-border": {
+        "light": "#666666",
+        "dark": "#b0b0b0"
+      },
+      "aside-tip": {
+        "light": "#3d777d",
+        "dark": "#7dffe4"
+      },
+      "aside-tip-background": {
+        "light": "#faffff",
+        "dark": "#002d2b"
+      },
+      "aside-tip-border": {
+        "light": "#3d777d",
+        "dark": "#7dffe4"
+      },
+      "aside-important": {
+        "light": "#9e6700",
+        "dark": "#ffb50f"
+      },
+      "aside-important-background": {
+        "light": "#fffbf2",
+        "dark": "#2b1e00"
+      },
+      "aside-important-border": {
+        "light": "#9e6700",
+        "dark": "#ffb50f"
+      },
+      "aside-warning": {
+        "light": "#ff0000",
+        "dark": "#ff3333"
+      },
+      "aside-warning-background": {
+        "light": "#fff2f4",
+        "dark": "#330000"
+      },
+      "aside-warning-border": {
+        "light": "#ff0000",
+        "dark": "#ff3333"
+      },
+      "aside-experiment": {
+        "light": "#8c28c2",
+        "dark": "#a95ed2"
+      },
+      "aside-experiment-background": {
+        "light": "#fcf8ff",
+        "dark": "#190325"
+      },
+      "aside-experiment-border": {
+        "light": "#8c28c2",
+        "dark": "#a95ed2"
+      },
+      "aside-deprecated": {
+        "light": "#cc3300",
+        "dark": "#ff6600"
+      },
+      "aside-deprecated-background": {
+        "light": "#fff9f4",
+        "dark": "#290d00"
+      },
+      "aside-deprecated-border": {
+        "light": "#cc3300",
+        "dark": "#ff6600"
+      }
+    },
     "typography": {},
     "border-radius": "12px",
     "code": {
