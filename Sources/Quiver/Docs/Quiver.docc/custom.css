@@ -1,5 +1,38 @@
 /* Custom styles for Quiver documentation */
 
+/* Typography — tighten letter-spacing to match the book */
 h1, h2, h3 {
   font-weight: 700 !important;
+  letter-spacing: -0.005em !important;
+}
+
+/* Aside callouts — match Xcode's subtle colored glow instead of left-bar shadow */
+aside.note {
+  box-shadow: 0 0 1px 0 var(--color-aside-note-border) inset,
+              0 0 1px 0 var(--color-aside-note-border) !important;
+}
+
+aside.tip {
+  box-shadow: 0 0 1px 0 var(--color-aside-tip-border) inset,
+              0 0 1px 0 var(--color-aside-tip-border) !important;
+}
+
+aside.important {
+  box-shadow: 0 0 1px 0 var(--color-aside-important-border) inset,
+              0 0 1px 0 var(--color-aside-important-border) !important;
+}
+
+aside.warning {
+  box-shadow: 0 0 1px 0 var(--color-aside-warning-border) inset,
+              0 0 1px 0 var(--color-aside-warning-border) !important;
+}
+
+aside.experiment {
+  box-shadow: 0 0 1px 0 var(--color-aside-experiment-border) inset,
+              0 0 1px 0 var(--color-aside-experiment-border) !important;
+}
+
+aside.deprecated {
+  box-shadow: 0 0 1px 0 var(--color-aside-deprecated-border) inset,
+              0 0 1px 0 var(--color-aside-deprecated-border) !important;
 }

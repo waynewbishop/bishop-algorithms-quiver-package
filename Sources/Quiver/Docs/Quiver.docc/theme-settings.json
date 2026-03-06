@@ -83,7 +83,9 @@
       "border-radius": "12px"
     },
     "aside": {
-      "border-radius": "12px"
+      "border-radius": "15px",
+      "border-width": "1px",
+      "border-style": "solid"
     }
   },
   "features": {
