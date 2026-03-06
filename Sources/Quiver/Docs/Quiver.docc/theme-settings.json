@@ -103,6 +103,18 @@
       "standard-yellow": {
         "light": "#ffe0a3",
         "dark": "#8f7200"
+      },
+      "standard-sky": {
+        "light": "#06c",
+        "dark": "#6bf"
+      },
+      "standard-teal": {
+        "light": "#509ca3",
+        "dark": "#7dffe4"
+      },
+      "standard-pink": {
+        "light": "#d82797",
+        "dark": "#ff6ec7"
       }
     },
     "typography": {},
