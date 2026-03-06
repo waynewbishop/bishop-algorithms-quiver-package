@@ -1,5 +1,36 @@
 /* Custom styles for Quiver documentation */
 
+/* ========================================
+   Header accent colors — Xcode maps page roles to color names
+   (sky, teal, pink) that the web renderer doesn't define.
+   These variables make the hero background tints work.
+   ======================================== */
+:root {
+  --color-standard-sky: #06c;
+  --color-standard-teal: #509ca3;
+  --color-standard-pink: #d82797;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-standard-sky: #6bf;
+    --color-standard-teal: #7dffe4;
+    --color-standard-pink: #ff6ec7;
+  }
+}
+
+/* Hero section — add white overlay like Xcode to create subtle tint */
+.documentation-hero::after {
+  background: var(--color-fill, #fff) !important;
+  opacity: 0.85 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .documentation-hero::after {
+    opacity: 0.55 !important;
+  }
+}
+
 /* Typography — tighten letter-spacing to match the book */
 h1, h2, h3 {
   font-weight: 700 !important;
