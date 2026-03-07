@@ -37,6 +37,7 @@ Matrix arithmetic operations work element-by-element:
 let m1 = [[1.0, 2.0], [3.0, 4.0]]
 let m2 = [[5.0, 6.0], [7.0, 8.0]]
 
+// Perform element-wise arithmetic on two matrices
 let sum = m1 + m2         // [[6.0, 8.0], [10.0, 12.0]]
 let difference = m1 - m2  // [[-4.0, -4.0], [-4.0, -4.0]]
 let product = m1 * m2     // [[5.0, 12.0], [21.0, 32.0]] (Hadamard)
@@ -52,12 +53,12 @@ Apply a scalar value to every element:
 ```swift
 let matrix = [[100.0, 200.0], [300.0, 400.0]]
 
-// All operations work with scalars
+// Apply a scalar operation to every element
 let scaled = matrix * 0.5        // [[50.0, 100.0], [150.0, 200.0]]
 let shifted = matrix + 10.0      // [[110.0, 210.0], [310.0, 410.0]]
 let divided = matrix / 100.0     // [[1.0, 2.0], [3.0, 4.0]]
 
-// Commutative operations work both ways
+// Commutative operations work in either direction
 let doubled = 2.0 * matrix       // Same as matrix * 2.0
 let offset = 5.0 + matrix        // Same as matrix + 5.0
 ```
@@ -66,6 +67,7 @@ let offset = 5.0 + matrix        // Same as matrix + 5.0
 
 **Data standardization (z-score):**
 ```swift
+// Normalize each element to zero mean and unit variance
 let data = [[100.0, 200.0], [300.0, 400.0]]
 let mean = 250.0
 let stdDev = 129.0
@@ -74,6 +76,7 @@ let standardized = (data - mean) / stdDev
 
 **Feature scaling (min-max):**
 ```swift
+// Scale features to the 0-1 range
 let features = [[1.0, 5.0], [3.0, 7.0]]
 let min = 1.0
 let max = 7.0
@@ -82,8 +85,9 @@ let scaled = (features - min) / (max - min)
 
 **Applying transformations:**
 ```swift
+// Calibrate measurements with a 5% increase and 2.0 offset
 let measurements = [[10.0, 20.0], [30.0, 40.0]]
-let calibrated = measurements * 1.05 + 2.0  // 5% increase + 2.0 offset
+let calibrated = measurements * 1.05 + 2.0
 ```
 
 ### Transpose

@@ -40,7 +40,7 @@ Vectors can represent many real-world concepts:
 
 Vector operations reveal relationships between vectors and enable transformations.
 
-#### Dot Product
+#### Dot product
 
 The dot product measures how parallel two vectors are:
 
@@ -60,7 +60,7 @@ Applications include:
 - Calculating work in physics (`force` × `distance`)
 - Finding projections of one vector onto another
 
-#### Vector Projection
+#### Vector projection
 
 Projection answers the fundamental question of "how much of one vector lies in the direction of another?" Imagine shining a light perpendicular to a surface—the shadow cast by one vector onto another is its projection. This geometric operation decomposes one vector into two components: the part aligned with a reference direction and the part perpendicular to it.
 
@@ -101,7 +101,7 @@ Matrices serve two primary purposes: organizing data (where rows might represent
 
 > Tip: The term **canvas** appears throughout to represent the fundamental space where objects exist. In graph theory, the canvas is the collection of `vertices` (as seen in [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/)). In linear algebra, the canvas is the coordinate system defined by basis vectors. 
 
-#### Matrix Creation
+#### Matrix creation
 
 Quiver makes it easy to create common matrices (see <doc:Generation> for more matrix creation methods):
 
@@ -117,7 +117,7 @@ let zeros = [Double].zeros(2, 3)
 // [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 ```
 
-#### Transforming with Matrices
+#### Transforming with matrices
 
 One of the most powerful applications of matrices is transforming vectors (see <doc:Transformation-Basics> for detailed transformation concepts):
 
@@ -143,7 +143,7 @@ Common transformations include:
 - Reflection (mirrors across an axis)
 - Shear (shifts proportionally to distance)
 
-### Practical Applications
+### Practical applications
 
 Let's examine some real-world applications of these concepts.
 

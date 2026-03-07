@@ -55,11 +55,3 @@ let b: [Double] = [4, 5, 6]
 let result = a.dot(b)
 print(result) // 32.0
 ```
-
-### Next steps
-
-With Quiver installed, explore the fundamentals of the library:
-
-- <doc:Primer> — Core concepts of vectors, matrices, and transformations
-- <doc:Statistics-Primer> — Statistical operations and data analysis
-- <doc:Determinants-Primer> — Understanding determinants and matrix inversion

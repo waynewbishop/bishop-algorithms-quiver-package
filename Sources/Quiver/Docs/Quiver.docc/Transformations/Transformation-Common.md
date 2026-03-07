@@ -18,15 +18,13 @@ Rotation transforms rotate vectors around the origin by a specified angle. In 2D
 ```swift
 import Quiver
 
-// 90° counterclockwise rotation
+// Rotate vectors 90° counterclockwise around the origin
 let rotate90 = [
     [0.0, -1.0],
     [1.0,  0.0]
 ]
 
-// What happens to basis vectors:
-// i-hat [1,0] → [0,1] (right → up)
-// j-hat [0,1] → [-1,0] (up → left)
+// Basis vectors move: i-hat [1,0] → [0,1], j-hat [0,1] → [-1,0]
 
 [1.0, 0.0].transformedBy(rotate90)
 // Row 1: [0, -1] • [1, 0] = (0×1 + (-1)×0) = 0
@@ -41,7 +39,7 @@ let rotate90 = [
 
 **180° (flip):**
 ```swift
-// 180° rotation
+// Rotate vectors 180° to reverse direction
 let rotate180 = [
     [-1.0,  0.0],
     [ 0.0, -1.0]
@@ -55,7 +53,7 @@ let rotate180 = [
 
 **45° counterclockwise:**
 ```swift
-// 45° counterclockwise rotation
+// Rotate vectors 45° counterclockwise
 let rotate45 = [
     [0.707, -0.707],
     [0.707,  0.707]
@@ -69,7 +67,7 @@ let rotate45 = [
 
 **90° clockwise:**
 ```swift
-// 90° clockwise rotation (negative angle flips the sign of sin)
+// Rotate vectors 90° clockwise
 let rotate90cw = [
     [ 0.0, 1.0],
     [-1.0, 0.0]
@@ -85,21 +83,16 @@ let rotate90cw = [
 
 **Game character rotation:**
 ```swift
-// Character facing right
+// Rotate a character's facing direction
 let facingRight = [1.0, 0.0]
 
-// Rotate to face up
-let facingUp = facingRight.transformedBy(rotate90)
-// [0.0, 1.0]
-
-// Rotate to face left
-let facingLeft = facingRight.transformedBy(rotate180)
-// [-1.0, 0.0]
+let facingUp = facingRight.transformedBy(rotate90)    // [0.0, 1.0]
+let facingLeft = facingRight.transformedBy(rotate180)  // [-1.0, 0.0]
 ```
 
 **Circular motion:**
 ```swift
-// Object at radius 5, rotated 90° around the origin
+// Move an object along a circular path around the origin
 let radius = 5.0
 let position = [radius, 0.0].transformedBy(rotate90)
 // Row 1: [0, -1] • [5, 0] = (0×5 + (-1)×0) = 0
@@ -113,7 +106,7 @@ Scaling transformations change the magnitude of vectors. Uniform scaling multipl
 
 **Uniform scaling (same factor all directions):**
 ```swift
-// Scale by 2 — diagonal matrix with factor on diagonal
+// Scale all axes by the same factor
 let scale2x = [Double].diag([2.0, 2.0])
 // [[2.0, 0.0],
 //  [0.0, 2.0]]
@@ -126,7 +119,7 @@ let scale2x = [Double].diag([2.0, 2.0])
 
 **Non-uniform scaling (different per axis):**
 ```swift
-// Stretch horizontally (3×), compress vertically (0.5×)
+// Stretch horizontally and compress vertically
 let stretch = [
     [3.0, 0.0],
     [0.0, 0.5]
@@ -142,9 +135,9 @@ let stretch = [
 
 **Sprite scaling:**
 ```swift
-// Make sprite twice as large
+// Double the size of a sprite
 let scale2x = [Double].diag([2.0, 2.0])
-let spriteSize = [32.0, 48.0]  // Width × height in points
+let spriteSize = [32.0, 48.0]
 let scaled = spriteSize.transformedBy(scale2x)
 // Row 1: [2, 0] • [32, 48] = (2×32 + 0×48) = 64
 // Row 2: [0, 2] • [32, 48] = (0×32 + 2×48) = 96
@@ -153,7 +146,7 @@ let scaled = spriteSize.transformedBy(scale2x)
 
 **Aspect ratio correction:**
 ```swift
-// Convert 16:9 to square
+// Correct a 16:9 aspect ratio to square coordinates
 let aspectCorrection = [
     [1.0, 0.0],
     [0.0, 16.0/9.0]
@@ -168,7 +161,7 @@ let squareCoords = wideScreen.transformedBy(aspectCorrection)
 
 **Zoom effect:**
 ```swift
-// Zoom level 1.0-3.0
+// Apply a zoom level to camera coordinates
 let zoomLevel = 1.5
 let zoom = [Double].diag([zoomLevel, zoomLevel])
 
@@ -185,6 +178,7 @@ Reflection mirrors vectors across an axis or line. The transformation flips coor
 
 **Reflect across x-axis (horizontal flip):**
 ```swift
+// Mirror a vector across the x-axis
 let reflectX = [
     [ 1.0, 0.0],
     [ 0.0, -1.0]
@@ -198,6 +192,7 @@ let reflectX = [
 
 **Reflect across y-axis (vertical flip):**
 ```swift
+// Mirror a vector across the y-axis
 let reflectY = [
     [-1.0, 0.0],
     [ 0.0, 1.0]
@@ -211,6 +206,7 @@ let reflectY = [
 
 **Reflect across diagonal (y=x):**
 ```swift
+// Swap x and y coordinates by reflecting across y=x
 let reflectDiagonal = [
     [0.0, 1.0],
     [1.0, 0.0]
@@ -226,7 +222,7 @@ let reflectDiagonal = [
 
 **Mirror image:**
 ```swift
-// Flip sprite horizontally (face opposite direction)
+// Flip a sprite to face the opposite direction
 let spritePosition = [10.0, 5.0]
 let mirrored = spritePosition.transformedBy(reflectY)
 // [-10.0, 5.0]
@@ -234,8 +230,8 @@ let mirrored = spritePosition.transformedBy(reflectY)
 
 **Water reflection:**
 ```swift
-// Object above water, reflection below
-let objectPosition = [5.0, 10.0]  // 10 units above water
+// Reflect an object's position below the water line
+let objectPosition = [5.0, 10.0]
 let waterReflection = objectPosition.transformedBy(reflectX)
 // [5.0, -10.0] - 10 units below water
 ```
@@ -246,7 +242,7 @@ Shear transformations "slant" the coordinate system, shifting one axis proportio
 
 **Horizontal shear (x depends on y):**
 ```swift
-// Horizontal shear with factor 0.5
+// Shift x proportionally to y with a shear factor of 0.5
 let shearH = [
     [1.0, 0.5],
     [0.0, 1.0]
@@ -260,7 +256,7 @@ let shearH = [
 
 **Vertical shear (y depends on x):**
 ```swift
-// Vertical shear with factor 0.5
+// Shift y proportionally to x with a shear factor of 0.5
 let shearV = [
     [1.0, 0.0],
     [0.5, 1.0]
@@ -276,7 +272,7 @@ let shearV = [
 
 **Italic text effect:**
 ```swift
-// Lean letters to the right with horizontal shear
+// Simulate italic text by leaning letters to the right
 let italicShear = [
     [1.0, 0.3],
     [0.0, 1.0]
@@ -291,7 +287,7 @@ let italicPosition = letterPosition.transformedBy(italicShear)
 
 **Perspective projection:**
 ```swift
-// Simple perspective (farther = more shifted)
+// Simulate depth by shifting x based on distance
 let perspective = [
     [1.0, 0.2],
     [0.0, 1.0]

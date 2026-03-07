@@ -26,6 +26,7 @@ Quiver is a Swift package that provides powerful numerical computing capabilitie
 * **Array Generation and Manipulation**
   * Generate arrays (zeros, ones, linspace, random)
   * Create special matrices (identity, diagonal)
+  * Reshape and flatten (1D ↔ 2D conversion)
   * Shape information and transformation
   * Sorting and ranking (sortedIndices)
 

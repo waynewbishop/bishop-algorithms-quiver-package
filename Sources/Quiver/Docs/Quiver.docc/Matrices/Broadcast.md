@@ -12,6 +12,8 @@ Swift already provides powerful functional methods like `map`, `reduce`, and `fi
 
 **Swift's map (functional approach):**
 ```swift
+import Quiver
+
 let temperatures = [72.0, 68.0, 73.0, 70.0, 75.0]
 
 // Convert Fahrenheit to Celsius: (F - 32) * 5/9
@@ -21,7 +23,7 @@ let celsiusMap = temperatures.map { ($0 - 32.0) * 5.0/9.0 }
 
 **Quiver's broadcasting (mathematical approach):**
 ```swift
-// More declarative - separates operations clearly
+// Subtract and multiply using operator broadcasting
 let celsius = (temperatures - 32.0) * 5.0/9.0
 // [22.2, 20.0, 22.8, 21.1, 23.9]
 
@@ -35,11 +37,11 @@ let celsiusAlt = temperatures.broadcast(subtracting: 32.0)
 Broadcasting is ideal for applying scalar mathematical operations to arrays. It makes the code read like mathematical notation and clearly separates each transformation step. Use `map` for custom logic, complex transformations, or non-mathematical operations where broadcasting doesn't apply.
 
 ```swift
-// Broadcasting excels at mathematical operations
+// Broadcasting excels at scalar mathematical operations
 let normalized = (data - mean) / stdDev
 let scaled = matrix * 2.0
 
-// Map excels at custom transformations
+// Map excels at custom or non-numeric transformations
 let formatted = temperatures.map { "\($0)°F" }
 let categorized = scores.map { $0 >= 90 ? "A" : "B" }
 ```
@@ -74,30 +76,30 @@ Scalar broadcasting is also available through standard arithmetic operators:
 ```swift
 let vector = [1.0, 2.0, 3.0]
 
-// Method syntax (still supported)
+// Add a scalar using method syntax
 let result1 = vector.broadcast(adding: 10.0)
 
-// Operator syntax (recommended)
-let result2 = vector + 10.0  // Cleaner!
+// Add a scalar using operator syntax
+let result2 = vector + 10.0
 let result3 = vector * 2.0
 let result4 = vector / 3.0
 
-// Commutative operations work both ways
-let result5 = 10.0 + vector  // Same as vector + 10.0
-let result6 = 2.0 * vector   // Same as vector * 2.0
+// Commutative operations work in either direction
+let result5 = 10.0 + vector
+let result6 = 2.0 * vector
 ```
 
 **Matrix broadcasting:**
 ```swift
 let matrix = [[1.0, 2.0], [3.0, 4.0]]
 
-// Method syntax
+// Multiply each element using method syntax
 let result1 = matrix.map { $0.broadcast(multiplyingBy: 2.0) }
 
-// Operator syntax (much cleaner!)
+// Multiply each element using operator syntax
 let result2 = matrix * 2.0
 let result3 = matrix + 10.0
-let result4 = (matrix - 5.0) / 2.0  // Complex expressions
+let result4 = (matrix - 5.0) / 2.0
 ```
 
 The operator syntax is recommended for new code as it improves readability. The method-based syntax remains available for compatibility and for cases requiring custom operations via closures.

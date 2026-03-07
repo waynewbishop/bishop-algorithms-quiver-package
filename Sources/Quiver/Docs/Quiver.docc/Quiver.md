@@ -45,6 +45,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Matrices
 - <doc:Matrices-Operations>
+- <doc:Reshape>
 - <doc:Broadcast>
 - <doc:Generation>
 - <doc:Random>
