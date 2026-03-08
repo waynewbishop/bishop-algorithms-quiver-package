@@ -19,6 +19,10 @@ let matrix = [
     [4.0, 5.0, 6.0]
 ]
 
+// Inspect dimensions
+matrix.shape  // (rows: 2, columns: 3)
+matrix.size   // 6
+
 // Access elements
 let value = matrix[0][1]  // 2.0 (row 0, column 1)
 
@@ -170,6 +174,8 @@ let scores = [
     [92.0, 94.0, 88.0]   // Player C
 ]
 
+scores.shape  // (rows: 3, columns: 3) — 3 players, 3 games
+
 // Extract all scores from game 2
 let game2Scores = scores.column(at: 1)  // [88.0, 90.0, 94.0]
 
@@ -195,6 +201,9 @@ let word1Usage = documents.column(at: 0)  // [2.0, 1.0, 3.0]
 
 // Switch to term-document orientation
 let byTerms = documents.transpose()
+
+// Collapse into a single vector for total word frequency
+let allCounts = documents.flattened()  // [2.0, 3.0, 1.0, 1.0, 2.0, 3.0, 3.0, 1.0, 2.0]
 ```
 
 ### Type support

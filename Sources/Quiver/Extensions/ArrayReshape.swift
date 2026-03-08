@@ -58,6 +58,53 @@ extension Array where Element: Numeric {
 
 extension Array where Element: Collection, Element.Element: Numeric {
 
+    /// Returns the shape of a two-dimensional array as a `(rows, columns)` tuple.
+    ///
+    /// The row count is the number of inner arrays, and the column count is taken
+    /// from the first row. This property provides a quick way to inspect the
+    /// dimensions of a matrix without iterating over every element.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let matrix: [[Double]] = [
+    ///     [1.0, 2.0, 3.0],
+    ///     [4.0, 5.0, 6.0]
+    /// ]
+    /// let (rows, columns) = matrix.shape
+    /// // rows == 2, columns == 3
+    /// ```
+    ///
+    /// - Returns: A tuple of `(rows: Int, columns: Int)`. Returns `(0, 0)` for
+    ///   an empty matrix.
+    var shape: (rows: Int, columns: Int) {
+        return _Vector<Element.Element>.shape(of: self)
+    }
+
+    /// Returns the total number of elements across all dimensions.
+    ///
+    /// For a matrix with shape `(rows, columns)`, this equals the sum of every
+    /// row's element count. Unlike `count`, which returns only the number of rows,
+    /// `size` reflects the full element population of the matrix.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let matrix: [[Double]] = [
+    ///     [1.0, 2.0, 3.0],
+    ///     [4.0, 5.0, 6.0]
+    /// ]
+    /// matrix.size   // 6
+    /// matrix.count  // 2 (number of rows only)
+    /// ```
+    ///
+    /// - Returns: The total element count. Returns `0` for an empty matrix.
+    var size: Int {
+        return _Vector<Element.Element>.size(of: self)
+    }
+
     /// Flattens a two-dimensional matrix into a one-dimensional array by concatenating
     /// rows in row-major order.
     ///

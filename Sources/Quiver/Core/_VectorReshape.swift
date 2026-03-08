@@ -45,6 +45,31 @@ extension _Vector where Element: Numeric {
         return result
     }
 
+    /// Returns the shape of a two-dimensional collection as a `(rows, columns)` tuple.
+    ///
+    /// Row count is the number of inner collections. Column count is taken from the
+    /// first row, or zero if the collection is empty.
+    ///
+    /// - Parameter matrix: A two-dimensional collection to inspect.
+    /// - Returns: A tuple of `(rows: Int, columns: Int)`.
+    static func shape<C: Collection>(of matrix: C) -> (rows: Int, columns: Int)
+        where C.Element: Collection, C.Element.Element == Element {
+        let rows = matrix.count
+        let columns = matrix.first?.count ?? 0
+        return (rows, columns)
+    }
+
+    /// Returns the total number of elements in a two-dimensional collection.
+    ///
+    /// Sums the element count of every row without allocating a flattened copy.
+    ///
+    /// - Parameter matrix: A two-dimensional collection to measure.
+    /// - Returns: The total element count across all rows.
+    static func size<C: Collection>(of matrix: C) -> Int
+        where C.Element: Collection, C.Element.Element == Element {
+        return matrix.reduce(0) { $0 + $1.count }
+    }
+
     /// Flattens a two-dimensional matrix into a one-dimensional array using row-major order.
     ///
     /// Rows are concatenated sequentially — all elements from the first row appear first,
