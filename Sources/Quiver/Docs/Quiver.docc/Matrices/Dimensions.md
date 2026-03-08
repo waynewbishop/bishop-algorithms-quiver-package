@@ -36,7 +36,7 @@ let dimensions = matrix.shape
 // dimensions.columns == 3
 ```
 
-The named tuple makes intent explicit at the call site. Rather than accessing dimensions by numeric index and remembering which position corresponds to rows or columns, we access `.rows` and `.columns` directly. The labels are part of the return type signature — the compiler carries them through, so there is no chance of transposing the two values by accident.
+The `.shape` property returns a named tuple of type `(rows: Int, columns: Int)`. The labels `.rows` and `.columns` are built into the return type, so they are available automatically — we do not need to declare them ourselves. This makes intent explicit at the call site and eliminates any chance of transposing the two values by accident.
 
 ### Counting total elements
 
@@ -91,6 +91,8 @@ let (stores, days) = sales.shape
 
 sales.size  // 28 (total data points across all stores)
 ```
+
+Here we use tuple destructuring to unpack `.shape` into names that reflect the domain — `stores` and `days` instead of the generic `rows` and `columns`. Destructuring works by position, so the first value is always the row count and the second is always the column count.
 
 ### Compile-time type guarantees
 
