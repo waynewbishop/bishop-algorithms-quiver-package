@@ -22,7 +22,7 @@ jobs:
 
       - name: Build DocC
         env:
-          BASE_PATH: bishop-algorithms-quiver-package
+          BASE_PATH: quiver
         run: |
           xcodebuild docbuild \
             -scheme Quiver \

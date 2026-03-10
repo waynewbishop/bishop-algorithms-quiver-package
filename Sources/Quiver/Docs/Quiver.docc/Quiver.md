@@ -16,7 +16,7 @@ A Swift package that provides vector mathematics, numerical computing, and stati
 
 ## Overview
 
-[Quiver](https://github.com/waynewbishop/bishop-algorithms-quiver-package) expands the Swift ecosystem with a native, Swift-first approach to vector mathematics and numerical computing. By building directly on Swift's powerful type system and syntax, Quiver creates an intuitive bridge between traditional array operations and advanced mathematical concepts. Built as an extension on the standard `Array` type, the framework embraces Swift's emphasis on readability and expressiveness, offering mathematical operations that feel natural to iOS and macOS developers.
+[Quiver](https://github.com/waynewbishop/quiver) expands the Swift ecosystem with a native, Swift-first approach to vector mathematics and numerical computing. By building directly on Swift's powerful type system and syntax, Quiver creates an intuitive bridge between traditional array operations and advanced mathematical concepts. Built as an extension on the standard `Array` type, the framework embraces Swift's emphasis on readability and expressiveness, offering mathematical operations that feel natural to iOS and macOS developers.
 
 ### Data science in Swift
 
@@ -42,10 +42,6 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Operations>
 - <doc:Elements>
 
-### Statistical Operations
-- <doc:Statistics>
-- <doc:Sampling>
-
 ### Matrices
 - <doc:Matrices-Operations>
 - <doc:Reshape>
@@ -62,6 +58,10 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 ### Similarity and Distance
 - <doc:Similarity-Operations>
 - <doc:Semantic-Search>
+
+### Statistical Operations
+- <doc:Statistics>
+- <doc:Sampling>
 
 ### Sorting and Selection
 - <doc:Selection>
