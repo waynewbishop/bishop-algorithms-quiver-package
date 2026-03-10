@@ -41,7 +41,10 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 ### Vectors
 - <doc:Operations>
 - <doc:Elements>
+
+### Statistical Operations
 - <doc:Statistics>
+- <doc:Sampling>
 
 ### Matrices
 - <doc:Matrices-Operations>
@@ -62,9 +65,6 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Sorting and Selection
 - <doc:Selection>
-
-### Sampling
-- <doc:Sampling>
 
 ### Quick Reference
 - ``Swift/Array/dot(_:)``

@@ -73,13 +73,9 @@ In other numerical computing ecosystems, train-test splitting is typically a sin
 
 Quiver takes a different approach. Each call splits one array and returns a named tuple with exactly two values: `.train` and `.test`. This design has three advantages:
 
-**No positional ordering bugs.** With a single multi-array function, swapping two variables in the unpack silently corrupts the data. With named tuples, each destructure is self-contained — `trainFeatures` and `testFeatures` cannot be confused with `trainPrices` and `testPrices`.
+**No positional ordering bugs**. With a single multi-array function, swapping two variables in the unpack silently corrupts the data. With named tuples, each destructure is self-contained — `trainFeatures` and `testFeatures` cannot be confused with `trainPrices` and `testPrices`.
 
-**Works with any number of arrays.** If we have features, labels, and sample weights, we add a third call with the same seed. A single-function approach would need a new parameter for every additional array.
-
-**Consistent with the rest of Quiver.** Every Quiver operation is an extension on `Array` — a method called on one array that returns a result. A freestanding function accepting multiple arrays of different types would break this pattern and introduce a different kind of API into the library.
-
-> Note: The seed parameter is what makes this safe. Two arrays of any type, split with the same seed and the same `testRatio`, will always produce the same index permutation. The pairing guarantee comes from deterministic shuffling, not from bundling arrays into a single call.
+**Works with any number of arrays**. If we have features, labels, and sample weights, we add a third call with the same seed. A single-function approach would need a new parameter for every additional array.
 
 ### Choosing a test ratio
 
