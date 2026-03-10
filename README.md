@@ -1,8 +1,6 @@
 # Quiver — Numerical Computing for Swift
 
-A lightweight, pure-Swift package for vector math, matrix operations, statistics, and data science. Works on iOS, macOS, watchOS, visionOS, and Linux. Zero external dependencies.
-
-**[Documentation](https://waynewbishop.github.io/quiver/documentation/quiver/)** | **[Swift Algorithms Book](https://waynewbishop.github.io/swift-algorithms/)**
+Quiver expands the Swift ecosystem with a native, Swift-first approach to vector mathematics, numerical computing, and statistical operations. As a pure Swift library with zero external dependencies, Quiver runs on every Apple platform — iOS, macOS, watchOS, tvOS, and visionOS — as well as server-side Swift with frameworks like Vapor, Linux environments, and containerized deployments. As a lightweight framework, Quiver is ideal for teaching environments, on-device processing, and any context where minimal dependencies and platform portability matter.
 
 ## Features
 
@@ -38,6 +36,7 @@ A lightweight, pure-Swift package for vector math, matrix operations, statistics
   * Grouped aggregations and percentage changes
 
 * **Data Analysis Tools**
+  * Train/test split with reproducible seeded shuffling
   * Boolean operations and filtering
   * Broadcasting operations (scalar and vector)
   * Comparison operations and masking
@@ -110,7 +109,7 @@ Quiver is built on several core principles:
 
 ## Data Science Framework
 
-Quiver occupies a unique niche as a Swift-native data science framework with a clean, developer-friendly API. It fills the gap between low-level frameworks and high-level tools. Overall, the framework provides the style and functionality of frameworks utilized in the Python community, reimagined for Swift's type system and modern language features.
+Quiver occupies a unique niche as a Swift-native data science framework with a clean, developer-friendly API. It fills the gap between low-level frameworks and high-level tools, reimagined for Swift's type system and modern language features.
 
 ## When to Use Quiver
 
@@ -122,15 +121,6 @@ Quiver is particularly useful for:
 * **Educational settings** - Teaching vector mathematics, numerical computing, and data science concepts
 * **On-device intelligence** - Privacy-first ML features without cloud dependencies or external runtimes
 
-## Swift Charts Integration
-
-Quiver seamlessly integrates with Swift Charts for data visualization:
-* Rolling averages for time series smoothing
-* Histogram binning for distribution analysis
-* Percentiles and quartiles for box plots
-* Grouped aggregations for bar charts
-* Percentage change and correlation analysis
-
 ## Documentation
 
 Full API documentation is available at [waynewbishop.github.io/quiver](https://waynewbishop.github.io/quiver/documentation/quiver/), including:
@@ -139,7 +129,7 @@ Full API documentation is available at [waynewbishop.github.io/quiver](https://w
 * Linear algebra primer for beginners
 * Matrix operations and transformations
 
-Quiver is the companion numerical computing package for the [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/) book (Chapters 20–23).
+Quiver is also the companion numerical computing package for [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/) book.
 
 ## Contributing
 
