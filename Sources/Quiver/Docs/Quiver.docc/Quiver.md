@@ -60,8 +60,9 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Semantic-Search>
 
 ### Statistical Operations
-- <doc:Statistics>
 - <doc:Sampling>
+- <doc:Charts>
+- <doc:Statistics>
 
 ### Sorting and Selection
 - <doc:Selection>

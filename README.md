@@ -1,6 +1,8 @@
 # Quiver — Numerical Computing for Swift
 
-Quiver expands the Swift ecosystem with a native, Swift-first approach to vector mathematics, numerical computing, and statistical operations. As a pure Swift library with zero external dependencies, Quiver runs on every Apple platform — iOS, macOS, watchOS, tvOS, and visionOS — as well as server-side Swift with frameworks like Vapor, Linux environments, and containerized deployments. As a lightweight framework, Quiver is ideal for teaching environments, on-device processing, and any context where minimal dependencies and platform portability matter.
+Quiver expands the Swift ecosystem with a native, Swift-first approach to vector mathematics, numerical computing, and statistical operations. As a lightweight framework, Quiver is ideal for teaching environments, on-device processing, and any context where minimal dependencies and platform portability matter.
+
+As a pure Swift library with zero external dependencies, Quiver runs on every Apple platform — iOS, macOS, watchOS, tvOS, and visionOS — as well as server-side Swift with frameworks like Vapor, Linux environments, and containerized deployments. 
 
 ## Features
 
@@ -34,6 +36,10 @@ Quiver expands the Swift ecosystem with a native, Swift-first approach to vector
   * Swift Charts integration (rolling averages, histograms)
   * Percentiles and quartiles for box plots
   * Grouped aggregations and percentage changes
+
+* **Text and Embeddings**
+  * Tokenization for text analysis and NLP workflows
+  * Word embedding lookups with automatic vocabulary filtering
 
 * **Data Analysis Tools**
   * Train/test split with reproducible seeded shuffling

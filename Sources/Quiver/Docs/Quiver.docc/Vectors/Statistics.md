@@ -4,41 +4,48 @@ Calculate common statistical measures from arrays of numerical data.
 
 ## Overview
 
-Quiver extends Swift arrays with powerful statistical functions for calculating summary statistics like sum, mean, median, variance, and standard deviation. These operations support both exploratory data analysis and algorithmic computations.
-
-Statistical functions form the foundation of data analysis and are essential for understanding the characteristics of numerical data.
+Statistical functions are the foundation of data analysis in Quiver. They answer three questions about any dataset: where is the center, how spread out are the values, and which values are unusual. These measures feed directly into visualization, scaling, and machine learning workflows throughout the framework.
 
 ### Quick data overview
 
-For a comprehensive overview of data including both shape information and key statistics, use the `info()` method:
+The `info()` method provides a quick statistical summary of any array or matrix. For vectors, it reports count, type, mean, standard deviation, min, and max. For matrices, it adds shape and size:
 
 ```swift
 import Quiver
 
-let data = [12.5, 18.3, 9.8, 15.2, 13.7, 10.1, 19.4]
-print(data.info())
-// Output:
-// Array Information:
-// Count: 7
-// Shape: (7, 0)
+let matrix: [[Double]] = [
+    [1.0, 2.0, 3.0],
+    [4.0, 5.0, 6.0]
+]
+
+print(matrix.info())
+// Matrix Information:
+// Shape: (2, 3)
+// Size: 6
 // Type: Double.Type
-// Mean: 14.14
-// Min: 9.8
-// Max: 19.4
+// Mean: 3.5
+// Std: 1.707825127659933
+// Min: 1.0
+// Max: 6.0
 //
-// First 5 items:
-// [0]: 12.5
-// [1]: 18.3
-// [2]: 9.8
-// [3]: 15.2
-// [4]: 13.7
+// First 2 rows:
+// [0]: [1.0, 2.0, 3.0]
+// [1]: [4.0, 5.0, 6.0]
 ```
 
-The shape `(7, 0)` indicates a 1D array with 7 elements. For a 2D matrix, the shape would show both dimensions — for example, `(3, 4)` for a 3-row, 4-column matrix.
+These properties are also available individually on any matrix:
+
+```swift
+matrix.shape        // (rows: 2, columns: 3)
+matrix.size         // 6
+matrix.transposed() // [[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]]
+```
+
+> Tip: For a deeper look at shape, size, and dimension operations, see <doc:Dimensions>.
 
 ### Aggregation functions
 
-Quiver also provides functions to calculate basic aggregations on arrays:
+Quiver provides functions to calculate basic aggregations on arrays:
 
 ```swift
 let data = [4.0, 7.0, 2.0, 9.0, 3.0]
@@ -59,128 +66,69 @@ let maxIndex = data.argmax()  // 3
 
 ### Central tendency
 
-These functions find the "center" of a data distribution:
-
-```swift
-let data = [4.0, 7.0, 2.0, 9.0, 3.0]
-
-// Calculate the mean (average)
-let mean = data.mean()  // 5.0
-
-// Calculate the median (middle value)
-let median = data.median()  // 4.0
-```
-
-> Note: The mean is affected by extreme values (outliers), while the median is more robust. Comparing these two measures can help identify skewed distributions.
-
-### Dispersion and variation
-
-These functions measure how spread out the data is:
-
-```swift
-let data = [4.0, 7.0, 2.0, 9.0, 3.0]
-
-// Calculate the variance
-let variance = data.variance()  // 6.8
-
-// Calculate the standard deviation
-let std = data.std()  // 2.61...
-
-// For sample statistics (n-1 denominator)
-let sampleVar = data.variance(ddof: 1)  // 8.5
-let sampleStd = data.std(ddof: 1)  // 2.92...
-```
-
-> Important: The `ddof` parameter (Delta Degrees of Freedom) changes how variance is calculated. Use `ddof: 0` for population statistics and `ddof: 1` for sample statistics. Sample statistics are more commonly used when the data represents only a subset of all possible observations.
-
-### Cumulative operations
-
-Calculate cumulative statistics across an array:
-
-```swift
-let data = [1.0, 2.0, 3.0, 4.0, 5.0]
-
-// Calculate cumulative sum
-let cumSum = data.cumulativeSum()  // [1.0, 3.0, 6.0, 10.0, 15.0]
-
-// Calculate cumulative product
-let cumProd = data.cumulativeProduct()  // [1.0, 2.0, 6.0, 24.0, 120.0]
-```
-
-Cumulative operations are useful for:
-- Running totals and balances
-- Calculating growth over time
-- Building empirical distribution functions
-
-### Working with different data types
-
-Quiver's statistical functions have appropriate type constraints:
-
-```swift
-// Basic operations work with any Numeric type
-let integers = [1, 2, 3, 4, 5]
-let intSum = integers.sum()  // 15
-
-// Advanced statistics require FloatingPoint types
-let doubles = [1.0, 2.0, 3.0, 4.0, 5.0]
-let mean = doubles.mean()  // 3.0
-```
-
-> Note: To perform statistical operations on integer data, consider converting to a floating-point type first to avoid precision loss.
-
-## Common use cases
-
-### Data normalization
-
-Normalize data with simple transformations:
+Mean and median both describe the center of a distribution, but they respond differently to extreme values. The mean shifts toward outliers; the median ignores them. When the two diverge significantly, it signals a skewed distribution — and `outlierMask()` can help identify the values responsible.
 
 ```swift
 import Quiver
 
-let temperatures = [72.0, 68.0, 73.0, 70.0, 75.0]
+let responseTimes = [12.0, 15.0, 14.0, 13.0, 16.0, 11.0, 450.0]
 
-// Convert Fahrenheit to Celsius: (F - 32) * 5/9
-// Using map
-let celsiusMap = temperatures.map { ($0 - 32.0) * 5.0/9.0 }
+let mean = responseTimes.mean()      // 75.86 (pulled up by 450)
+let median = responseTimes.median()  // 14.0  (unaffected)
 
-// Using Quiver broadcasting for cleaner code
-let celsius = temperatures.broadcast(subtracting: 32.0).broadcast(multiplyingBy: 5.0/9.0)
-// [22.2, 20.0, 22.8, 21.1, 23.9]
-
-// Using a custom broadcasting operation with closure
-let celsiusCustom = temperatures.broadcast(with: 0.0) { fahrenheit, _ in
-    (fahrenheit - 32.0) * 5.0/9.0
-}
-// [22.2, 20.0, 22.8, 21.1, 23.9]
-
-// Add 10% to each value
-// Using map
-let increasedMap = temperatures.map { $0 * 1.1 }
-
-// Using Quiver broadcasting
-let increased = temperatures.broadcast(multiplyingBy: 1.1)
-// [79.2, 74.8, 80.3, 77.0, 82.5]
+// The gap between mean and median signals an outlier
+let outliers = responseTimes.outlierMask(threshold: 2.0)
+// [false, false, false, false, false, false, true]
 ```
 
-> Tip: Custom broadcasting with closures is particularly useful for complex transformations that combine multiple operations or include conditional logic. Learn more about <doc:Broadcast>.
+### Dispersion and variation
 
-> Note: The second parameter in the custom broadcasting closure is a placeholder in this example (hence the `_`), but it can be used for operations that require a specific value.
+Variance and standard deviation measure how far values spread from the mean. A low standard deviation means values cluster tightly; a high one means they are scattered. These two measures are the inputs to z-score standardization — dividing by the standard deviation converts any dataset to a common scale where values represent distance from the mean in standard-deviation units.
+
+```swift
+import Quiver
+
+let data = [4.0, 7.0, 2.0, 9.0, 3.0]
+
+// Population statistics (default, ddof: 0)
+let variance = data.variance()  // 6.8
+let std = data.std()            // 2.61
+
+// Sample statistics (ddof: 1) for data representing a subset
+let sampleVar = data.variance(ddof: 1)  // 8.5
+let sampleStd = data.std(ddof: 1)       // 2.92
+```
+
+> Important: The `ddof` parameter (Delta Degrees of Freedom) controls the denominator. Use `ddof: 0` for population statistics when the data is the complete set. Use `ddof: 1` for sample statistics when the data is a subset of all possible observations.
+
+### Cumulative operations
+
+Cumulative functions replace each element with the running total or running product up to that position. These are useful for tracking growth over time, computing running balances, and building empirical distribution functions.
+
+```swift
+let data = [1.0, 2.0, 3.0, 4.0, 5.0]
+
+let cumSum = data.cumulativeSum()      // [1.0, 3.0, 6.0, 10.0, 15.0]
+let cumProd = data.cumulativeProduct() // [1.0, 2.0, 6.0, 24.0, 120.0]
+```
 
 ### Anomaly detection
 
-Find values that deviate significantly from the norm using z-score method:
+Find values that deviate significantly from the norm using the z-score method. A z-score measures how many standard deviations a value is from the mean — the threshold parameter sets the cutoff:
 
 ```swift
+import Quiver
+
 let data = [4.0, 7.0, 2.0, 9.0, 3.0, 35.0, 5.0]
 
 // Find outliers (values more than 2 standard deviations from mean)
 let mask = data.outlierMask(threshold: 2.0)
 // [false, false, false, false, false, true, false]
 
-// Extract outlier values
+// Extract outlier values using boolean masking
 let outliers = data.masked(by: mask)  // [35.0]
 
-// For performance, pre-calculate statistics when processing multiple arrays
+// Pre-calculate statistics when processing multiple arrays
 guard let mean = data.mean(), let std = data.std() else {
     fatalError("Unable to calculate statistics for empty array")
 }
@@ -191,33 +139,21 @@ let mask2 = data.outlierMask(threshold: 3.0, mean: mean, std: std)
 
 ### Vector averaging
 
-Calculate the mean vector by averaging corresponding elements across multiple vectors:
+Calculate the mean vector by averaging corresponding elements across multiple vectors. This operation computes the element-wise mean — essential for creating document vectors from word embeddings, computing centroids for clustering, and averaging feature vectors in machine learning:
 
 ```swift
-let vectors = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
-let mean = vectors.meanVector()
-// [4.0, 5.0, 6.0]
-```
+import Quiver
 
-This operation computes the element-wise mean useful for:
-- Creating context vectors from word embeddings
-- Averaging feature vectors in machine learning
-- Computing centroids for clustering algorithms
-
-```swift
-// Simulate averaging word embeddings for context
+// Average word embeddings to create a document vector
 let wordEmbeddings = [
-    [0.2, 0.5, -0.3, 0.8],
-    [0.1, 0.6, 0.2, -0.4]
+    [0.2, 0.5, -0.3, 0.8],   // "swift"
+    [0.1, 0.6, 0.2, -0.4]    // "algorithms"
 ]
-let contextVector = wordEmbeddings.meanVector()
+let documentVector = wordEmbeddings.meanVector()
 // [0.15, 0.55, -0.05, 0.2]
 ```
 
-> Note: The function returns `nil` if the array is empty or if vectors have inconsistent dimensions.
-
 > Tip: The `meanVector()` method is a key step in building semantic search systems — it combines multiple word vectors into a single document vector for similarity comparison. See <doc:Semantic-Search> for a complete walkthrough.
-
 
 ## Topics
 
@@ -246,5 +182,6 @@ let contextVector = wordEmbeddings.meanVector()
 - ``Swift/Array/meanVector()->[Float]?``
 
 ### Related articles
+- <doc:Charts>
+- <doc:Sampling>
 - <doc:Operations>
-- <doc:Broadcast>

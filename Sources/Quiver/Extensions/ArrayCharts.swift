@@ -12,12 +12,20 @@ import Foundation
 
 // MARK: - Chart Helper Functions
 
-/// Aggregation methods for groupBy operations
+/// Specifies how values within a group or window are combined into a single result.
+///
+/// Used by `groupBy(_:using:)`, `groupedData(by:using:)`, and `downsample(factor:using:)`
+/// to control how multiple values are aggregated.
 public enum AggregationMethod {
+    /// Sum all values in the group
     case sum
+    /// Calculate the arithmetic mean of the group
     case mean
+    /// Count the number of values in the group
     case count
+    /// Select the minimum value in the group
     case min
+    /// Select the maximum value in the group
     case max
 }
 
@@ -73,9 +81,33 @@ public extension Array where Element: FloatingPoint {
         return result
     }
 
-    /// Calculate period-over-period difference
-    /// - Parameter lag: Number of periods to lag (default: 1)
-    /// - Returns: Array of differences (length = count - lag)
+    /// Calculates the difference between each element and the element a fixed number of
+    /// periods before it.
+    ///
+    /// Period-over-period differencing isolates how much a value changed between consecutive
+    /// observations. This is useful for converting cumulative or absolute measurements into
+    /// rates of change, and for removing trends from time-series data before further analysis.
+    ///
+    /// The result array is shorter than the input by the lag amount, since the first `lag`
+    /// elements have no prior value to subtract.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let monthlyRevenue = [50000.0, 52000.0, 48000.0, 55000.0, 60000.0]
+    ///
+    /// // Month-over-month change
+    /// let changes = monthlyRevenue.diff()
+    /// // [2000.0, -4000.0, 7000.0, 5000.0]
+    ///
+    /// // Quarter-over-quarter change (3-period lag)
+    /// let quarterly = monthlyRevenue.diff(lag: 3)
+    /// // [5000.0, 8000.0]
+    /// ```
+    ///
+    /// - Parameter lag: The number of periods to look back when computing the difference (default: 1)
+    /// - Returns: Array of differences with length equal to `count - lag`
     func diff(lag: Int = 1) -> [Element] {
         guard lag > 0 && lag < count else { return [] }
 
@@ -89,9 +121,30 @@ public extension Array where Element: FloatingPoint {
         return result
     }
 
-    /// Calculate period-over-period percentage change
-    /// - Parameter lag: Number of periods to lag (default: 1)
-    /// - Returns: Array of percentage changes
+    /// Calculates the percentage change between each element and the element a fixed number
+    /// of periods before it.
+    ///
+    /// Percentage change normalizes differences by the prior value, making it possible to
+    /// compare growth rates across series with different scales. A result of `10.0` means
+    /// a 10% increase; `-5.0` means a 5% decrease. If a prior value is zero, the change
+    /// for that position is reported as zero to avoid division errors.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let stockPrices = [100.0, 105.0, 102.0, 110.0, 108.0]
+    ///
+    /// let dailyReturns = stockPrices.percentChange()
+    /// // [5.0, -2.857, 7.843, -1.818]
+    ///
+    /// // Year-over-year comparison with a 4-period lag
+    /// let yoy = stockPrices.percentChange(lag: 4)
+    /// // [8.0]
+    /// ```
+    ///
+    /// - Parameter lag: The number of periods to look back when computing the change (default: 1)
+    /// - Returns: Array of percentage changes with length equal to `count - lag`
     func percentChange(lag: Int = 1) -> [Element] {
         guard lag > 0 && lag < count else { return [] }
 
@@ -219,9 +272,27 @@ public extension Array where Element: FloatingPoint {
         return (min: minVal, q1: q1Value, median: medianValue, q3: q3Value, max: maxVal, iqr: iqr)
     }
 
-    /// Calculate specific percentile value
-    /// - Parameter p: Percentile to calculate (0-100)
-    /// - Returns: Value at the specified percentile, or nil if array is empty
+    /// Calculates the value at a specific percentile using linear interpolation.
+    ///
+    /// The percentile indicates the point below which a given percentage of observations
+    /// fall. For example, the 90th percentile is the value below which 90% of the data
+    /// lies. This method sorts the data and interpolates between adjacent values when the
+    /// percentile falls between two observations.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let responseTimes = [12.0, 25.0, 18.0, 45.0, 30.0, 15.0, 22.0, 120.0]
+    ///
+    /// let p50 = responseTimes.percentile(50.0)   // 23.5 (median)
+    /// let p90 = responseTimes.percentile(90.0)   // 71.25
+    /// let p99 = responseTimes.percentile(99.0)   // 115.15
+    /// ```
+    ///
+    /// - Parameter p: The percentile to calculate, between 0 and 100 inclusive
+    /// - Returns: The interpolated value at the given percentile, or nil if the array is empty
+    ///   or `p` is outside the valid range
     func percentile(_ p: Double) -> Element? where Element: BinaryFloatingPoint {
         guard !isEmpty else { return nil }
         guard p >= 0 && p <= 100 else { return nil }
@@ -235,9 +306,24 @@ public extension Array where Element: FloatingPoint {
         return sorted[lowerIndex] + fraction * (sorted[upperIndex] - sorted[lowerIndex])
     }
 
-    /// Calculate percentile rank for a specific value
-    /// - Parameter value: Value to find percentile rank for
-    /// - Returns: Percentile rank (0-100)
+    /// Calculates the percentile rank of a specific value within the array.
+    ///
+    /// The percentile rank tells us what percentage of values in the array fall at or
+    /// below the given value. A rank of 75.0 means the value is greater than or equal
+    /// to 75% of the data. This is the inverse operation of `percentile(_:)`.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let scores = [60.0, 70.0, 80.0, 90.0, 100.0]
+    ///
+    /// let rank = scores.percentileRank(of: 80.0)  // 50.0
+    /// // 80 is at the 50th percentile (middle of the distribution)
+    /// ```
+    ///
+    /// - Parameter value: The value to find the percentile rank for
+    /// - Returns: The percentile rank between 0 and 100
     func percentileRank(of value: Element) -> Element {
         guard !isEmpty else { return .zero }
 
@@ -256,8 +342,25 @@ public extension Array where Element: FloatingPoint {
         return rank
     }
 
-    /// Calculate percentile ranks for all values in the array
-    /// - Returns: Array of percentile ranks corresponding to each value
+    /// Calculates the percentile rank for every value in the array.
+    ///
+    /// Each element is replaced by its percentile rank — the percentage of values in the
+    /// array that fall at or below it. Equal values receive the same rank. This is useful
+    /// for normalizing data into a uniform distribution or for comparing positions across
+    /// different datasets.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let scores = [85.0, 92.0, 78.0, 92.0, 88.0]
+    ///
+    /// let ranks = scores.percentileRanks()
+    /// // [30.0, 80.0, 10.0, 80.0, 50.0]
+    /// // Both 92s share the same rank; 78 is at the 10th percentile
+    /// ```
+    ///
+    /// - Returns: Array of percentile ranks (0-100) corresponding to each element
     func percentileRanks() -> [Element] {
         guard !isEmpty else { return [] }
 
@@ -290,9 +393,29 @@ public extension Array where Element: FloatingPoint {
 
     // MARK: - Normalization and Scaling
 
-    /// Scale values to a custom range using min-max scaling
-    /// - Parameter range: Target range (ClosedRange)
-    /// - Returns: Array of scaled values
+    /// Scales values to a target range using min-max normalization.
+    ///
+    /// Min-max scaling linearly maps the smallest value to the lower bound and the largest
+    /// value to the upper bound, preserving the relative spacing between all values. This
+    /// is commonly used to normalize features before machine learning, or to map data values
+    /// to visual properties like chart mark sizes or color intensity.
+    ///
+    /// If all values are identical (zero range), every element maps to the lower bound
+    /// of the target range.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let revenues = [45000.0, 52000.0, 48000.0, 61000.0, 55000.0]
+    ///
+    /// // Scale to point sizes for a scatter chart
+    /// let sizes = revenues.scaled(to: 10.0...50.0)
+    /// // [10.0, 17.5, 13.75, 50.0, 32.5]
+    /// ```
+    ///
+    /// - Parameter range: The target closed range to scale values into
+    /// - Returns: Array of scaled values mapped to the target range
     func scaled(to range: ClosedRange<Element>) -> [Element] {
         guard !isEmpty else { return [] }
         guard let minVal = self.min(), let maxVal = self.max() else {
@@ -308,8 +431,25 @@ public extension Array where Element: FloatingPoint {
         return map { (($0 - minVal) / dataRange) * targetRange + range.lowerBound }
     }
 
-    /// Convert values to percentages of total
-    /// - Returns: Array where values represent percentage of total sum
+    /// Converts each value to its percentage of the total sum.
+    ///
+    /// Each element is divided by the sum of all elements and multiplied by 100,
+    /// producing a distribution where all values add up to 100. This is the standard
+    /// preparation step for pie charts, donut charts, and proportional bar charts.
+    ///
+    /// If the total sum is zero, all elements are returned as zero to avoid division errors.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let categorySpend = [3200.0, 1800.0, 950.0, 4050.0]
+    ///
+    /// let shares = categorySpend.asPercentages()
+    /// // [32.0, 18.0, 9.5, 40.5]
+    /// ```
+    ///
+    /// - Returns: Array where each value represents its percentage of the total sum
     func asPercentages() -> [Element] {
         guard !isEmpty else { return [] }
 
@@ -321,8 +461,29 @@ public extension Array where Element: FloatingPoint {
         return map { ($0 / total) * Element(100) }
     }
 
-    /// Standardize values using z-score normalization (mean=0, std=1)
-    /// - Returns: Array of standardized values, or empty array if std is zero
+    /// Standardizes values using z-score normalization so the result has a mean of 0 and
+    /// a standard deviation of 1.
+    ///
+    /// Each value is transformed by subtracting the mean and dividing by the standard
+    /// deviation. This centers the data around zero and expresses each value in units of
+    /// standard deviation from the mean, making it possible to compare distributions with
+    /// different scales on the same axis.
+    ///
+    /// If the standard deviation is zero (all values are identical), all elements are
+    /// returned as zero.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let temperatures = [72.0, 68.0, 73.0, 70.0, 75.0]
+    ///
+    /// let zScores = temperatures.standardized()
+    /// // [-0.18, -1.63, 0.18, -0.91, 1.27]
+    /// // Positive values are above the mean; negative values are below
+    /// ```
+    ///
+    /// - Returns: Array of z-score standardized values, or empty array if standard deviation is zero
     func standardized() -> [Element] {
         guard !isEmpty else { return [] }
         guard let meanVal = mean(), let stdVal = std() else {
@@ -338,11 +499,31 @@ public extension Array where Element: FloatingPoint {
 
     // MARK: - Grouping and Aggregation
 
-    /// Group values by categories and aggregate using specified method
+    /// Groups values by category labels and aggregates each group using the specified method.
+    ///
+    /// Each value is paired with its corresponding category label by index position. Values
+    /// sharing the same label are collected into a group, and the aggregation method is
+    /// applied to produce a single result per category. The categories array must have the
+    /// same length as the values array.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let sales = [120.0, 95.0, 140.0, 110.0, 85.0, 130.0]
+    /// let regions = ["North", "South", "North", "South", "South", "North"]
+    ///
+    /// let totalByRegion = sales.groupBy(regions, using: .sum)
+    /// // ["North": 390.0, "South": 290.0]
+    ///
+    /// let avgByRegion = sales.groupBy(regions, using: .mean)
+    /// // ["North": 130.0, "South": 96.67]
+    /// ```
+    ///
     /// - Parameters:
-    ///   - categories: Array of category labels (same length as values)
-    ///   - method: Aggregation method to apply
-    /// - Returns: Dictionary mapping categories to aggregated values
+    ///   - categories: Array of category labels with the same length as the values array
+    ///   - method: The aggregation method to apply to each group (`.sum`, `.mean`, `.count`, `.min`, `.max`)
+    /// - Returns: Dictionary mapping each category label to its aggregated value
     func groupBy(_ categories: [String], using method: AggregationMethod) -> [String: Element] {
         guard categories.count == count else { return [:] }
 
@@ -372,11 +553,27 @@ public extension Array where Element: FloatingPoint {
         return result
     }
 
-    /// Group values and return chart-ready array of tuples
+    /// Groups values by category and returns chart-ready tuples sorted by category name.
+    ///
+    /// This is a convenience wrapper around `groupBy(_:using:)` that returns the results
+    /// as an array of named tuples sorted alphabetically by category. The sorted, tuple-based
+    /// output maps directly to Swift Charts mark initializers without additional transformation.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let sales = [120.0, 95.0, 140.0, 110.0, 85.0, 130.0]
+    /// let regions = ["North", "South", "North", "South", "South", "North"]
+    ///
+    /// let chartData = sales.groupedData(by: regions, using: .sum)
+    /// // [(category: "North", value: 390.0), (category: "South", value: 290.0)]
+    /// ```
+    ///
     /// - Parameters:
-    ///   - categories: Array of category labels (same length as values)
-    ///   - method: Aggregation method to apply
-    /// - Returns: Array of tuples (category, value) sorted by category name
+    ///   - categories: Array of category labels with the same length as the values array
+    ///   - method: The aggregation method to apply to each group
+    /// - Returns: Array of `(category, value)` tuples sorted alphabetically by category
     func groupedData(by categories: [String], using method: AggregationMethod) -> [(category: String, value: Element)] {
         let grouped = groupBy(categories, using: method)
         return grouped.map { ($0.key, $0.value) }.sorted { $0.category < $1.category }
@@ -387,8 +584,28 @@ public extension Array where Element: FloatingPoint {
 
 public extension Array where Element == [Double] {
 
-    /// Stack multiple series cumulatively for stacked area/bar charts
-    /// - Returns: Array of arrays where each series is cumulative sum of previous series
+    /// Stacks multiple data series cumulatively so each series builds on the one below it.
+    ///
+    /// Stacked area and bar charts require cumulative values where each series represents
+    /// the running total of all series beneath it. The first series in the result is
+    /// unchanged; the second is the sum of series one and two; the third is the sum of
+    /// all three; and so on. All inner arrays must have the same length.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let mobile  = [120.0, 135.0, 150.0, 140.0]
+    /// let desktop = [200.0, 190.0, 210.0, 195.0]
+    /// let tablet  = [50.0, 55.0, 45.0, 60.0]
+    ///
+    /// let stacked = [mobile, desktop, tablet].stackedCumulative()
+    /// // stacked[0] = [120.0, 135.0, 150.0, 140.0]     (mobile only)
+    /// // stacked[1] = [320.0, 325.0, 360.0, 335.0]     (mobile + desktop)
+    /// // stacked[2] = [370.0, 380.0, 405.0, 395.0]     (all three)
+    /// ```
+    ///
+    /// - Returns: Array of arrays where each series is the cumulative sum of all preceding series
     func stackedCumulative() -> [[Double]] {
         guard !isEmpty else { return [] }
         guard let firstSeries = first else { return [] }
@@ -410,8 +627,29 @@ public extension Array where Element == [Double] {
         return result
     }
 
-    /// Stack series as percentages (each time point sums to 100%)
-    /// - Returns: Array of percentage-normalized series
+    /// Converts multiple data series into percentage-based stacking where each time point
+    /// sums to 100%.
+    ///
+    /// At each index position, the values across all series are converted to their percentage
+    /// of the total at that position. This shows how each series contributes proportionally
+    /// over time, removing the effect of overall growth or decline. Useful for 100% stacked
+    /// bar charts and area charts that emphasize composition rather than magnitude.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let mobile  = [120.0, 135.0, 150.0, 140.0]
+    /// let desktop = [200.0, 190.0, 210.0, 195.0]
+    /// let tablet  = [50.0, 55.0, 45.0, 60.0]
+    ///
+    /// let percents = [mobile, desktop, tablet].stackedPercentage()
+    /// // percents[0] = [32.4, 35.5, 37.0, 35.4]   (mobile %)
+    /// // percents[1] = [54.1, 50.0, 51.9, 49.4]   (desktop %)
+    /// // percents[2] = [13.5, 14.5, 11.1, 15.2]   (tablet %)
+    /// ```
+    ///
+    /// - Returns: Array of arrays where each value is the percentage contribution at that index
     func stackedPercentage() -> [[Double]] {
         guard !isEmpty else { return [] }
         guard let firstSeries = first else { return [] }
@@ -516,9 +754,30 @@ public extension Array where Element == [Double] {
         return numerator / Foundation.sqrt(denomX * denomY)
     }
 
-    /// Flatten correlation matrix to chart-ready tuples
-    /// - Parameter labels: Labels for each series
-    /// - Returns: Array of (x, y, value) tuples for heatmap visualization
+    /// Computes a correlation matrix and flattens it into labeled tuples for heatmap rendering.
+    ///
+    /// This method first calculates the Pearson correlation matrix for all series, then
+    /// converts the 2D matrix into an array of `(x, y, value)` tuples where `x` and `y`
+    /// are the series labels and `value` is the correlation coefficient. The output maps
+    /// directly to `RectangleMark` in Swift Charts, with the value driving color intensity.
+    ///
+    /// The labels array must have the same length as the number of series.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let temperature = [30.0, 32.0, 35.0, 28.0, 33.0]
+    /// let iceCream    = [200.0, 220.0, 260.0, 180.0, 230.0]
+    /// let hotCocoa    = [150.0, 130.0, 100.0, 170.0, 120.0]
+    ///
+    /// let labels = ["Temp", "Ice Cream", "Hot Cocoa"]
+    /// let heatmap = [temperature, iceCream, hotCocoa].heatmapData(labels: labels)
+    /// // [("Temp", "Temp", 1.0), ("Temp", "Ice Cream", 0.99), ...]
+    /// ```
+    ///
+    /// - Parameter labels: Array of labels for each series, matching the number of inner arrays
+    /// - Returns: Array of `(x, y, value)` tuples suitable for heatmap visualization
     func heatmapData(labels: [String]) -> [(x: String, y: String, value: Double)] {
         let matrix = correlationMatrix()
         guard matrix.count == labels.count else { return [] }
@@ -539,11 +798,42 @@ public extension Array where Element == [Double] {
 
 public extension Array where Element: FloatingPoint {
 
-    /// Downsample array by factor using specified aggregation method
+    /// Reduces the array size by grouping consecutive elements into fixed-size windows and
+    /// aggregating each window into a single value.
+    ///
+    /// Downsampling is essential for rendering large datasets in charts without overwhelming
+    /// the renderer. A factor of 6 on hourly data produces 4-hour summaries; a factor of
+    /// 24 produces daily summaries. The aggregation method controls how values within each
+    /// window are combined — use `.mean` for smoothed trends, `.max` for peak detection,
+    /// `.sum` for totals, or `.count` for frequency.
+    ///
+    /// If the array length is not evenly divisible by the factor, the final window contains
+    /// the remaining elements.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let hourlyTemps = [
+    ///     18.0, 17.5, 17.0, 16.5, 16.0, 16.5,
+    ///     18.0, 20.0, 22.0, 24.0, 25.5, 26.0,
+    ///     27.0, 27.5, 27.0, 26.0, 24.5, 23.0,
+    ///     21.0, 19.5, 18.5, 18.0, 17.5, 17.0
+    /// ]
+    ///
+    /// // Six-hour averages
+    /// let sixHourly = hourlyTemps.downsample(factor: 6, using: .mean)
+    /// // [17.6, 22.6, 26.5, 18.6]
+    ///
+    /// // Six-hour peaks
+    /// let peaks = hourlyTemps.downsample(factor: 6, using: .max)
+    /// // [18.0, 26.0, 27.5, 21.0]
+    /// ```
+    ///
     /// - Parameters:
-    ///   - factor: Downsampling factor (e.g., 6 converts hourly to 6-hourly)
-    ///   - method: How to aggregate values in each window
-    /// - Returns: Downsampled array
+    ///   - factor: The number of consecutive elements to aggregate into each output value
+    ///   - method: The aggregation method to apply within each window
+    /// - Returns: Array with length equal to `ceil(count / factor)`
     func downsample(factor: Int, using method: AggregationMethod) -> [Element] {
         guard factor > 0 && !isEmpty else { return [] }
         guard factor < count else { return [aggregate(using: method)] }
