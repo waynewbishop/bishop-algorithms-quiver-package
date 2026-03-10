@@ -63,6 +63,9 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 ### Sorting and Selection
 - <doc:Selection>
 
+### Sampling
+- <doc:Sampling>
+
 ### Quick Reference
 - ``Swift/Array/dot(_:)``
 - ``Swift/Array/magnitude``
@@ -70,6 +73,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - ``Swift/Array/transformedBy(_:)``
 
 ### Data Analysis
+- ``Swift/Array/trainTestSplit(testRatio:seed:)``
 - ``Swift/Array/rollingMean(window:)``
 - ``Swift/Array/histogram(bins:)``
 - ``Swift/Array/quartiles()``
