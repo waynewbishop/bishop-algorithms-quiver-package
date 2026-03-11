@@ -83,6 +83,30 @@ A `testRatio` of `0.2` (80% training, 20% testing) is the most common choice and
 
 The ratio must be between 0 and 1, exclusive — a ratio of 0 or 1 would produce an empty partition, which is never useful.
 
+### Stratified splitting
+
+Random splitting works well for balanced datasets, but it can produce skewed partitions when classes are imbalanced. If only 5% of samples belong to the positive class, a random split might concentrate most of them in one partition, leaving the other with too few to learn from or evaluate against.
+
+`stratifiedSplit(labels:testRatio:seed:)` solves this by splitting each class independently, so both partitions reflect the original class ratios:
+
+```swift
+import Quiver
+
+let features: [[Double]] = [
+    [619, 15000], [502, 78000], [699, 0],
+    [850, 11000], [645, 125000], [720, 98000],
+    [410, 45000], [780, 0], [590, 175000], [680, 62000]
+]
+let labels = [1, 1, 0, 0, 1, 0, 1, 0, 1, 0]
+
+let split = features.stratifiedSplit(labels: labels, testRatio: 0.2, seed: 42)
+// split.trainFeatures, split.testFeatures
+// split.trainLabels, split.testLabels
+// Both partitions preserve the 50/50 class ratio
+```
+
+Unlike `trainTestSplit`, which takes one array at a time, `stratifiedSplit` takes both features and labels together. This is necessary because the method needs to see the class labels to determine how to divide each group. The return value is a named 4-tuple, so each partition is unambiguous at the call site.
+
 ### Works with any element type
 
 Because splitting is pure index shuffling and slicing, `trainTestSplit` has no type constraint on the array's elements. It works on `[Double]`, `[String]`, `[[Double]]`, custom structs, or any other Swift type:
@@ -96,6 +120,7 @@ let (trainLabels, testLabels) = labels.trainTestSplit(testRatio: 0.25, seed: 42)
 
 ## See also
 
+- <doc:Naive-Bayes>
 - <doc:Random>
 - <doc:Statistics>
 - <doc:Dimensions>

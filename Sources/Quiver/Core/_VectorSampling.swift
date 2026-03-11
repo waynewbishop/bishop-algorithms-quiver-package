@@ -77,4 +77,63 @@ internal enum _Sampling {
 
         return (train: train, test: test)
     }
+
+    /// Splits paired features and labels into training and testing partitions,
+    /// preserving the class distribution from the labels array in both sets.
+    ///
+    /// Groups elements by their label, shuffles each group independently using the
+    /// seeded generator, then takes the specified ratio from each group for the test set.
+    /// This guarantees that rare classes appear in both partitions proportionally.
+    ///
+    /// - Parameters:
+    ///   - features: The feature array to split (rows of data).
+    ///   - labels: The label array, same length as features.
+    ///   - testRatio: The fraction of elements for the test set (between 0 and 1, exclusive).
+    ///   - seed: A UInt64 seed for reproducible shuffling.
+    /// - Returns: A named tuple of `(trainFeatures: [T], testFeatures: [T], trainLabels: [L], testLabels: [L])`.
+    static func stratifiedSplit<T, L: Hashable>(
+        features: [T],
+        labels: [L],
+        testRatio: Double,
+        seed: UInt64
+    ) -> (trainFeatures: [T], testFeatures: [T], trainLabels: [L], testLabels: [L]) {
+        precondition(!features.isEmpty, "Features array must not be empty")
+        precondition(features.count == labels.count,
+            "Features and labels must have the same length")
+        precondition(testRatio > 0.0 && testRatio < 1.0,
+            "Test ratio must be between 0 and 1 (exclusive)")
+
+        // Group indices by label
+        var groups: [L: [Int]] = [:]
+        for (i, label) in labels.enumerated() {
+            groups[label, default: []].append(i)
+        }
+
+        var rng = SeededRandomNumberGenerator(seed: seed)
+        var trainIndices: [Int] = []
+        var testIndices: [Int] = []
+
+        // Process groups in sorted order for deterministic results
+        let sortedKeys = groups.keys.sorted { "\($0)" < "\($1)" }
+
+        for key in sortedKeys {
+            var indices = groups[key]!
+            indices.shuffle(using: &rng)
+
+            // At least 1 in test per class (if class has 2+ samples)
+            let testCount = max(1, Int(ceil(Double(indices.count) * testRatio)))
+            let actualTestCount = min(testCount, indices.count - 1)
+
+            testIndices.append(contentsOf: indices[..<actualTestCount])
+            trainIndices.append(contentsOf: indices[actualTestCount...])
+        }
+
+        let trainFeatures = trainIndices.map { features[$0] }
+        let testFeatures = testIndices.map { features[$0] }
+        let trainLabels = trainIndices.map { labels[$0] }
+        let testLabels = testIndices.map { labels[$0] }
+
+        return (trainFeatures: trainFeatures, testFeatures: testFeatures,
+                trainLabels: trainLabels, testLabels: testLabels)
+    }
 }

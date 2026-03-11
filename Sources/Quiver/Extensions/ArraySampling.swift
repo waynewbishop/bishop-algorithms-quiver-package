@@ -48,4 +48,45 @@ public extension Array {
     func trainTestSplit(testRatio: Double, seed: UInt64) -> (train: [Element], test: [Element]) {
         return _Sampling.trainTestSplit(self, testRatio: testRatio, seed: seed)
     }
+
+    /// Splits paired feature and label arrays into training and testing subsets,
+    /// preserving the class distribution from the labels in both sets.
+    ///
+    /// Standard random splitting can produce skewed partitions when classes are
+    /// imbalanced. For example, if only 5% of samples are positive, a random
+    /// 80/20 split might put all positive samples in one partition. Stratified
+    /// splitting prevents this by splitting each class independently, so both
+    /// sets reflect the original class ratios.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let features: [[Double]] = [
+    ///     [619, 15000], [502, 78000], [699, 0],
+    ///     [850, 11000], [645, 125000], [720, 98000],
+    ///     [410, 45000], [780, 0], [590, 175000], [680, 62000]
+    /// ]
+    /// let labels = [1, 1, 0, 0, 1, 0, 1, 0, 1, 0]
+    ///
+    /// let split = features.stratifiedSplit(labels: labels, testRatio: 0.2, seed: 42)
+    /// // split.trainFeatures, split.testFeatures, split.trainLabels, split.testLabels
+    /// // Both partitions preserve the 50/50 class ratio
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - labels: The class labels for each element, same length as the array.
+    ///   - testRatio: The fraction of elements for the test set (between 0 and 1, exclusive).
+    ///   - seed: A UInt64 seed for the random number generator, ensuring reproducibility.
+    /// - Returns: A named tuple of `(trainFeatures, testFeatures, trainLabels, testLabels)`.
+    func stratifiedSplit<L: Hashable>(
+        labels: [L],
+        testRatio: Double,
+        seed: UInt64
+    ) -> (trainFeatures: [Element], testFeatures: [Element], trainLabels: [L], testLabels: [L]) {
+        return _Sampling.stratifiedSplit(
+            features: self, labels: labels,
+            testRatio: testRatio, seed: seed
+        )
+    }
 }

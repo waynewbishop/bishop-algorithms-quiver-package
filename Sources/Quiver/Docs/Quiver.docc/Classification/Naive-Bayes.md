@@ -56,7 +56,7 @@ For deeper inspection, `predictLogProbabilities(_:)` returns the raw log-probabi
 
 A typical workflow combines data splitting, model fitting, prediction, and evaluation.
 
-> Tip: Quiver's `trainTestSplit(testRatio:seed:)` splits any array into training and test subsets with a single call. Using the same seed on both features and labels keeps them aligned — no manual index tracking required. See <doc:Sampling> for details.
+> Tip: Quiver's `trainTestSplit(testRatio:seed:)` splits any array into training and test subsets with a single call. For imbalanced datasets where one class is much rarer than another, use `stratifiedSplit(labels:testRatio:seed:)` instead — it preserves the class ratios in both partitions. See <doc:Sampling> for details.
 
 ```swift
 import Quiver
@@ -109,12 +109,16 @@ Naive Bayes multiplies together one probability for every feature in every class
 
 ### Training
 - ``GaussianNaiveBayes/fit(features:labels:)``
-- ``FeatureScaler``
 
 ### Prediction
 - ``GaussianNaiveBayes/predict(_:)``
 - ``GaussianNaiveBayes/predictLogProbabilities(_:)``
 
+### Data Splitting
+- ``Swift/Array/trainTestSplit(testRatio:seed:)``
+- ``Swift/Array/stratifiedSplit(labels:testRatio:seed:)``
+
 ### Related
+- <doc:Feature-Scaling>
 - <doc:Evaluation-Metrics>
 - <doc:Sampling>

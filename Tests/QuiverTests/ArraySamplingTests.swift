@@ -70,6 +70,58 @@ final class ArraySamplingTests: XCTestCase {
         XCTAssertNotEqual(first.train, second.train)
     }
 
+    // MARK: - Stratified Split
+
+    // Stratified split preserves class ratios in both partitions
+    func testStratifiedPreservesRatio() {
+        let features = Array(0..<100)
+        // 80 class-0, 20 class-1 (imbalanced)
+        var labels = Array(repeating: 0, count: 80)
+        labels.append(contentsOf: Array(repeating: 1, count: 20))
+
+        let split = features.stratifiedSplit(labels: labels, testRatio: 0.2, seed: 42)
+
+        // Total counts correct
+        XCTAssertEqual(split.trainFeatures.count + split.testFeatures.count, 100)
+        XCTAssertEqual(split.trainLabels.count + split.testLabels.count, 100)
+
+        // Test set should have proportional representation
+        let testClass0 = split.testLabels.filter { $0 == 0 }.count
+        let testClass1 = split.testLabels.filter { $0 == 1 }.count
+
+        // 80 * 0.2 = 16, 20 * 0.2 = 4
+        XCTAssertEqual(testClass0, 16)
+        XCTAssertEqual(testClass1, 4)
+    }
+
+    // Stratified split is reproducible with same seed
+    func testStratifiedReproducibility() {
+        let features: [[Double]] = [[1], [2], [3], [4], [5], [6], [7], [8]]
+        let labels = [0, 0, 0, 0, 1, 1, 1, 1]
+
+        let first = features.stratifiedSplit(labels: labels, testRatio: 0.25, seed: 42)
+        let second = features.stratifiedSplit(labels: labels, testRatio: 0.25, seed: 42)
+
+        XCTAssertEqual(first.trainLabels, second.trainLabels)
+        XCTAssertEqual(first.testLabels, second.testLabels)
+    }
+
+    // Stratified split keeps features and labels aligned
+    func testStratifiedAlignment() {
+        let features: [[Double]] = [[10], [20], [30], [40], [50], [60]]
+        let labels = [0, 0, 0, 1, 1, 1]
+
+        let split = features.stratifiedSplit(labels: labels, testRatio: 0.33, seed: 7)
+
+        // Each class should appear in the test set
+        XCTAssertTrue(split.testLabels.contains(0))
+        XCTAssertTrue(split.testLabels.contains(1))
+
+        // Features and labels must stay aligned
+        XCTAssertEqual(split.trainFeatures.count, split.trainLabels.count)
+        XCTAssertEqual(split.testFeatures.count, split.testLabels.count)
+    }
+
     // Various ratios produce correct partition sizes
     func testRatioSizes() {
         let data = Array(0..<100)

@@ -67,6 +67,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Classification
 - <doc:Naive-Bayes>
+- <doc:Feature-Scaling>
 - <doc:Evaluation-Metrics>
 
 ### Sorting and Selection
@@ -80,6 +81,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Data Analysis
 - ``Swift/Array/trainTestSplit(testRatio:seed:)``
+- ``Swift/Array/stratifiedSplit(labels:testRatio:seed:)``
 - ``Swift/Array/rollingMean(window:)``
 - ``Swift/Array/histogram(bins:)``
 - ``Swift/Array/quartiles()``
