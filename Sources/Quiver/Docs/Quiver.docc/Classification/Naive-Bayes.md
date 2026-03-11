@@ -1,6 +1,6 @@
 # Naive Bayes Classification
 
-Train a Gaussian Naive Bayes classifier using Quiver's array-based API.
+Train a Gaussian Naive Bayes classifier.
 
 ## Overview
 
@@ -64,54 +64,42 @@ let features: [[Double]] = [
     [619, 15000, 0.08], [502, 78000, 0.04], [699, 0, 0.42],
     [850, 11000, 0.12], [645, 125000, 0.35], [720, 98000, 0.18],
     [410, 45000, 0.06], [780, 0, 0.50], [590, 175000, 0.10],
-    [680, 62000, 0.28], [550, 200000, 0.03], [810, 5000, 0.45],
-    [470, 95000, 0.07], [730, 0, 0.38], [620, 140000, 0.15],
-    [760, 32000, 0.22], [520, 180000, 0.05], [690, 0, 0.48],
-    [580, 112000, 0.09], [840, 8000, 0.40]
+    [680, 62000, 0.28]
 ]
 
 // Labels — 1 means the customer churned
-let labels = [1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+let labels = [1, 1, 0, 0, 1, 0, 1, 0, 1, 0]
 
-// Split into training and test sets (same seed keeps them aligned)
+// Split, scale, fit, predict
 let (trainX, testX) = features.trainTestSplit(testRatio: 0.25, seed: 42)
 let (trainY, testY) = labels.trainTestSplit(testRatio: 0.25, seed: 42)
 
-// Scale features to [0, 1] when they are on very different scales
-let scaledTrainX = trainX.map { $0.scaled(to: 0.0...1.0) }
-let scaledTestX = testX.map { $0.scaled(to: 0.0...1.0) }
+let model = GaussianNaiveBayes.fit(
+    features: trainX.map { $0.scaled(to: 0.0...1.0) },
+    labels: trainY
+)
+let predictions = model.predict(testX.map { $0.scaled(to: 0.0...1.0) })
 
-// Fit and predict
-let model = GaussianNaiveBayes.fit(features: scaledTrainX, labels: trainY)
-let predictions = model.predict(scaledTestX)
-
-// Evaluate — precision and recall are Optional, forcing explicit handling
+// Evaluate — precision and recall return nil when undefined
 let cm = predictions.confusionMatrix(actual: testY)
-print("Accuracy:  \(cm.accuracy)")
-
-if let precision = cm.precision {
-    print("Precision: \(precision)")
-}
-if let recall = cm.recall {
-    print("Recall:    \(recall)")
-}
+print("Accuracy: \(cm.accuracy)")
+print("Precision: \(cm.precision as Any)")
+print("Recall: \(cm.recall as Any)")
 ```
 
-### Why value types matter
+### Safe by design
 
-``GaussianNaiveBayes`` is a Swift struct — a value type. This design eliminates several common bugs from class-based ML APIs:
+``GaussianNaiveBayes`` is a Swift struct, which means it cannot be accidentally changed after creation. This design prevents three common mistakes:
 
-**No accidental mutation.** In class-based ML APIs, fitting a scaler mutates the object in place. A common bug is accidentally re-fitting the scaler on test data, which leaks test statistics into the model. In Quiver, ``GaussianNaiveBayes/fit(features:labels:)`` returns a new, immutable model. There is no mutable state to corrupt.
+**The model is always ready to use.** Calling ``GaussianNaiveBayes/fit(features:labels:)`` returns a fully trained model in one step. There is no way to create an empty model and forget to train it before making predictions.
 
-**No unfitted models.** Some APIs allow constructing an empty model and calling `predict` before fitting — a runtime crash. Quiver's static factory method makes this impossible. The only way to obtain a ``GaussianNaiveBayes`` instance is through ``GaussianNaiveBayes/fit(features:labels:)``, which always returns a fully trained model.
+**Training data stays separate from test data.** Because the model is immutable once created, there is no risk of accidentally re-training it on test data — a subtle bug that can inflate evaluation scores and go unnoticed.
 
-**No global random state.** Quiver's ``Swift/Array/trainTestSplit(testRatio:seed:)`` uses a local seeded random number generator. There is no global random seed that can be accidentally overwritten by another part of the codebase.
+**Reproducible splits.** Each call to ``Swift/Array/trainTestSplit(testRatio:seed:)`` uses its own seed. There is no shared random state that other code can interfere with, so the same seed always produces the same split.
 
 ### Numerical stability
 
-Naive Bayes computes the product of many small probabilities — one Gaussian probability density function value per feature per class. With many features or extreme values, these products underflow to zero in standard floating-point arithmetic. This is exactly what causes some implementations to predict only the majority class when features are on very different scales.
-
-Quiver works entirely in log-space, converting multiplication to addition. This avoids underflow regardless of feature scale or count, producing reliable predictions without requiring data scaling as a workaround for numerical issues.
+Naive Bayes multiplies together one probability for every feature in every class. With many features, these probabilities become extremely small numbers that can round to zero, causing the model to stop distinguishing between classes. Quiver handles this internally by working with logarithms, which keeps the arithmetic accurate regardless of how many features the data contains.
 
 ## Topics
 
