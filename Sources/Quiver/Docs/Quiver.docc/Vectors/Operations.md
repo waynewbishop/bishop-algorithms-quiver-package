@@ -49,7 +49,7 @@ v1.angleInDegrees(with: v2)  // 90.0 degrees
 
 These angle functions work with vectors of any dimension. The `cosineOfAngle(with:)` method returns the raw cosine value, while `angle(with:)` applies `acos()` to produce the angle in radians.
 
-> Tip: The dot product is zero when vectors are perpendicular and equals the product of their magnitudes when they're parallel.
+> Tip: The dot product is zero when vectors are perpendicular.
 
 ### Vector averaging
 

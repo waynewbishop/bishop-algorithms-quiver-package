@@ -691,13 +691,25 @@ public extension Array where Element: FloatingPoint {
         return v.magnitude()
     }
     
-    /// Returns a normalized version of the vector (unit vector)
+    /// Returns a normalized version of the vector (unit vector).
+    ///
+    /// A unit vector preserves direction but has a magnitude of 1.0. Normalization
+    /// is essential for cosine similarity, direction comparisons, and any operation
+    /// where only orientation matters.
+    ///
+    /// - Returns: A new array with the same direction and magnitude 1.0, or a zero vector if the original has zero magnitude
     var normalized: [Element] {
         let v = _Vector(elements: self)
         return v.normalized().elements
     }
     
-    /// Calculate the distance between two points or vectors
+    /// Calculates the Euclidean distance between two points or vectors.
+    ///
+    /// The distance is computed as the magnitude of the difference vector,
+    /// equivalent to `(self - other).magnitude`.
+    ///
+    /// - Parameter other: The vector to measure distance to (must have the same number of elements)
+    /// - Returns: The Euclidean distance between the two vectors
     func distance(to other: [Element]) -> Element {
         return (self - other).magnitude
     }
@@ -743,38 +755,42 @@ public extension Array where Element: FloatingPoint {
         return dotProduct / magnitudeProduct
     }
 
-    /// Calculates the scalar projection of this vector onto another vector
+    /// Calculates the scalar projection of this vector onto another vector.
     ///
-    /// The scalar projection represents the length of the shadow cast by this vector
-    /// onto the direction of the other vector.
+    /// The scalar projection represents the signed length of the shadow cast by this vector
+    /// onto the direction of the other vector. A positive value means the vectors point
+    /// in the same general direction; a negative value means they point in opposite directions.
     ///
-    /// - Parameter vector: The vector to project onto
-    /// - Returns: The scalar projection value
+    /// - Parameter vector: The vector to project onto (must not be a zero vector)
+    /// - Returns: The scalar length of the projection along the target vector's direction
     func scalarProjection(onto vector: [Element]) -> Element {
         let v1 = _Vector(elements: self)
         let v2 = _Vector(elements: vector)
         return v1.scalarProjection(onto: v2)
     }
     
-    /// Calculates the vector projection of this vector onto another vector
+    /// Calculates the vector projection of this vector onto another vector.
     ///
-    /// The vector projection is the vector component of this vector
-    /// in the direction of the other vector.
+    /// The vector projection is the component of this vector that lies along
+    /// the direction of the target vector. Together with `orthogonalComponent(to:)`,
+    /// it decomposes this vector into parallel and perpendicular parts.
     ///
-    /// - Parameter vector: The vector to project onto
-    /// - Returns: The projected vector
+    /// - Parameter vector: The vector to project onto (must not be a zero vector)
+    /// - Returns: A new vector pointing in the direction of the target with the projected magnitude
     func vectorProjection(onto vector: [Element]) -> [Element] {
         let v1 = _Vector(elements: self)
         let v2 = _Vector(elements: vector)
         return v1.vectorProjection(onto: v2).elements
     }
     
-    /// Returns the orthogonal component of this vector with respect to another vector
+    /// Returns the component of this vector that is perpendicular to another vector.
     ///
-    /// This returns the component of this vector that is perpendicular to the other vector.
+    /// The orthogonal component is computed as `self - vectorProjection(onto: vector)`.
+    /// Together with `vectorProjection(onto:)`, it decomposes this vector into
+    /// parallel and perpendicular parts relative to the reference vector.
     ///
-    /// - Parameter vector: The reference vector
-    /// - Returns: The orthogonal component
+    /// - Parameter vector: The reference vector to measure perpendicularity against (must not be a zero vector)
+    /// - Returns: A new vector perpendicular to the reference vector
     func orthogonalComponent(to vector: [Element]) -> [Element] {
         let projection = self.vectorProjection(onto: vector)
         return self - projection
@@ -796,8 +812,12 @@ public extension Array where Element == [Double] {
     }
     
     /// Calculates the element-wise average of a collection of vectors.
-    /// Returns nil if the input is empty or vectors have inconsistent dimensions.
-    /// Calculates the element-wise average of the vectors in this array
+    ///
+    /// Each element in the result is the mean of the corresponding elements across all vectors.
+    /// This is commonly used to compute centroids for clustering, average word embeddings
+    /// into document vectors, and aggregate feature vectors.
+    ///
+    /// - Returns: A vector where each element is the mean across all input vectors, or `nil` if the array is empty or vectors have inconsistent dimensions
     func averaged() -> [Double]? {
         // Return nil if no vectors to average
         guard !self.isEmpty else { return nil }
@@ -818,9 +838,13 @@ public extension Array where Element == [Double] {
         return sum.broadcast(dividingBy: Double(self.count))
     }
     
-    /// Calculate cosine similarities between each vector in the array and a target vector.
-    /// Returns an array of similarity scores where each score represents how similar
-    /// the corresponding vector is to the target (1.0 = identical, 0.0 = orthogonal).
+    /// Calculates cosine similarity between each vector in the array and a target vector.
+    ///
+    /// Each score measures directional alignment: 1.0 means identical orientation,
+    /// 0.0 means perpendicular, and -1.0 means opposite directions.
+    ///
+    /// - Parameter target: The reference vector to compare each vector against
+    /// - Returns: An array of similarity scores in the range [-1, 1], one per vector
     func cosineSimilarities(to target: [Double]) -> [Double] {
         return self.map { $0.cosineOfAngle(with: target) }
     }
@@ -965,9 +989,13 @@ public extension Array where Element == Double {
 // MARK: - Float Vector Operations
 
 public extension Array where Element == [Float] {
-    /// Calculate cosine similarities between each vector in the array and a target vector.
-    /// Returns an array of similarity scores where each score represents how similar
-    /// the corresponding vector is to the target (1.0 = identical, 0.0 = orthogonal).
+    /// Calculates cosine similarity between each vector in the array and a target vector.
+    ///
+    /// Each score measures directional alignment: 1.0 means identical orientation,
+    /// 0.0 means perpendicular, and -1.0 means opposite directions.
+    ///
+    /// - Parameter target: The reference vector to compare each vector against
+    /// - Returns: An array of similarity scores in the range [-1, 1], one per vector
     func cosineSimilarities(to target: [Float]) -> [Float] {
         return self.map { $0.cosineOfAngle(with: target) }
     }

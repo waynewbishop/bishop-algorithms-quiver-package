@@ -44,11 +44,10 @@ Swift's standard library uses this same mechanism extensively. Methods like `.so
 
 Not every array operation makes sense for every element type. Computing a mean requires division, which integers cannot do precisely. Computing magnitude requires a square root, which strings cannot produce. Quiver needs a way to say "this method only exists when the elements are the right kind of number."
 
-Swift solves this with **constrained extensions** — an extension that applies only when the generic type parameter meets a specific requirement. The constraint acts as a gate: if the elements qualify, the methods appear. If they do not, the compiler prevents us from calling them.
-
-Here is the actual Quiver extension that adds `.magnitude` to arrays:
+Swift solves this with **constrained extensions** — an extension that applies only when the generic type parameter meets a specific requirement. The constraint acts as a gate: if the elements qualify, the methods appear. If they do not, the compiler prevents us from calling them:
 
 ```swift
+//Actual Quiver extension that adds `.magnitude` to arrays
 extension Array where Element: FloatingPoint {
     var magnitude: Element {
         var sumOfSquares = Element.zero

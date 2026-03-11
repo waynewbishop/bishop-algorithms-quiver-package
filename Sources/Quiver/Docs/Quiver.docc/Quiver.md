@@ -65,6 +65,10 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Charts>
 - <doc:Statistics>
 
+### Classification
+- <doc:Evaluation-Metrics>
+- <doc:Naive-Bayes>
+
 ### Sorting and Selection
 - <doc:Selection>
 
@@ -90,3 +94,5 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - ``LogDeterminant``
 - ``AggregationMethod``
 - ``MatrixError``
+- ``ConfusionMatrix``
+- ``GaussianNaiveBayes``

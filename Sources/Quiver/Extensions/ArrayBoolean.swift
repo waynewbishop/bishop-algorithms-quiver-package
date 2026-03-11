@@ -57,26 +57,36 @@ public extension Array where Element: Comparable {
 
 // Helper extension for Boolean arrays
 public extension Array where Element == Bool {
-    /// Returns the indices where the elements are true
+    /// Returns the indices of all `true` elements in the boolean array.
+    ///
+    /// - Returns: An array of integer indices where the value is `true`
     var trueIndices: [Int] {
         return self.enumerated()
                   .filter { $0.element }
                   .map { $0.offset }
     }
 
-    /// Performs logical AND with another boolean array
+    /// Performs element-wise logical AND with another boolean array.
+    ///
+    /// - Parameter other: The boolean array to combine with (must have the same length)
+    /// - Returns: A new boolean array where each element is `true` only if both corresponding elements are `true`
     func and(_ other: [Bool]) -> [Bool] {
         precondition(self.count == other.count, "Arrays must have the same length")
         return zip(self, other).map { $0 && $1 }
     }
     
-    /// Performs logical OR with another boolean array
+    /// Performs element-wise logical OR with another boolean array.
+    ///
+    /// - Parameter other: The boolean array to combine with (must have the same length)
+    /// - Returns: A new boolean array where each element is `true` if either corresponding element is `true`
     func or(_ other: [Bool]) -> [Bool] {
         precondition(self.count == other.count, "Arrays must have the same length")
         return zip(self, other).map { $0 || $1 }
     }
     
-    /// Performs logical NOT on the boolean array
+    /// Returns the element-wise logical negation of the boolean array.
+    ///
+    /// - Returns: A new boolean array where each element is inverted
     var not: [Bool] {
         return self.map { !$0 }
     }

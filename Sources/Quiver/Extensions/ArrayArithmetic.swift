@@ -16,21 +16,36 @@ import Foundation
 // MARK: - Basic Arithmetic Operations
 
 public extension Array where Element: Numeric {
-    /// Element-wise addition of two vectors
+    /// Element-wise addition of two vectors.
+    ///
+    /// - Parameters:
+    ///   - lhs: The first vector
+    ///   - rhs: The second vector (must have the same length as `lhs`)
+    /// - Returns: A new array where each element is the sum of corresponding elements
     static func + (lhs: [Element], rhs: [Element]) -> [Element] {
         let v1 = _Vector(elements: lhs)
         let v2 = _Vector(elements: rhs)
         return _Vector.add(v1, v2).elements
     }
-    
-    /// Element-wise subtraction of two vectors
+
+    /// Element-wise subtraction of two vectors.
+    ///
+    /// - Parameters:
+    ///   - lhs: The first vector
+    ///   - rhs: The second vector (must have the same length as `lhs`)
+    /// - Returns: A new array where each element is the difference of corresponding elements
     static func - (lhs: [Element], rhs: [Element]) -> [Element] {
         let v1 = _Vector(elements: lhs)
         let v2 = _Vector(elements: rhs)
         return _Vector.subtract(v1, v2).elements
     }
-    
-    /// Element-wise multiplication of two vectors
+
+    /// Element-wise multiplication of two vectors (Hadamard product).
+    ///
+    /// - Parameters:
+    ///   - lhs: The first vector
+    ///   - rhs: The second vector (must have the same length as `lhs`)
+    /// - Returns: A new array where each element is the product of corresponding elements
     static func * (lhs: [Element], rhs: [Element]) -> [Element] {
         let v1 = _Vector(elements: lhs)
         let v2 = _Vector(elements: rhs)
@@ -40,7 +55,12 @@ public extension Array where Element: Numeric {
 
 // Division is only available for floating point types
 public extension Array where Element: FloatingPoint {
-    /// Element-wise division of two vectors
+    /// Element-wise division of two vectors.
+    ///
+    /// - Parameters:
+    ///   - lhs: The dividend vector
+    ///   - rhs: The divisor vector (must have the same length as `lhs`, no element may be zero)
+    /// - Returns: A new array where each element is the quotient of corresponding elements
     static func / (lhs: [Element], rhs: [Element]) -> [Element] {
         let v1 = _Vector(elements: lhs)
         let v2 = _Vector(elements: rhs)
