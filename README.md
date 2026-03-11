@@ -1,4 +1,4 @@
-# Quiver — Numerical Computing for Swift
+# Quiver — Vector math, statistics, and numerical computing for Swift
 
 Quiver expands the Swift ecosystem with a native, Swift-first approach to vector mathematics, numerical computing, and statistical operations. As a lightweight framework, Quiver is ideal for teaching environments, on-device processing, and any context where minimal dependencies and platform portability matter.
 
