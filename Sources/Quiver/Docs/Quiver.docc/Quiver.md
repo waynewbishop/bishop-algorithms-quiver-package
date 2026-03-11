@@ -96,3 +96,4 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - ``MatrixError``
 - ``ConfusionMatrix``
 - ``GaussianNaiveBayes``
+- ``FeatureScaler``

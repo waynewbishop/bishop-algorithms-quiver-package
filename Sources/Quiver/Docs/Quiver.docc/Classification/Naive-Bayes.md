@@ -6,7 +6,7 @@ Train a Gaussian Naive Bayes classifier.
 
 Naive Bayes is one of the simplest and most effective classification algorithms. It applies Bayes' theorem with the "naive" assumption that features are conditionally independent given the class label. Despite this strong assumption, Naive Bayes performs surprisingly well in practice and serves as a reliable baseline for classification tasks.
 
-Quiver provides ``GaussianNaiveBayes``, which assumes that the features within each class follow a normal (Gaussian) distribution. The model learns the mean and variance of each feature per class during training, then uses these statistics to classify new samples.
+Quiver provides `GaussianNaiveBayes`, which assumes that the features within each class follow a normal (Gaussian) distribution. The model learns the mean and variance of each feature per class during training, then uses these statistics to classify new samples.
 
 ### How Gaussian classification works
 
@@ -16,7 +16,7 @@ During prediction, the model evaluates the Gaussian PDF for every feature agains
 
 ### Fitting a model
 
-The ``GaussianNaiveBayes/fit(features:labels:)`` static method learns class statistics from training data and returns a ready-to-use model. There is no separate "unfitted" state — the returned struct is immediately usable:
+The `fit(features:labels:)` static method learns class statistics from training data and returns a ready-to-use model. There is no separate "unfitted" state — the returned struct is immediately usable:
 
 ```swift
 import Quiver
@@ -40,7 +40,7 @@ for stats in model.classes {
 
 ### Making predictions
 
-The ``GaussianNaiveBayes/predict(_:)`` method classifies new samples by computing the log-probability of each class and selecting the most likely one:
+The `predict(_:)` method classifies new samples by computing the log-probability of each class and selecting the most likely one:
 
 ```swift
 import Quiver
@@ -50,11 +50,13 @@ let predictions = model.predict(newSamples)
 // [0, 1]
 ```
 
-For deeper inspection, ``GaussianNaiveBayes/predictLogProbabilities(_:)`` returns the raw log-probabilities for each class, which is useful for understanding how confident the model is in each prediction.
+For deeper inspection, `predictLogProbabilities(_:)` returns the raw log-probabilities for each class, which is useful for understanding how confident the model is in each prediction.
 
 ### The full pipeline
 
-A typical workflow combines data splitting, model fitting, prediction, and evaluation:
+A typical workflow combines data splitting, model fitting, prediction, and evaluation.
+
+> Tip: Quiver's `trainTestSplit(testRatio:seed:)` splits any array into training and test subsets with a single call. Using the same seed on both features and labels keeps them aligned — no manual index tracking required. See <doc:Sampling> for details.
 
 ```swift
 import Quiver
@@ -74,11 +76,9 @@ let labels = [1, 1, 0, 0, 1, 0, 1, 0, 1, 0]
 let (trainX, testX) = features.trainTestSplit(testRatio: 0.25, seed: 42)
 let (trainY, testY) = labels.trainTestSplit(testRatio: 0.25, seed: 42)
 
-let model = GaussianNaiveBayes.fit(
-    features: trainX.map { $0.scaled(to: 0.0...1.0) },
-    labels: trainY
-)
-let predictions = model.predict(testX.map { $0.scaled(to: 0.0...1.0) })
+let scaler = FeatureScaler.fit(features: trainX)
+let model = GaussianNaiveBayes.fit(features: scaler.transform(trainX), labels: trainY)
+let predictions = model.predict(scaler.transform(testX))
 
 // Evaluate — precision and recall return nil when undefined
 let cm = predictions.confusionMatrix(actual: testY)
@@ -89,13 +89,13 @@ print("Recall: \(cm.recall as Any)")
 
 ### Safe by design
 
-``GaussianNaiveBayes`` is a Swift struct, which means it cannot be accidentally changed after creation. This design prevents three common mistakes:
+`GaussianNaiveBayes` is a Swift struct, which means it cannot be accidentally changed after creation. This design prevents three common mistakes:
 
-**The model is always ready to use.** Calling ``GaussianNaiveBayes/fit(features:labels:)`` returns a fully trained model in one step. There is no way to create an empty model and forget to train it before making predictions.
+**The model is always ready to use.** Calling `fit(features:labels:)` returns a fully trained model in one step. There is no way to create an empty model and forget to train it before making predictions.
 
-**Training data stays separate from test data.** Because the model is immutable once created, there is no risk of accidentally re-training it on test data — a subtle bug that can inflate evaluation scores and go unnoticed.
+**Training data stays separate from test data.** Both `GaussianNaiveBayes` and `FeatureScaler` are immutable once created. Fitting the scaler on training data and applying it to both sets ensures that test data never influences the scaling — a subtle but common source of data leakage in ML pipelines.
 
-**Reproducible splits.** Each call to ``Swift/Array/trainTestSplit(testRatio:seed:)`` uses its own seed. There is no shared random state that other code can interfere with, so the same seed always produces the same split.
+**Reproducible splits.** Each call to `trainTestSplit(testRatio:seed:)` uses its own seed. There is no shared random state that other code can interfere with, so the same seed always produces the same split.
 
 ### Numerical stability
 
@@ -109,6 +109,7 @@ Naive Bayes multiplies together one probability for every feature in every class
 
 ### Training
 - ``GaussianNaiveBayes/fit(features:labels:)``
+- ``FeatureScaler``
 
 ### Prediction
 - ``GaussianNaiveBayes/predict(_:)``

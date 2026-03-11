@@ -10,7 +10,7 @@ Quiver provides these metrics as extensions on `[Int]`, where the calling array 
 
 ### The confusion matrix
 
-Every binary classification metric derives from four counts — true positives, false positives, true negatives, and false negatives. The ``ConfusionMatrix`` struct captures all four and computes the derived metrics as properties:
+Every binary classification metric derives from four counts — true positives, false positives, true negatives, and false negatives. The `ConfusionMatrix` struct captures all four and computes the derived metrics as properties:
 
 ```swift
 import Quiver
