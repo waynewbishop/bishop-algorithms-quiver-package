@@ -1,0 +1,105 @@
+// Copyright 2025 Wayne W Bishop. All rights reserved.
+//
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+// file except in compliance with the License. You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software distributed under
+// the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+// ANY KIND, either express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+
+import Foundation
+
+// MARK: - Linear Regression
+
+/// A trained ordinary least squares regression model.
+///
+/// Linear regression finds the best-fit line (or hyperplane) through training data
+/// by minimizing the sum of squared residuals. This implementation uses the normal
+/// equation θ = (X'X)⁻¹X'y, which gives an exact closed-form solution without
+/// iterative optimization.
+///
+/// This is a value type — once created via ``fit(features:targets:intercept:)``,
+/// the model is immutable. There is no separate "unfitted" state, which eliminates
+/// the common bug of calling predict before fit.
+///
+/// Example:
+/// ```swift
+/// import Quiver
+///
+/// let features: [[Double]] = [
+///     [1.0], [2.0], [3.0], [4.0], [5.0]
+/// ]
+/// let targets = [2.1, 3.9, 6.1, 8.0, 9.8]
+///
+/// let model = try LinearRegression.fit(features: features, targets: targets)
+/// let predictions = model.predict([[6.0], [7.0]])
+/// // predictions ≈ [11.8, 13.7]
+/// ```
+public struct LinearRegression {
+
+    /// The fitted coefficient vector.
+    ///
+    /// When `hasIntercept` is true, the first element is the bias (intercept) term
+    /// and the remaining elements are the feature weights. When false, all elements
+    /// are feature weights.
+    public let coefficients: [Double]
+
+    /// Number of features the model was trained on.
+    public let featureCount: Int
+
+    /// Whether this model includes an intercept (bias) term.
+    public let hasIntercept: Bool
+
+    /// Fits a linear regression model to the given training data.
+    ///
+    /// Solves the normal equation θ = (X'X)⁻¹X'y to find the coefficient vector
+    /// that minimizes the sum of squared residuals. The returned model is ready
+    /// for prediction immediately.
+    ///
+    /// - Parameters:
+    ///   - features: 2D array where each row is a sample and each column is a feature.
+    ///   - targets: 1D array of target values, one per sample.
+    ///   - intercept: Whether to include a bias term. Defaults to `true`.
+    /// - Returns: A trained ``LinearRegression`` model.
+    /// - Throws: `MatrixError.singular` if the features are linearly dependent.
+    public static func fit(
+        features: [[Double]],
+        targets: [Double],
+        intercept: Bool = true
+    ) throws -> LinearRegression {
+        precondition(!features.isEmpty, "Features array must not be empty")
+        precondition(features.count == targets.count,
+            "Features and targets must have the same number of samples")
+
+        let featureCount = features[0].count
+        let theta = try _Regression.fitNormalEquation(
+            features: features,
+            targets: targets,
+            intercept: intercept
+        )
+
+        return LinearRegression(
+            coefficients: theta,
+            featureCount: featureCount,
+            hasIntercept: intercept
+        )
+    }
+
+    /// Predicts target values for one or more samples.
+    ///
+    /// Computes ŷ = Xθ for each input sample using the fitted coefficients.
+    ///
+    /// - Parameter features: 2D array where each row is a sample to predict.
+    /// - Returns: An array of predicted values, one per sample.
+    public func predict(_ features: [[Double]]) -> [Double] {
+        return _Regression.predict(
+            features: features,
+            coefficients: coefficients,
+            intercept: hasIntercept
+        )
+    }
+}

@@ -18,6 +18,7 @@ final class ArrayChartsTests: XCTestCase {
 
     // MARK: - Time Series Tests
 
+    // Covers basic rolling mean and window larger than array
     func testRollingMean() {
         let data = [1.0, 2.0, 3.0, 4.0, 5.0]
         let result = data.rollingMean(window: 3)
@@ -28,14 +29,11 @@ final class ArrayChartsTests: XCTestCase {
         XCTAssertEqual(result[2], 2.0, accuracy: 1e-10)  // [1,2,3] avg
         XCTAssertEqual(result[3], 3.0, accuracy: 1e-10)  // [2,3,4] avg
         XCTAssertEqual(result[4], 4.0, accuracy: 1e-10)  // [3,4,5] avg
-    }
 
-    func testRollingMeanWindowLargerThanArray() {
-        let data = [1.0, 2.0, 3.0]
-        let result = data.rollingMean(window: 10)
-
-        XCTAssertEqual(result.count, 3)
-        XCTAssertEqual(result[0], 2.0, accuracy: 1e-10)  // mean of all
+        // Window larger than array
+        let short = [1.0, 2.0, 3.0].rollingMean(window: 10)
+        XCTAssertEqual(short.count, 3)
+        XCTAssertEqual(short[0], 2.0, accuracy: 1e-10)
     }
 
     func testDiff() {
@@ -154,25 +152,20 @@ final class ArrayChartsTests: XCTestCase {
 
     // MARK: - Grouping Tests
 
-    func testGroupBy() {
+    // Covers groupBy with sum and mean aggregation
+    func testGroupBy() throws {
         let values = [100.0, 200.0, 150.0, 300.0]
         let categories = ["A", "B", "A", "B"]
-        let result = values.groupBy(categories, using: .sum)
 
-        XCTAssertEqual(result["A"], 250.0)  // 100 + 150
-        XCTAssertEqual(result["B"], 500.0)  // 200 + 300
-    }
+        let sumResult = values.groupBy(categories, using: .sum)
+        XCTAssertEqual(sumResult["A"], 250.0)  // 100 + 150
+        XCTAssertEqual(sumResult["B"], 500.0)  // 200 + 300
 
-    func testGroupByMean() throws {
-        let values = [100.0, 200.0, 150.0, 300.0]
-        let categories = ["A", "B", "A", "B"]
-        let result = values.groupBy(categories, using: .mean)
-
-        let meanA = try XCTUnwrap(result["A"])
-        let meanB = try XCTUnwrap(result["B"])
-
-        XCTAssertEqual(meanA, 125.0, accuracy: 1e-10)  // (100 + 150) / 2
-        XCTAssertEqual(meanB, 250.0, accuracy: 1e-10)  // (200 + 300) / 2
+        let meanResult = values.groupBy(categories, using: .mean)
+        let meanA = try XCTUnwrap(meanResult["A"])
+        let meanB = try XCTUnwrap(meanResult["B"])
+        XCTAssertEqual(meanA, 125.0, accuracy: 1e-10)
+        XCTAssertEqual(meanB, 250.0, accuracy: 1e-10)
     }
 
     func testGroupedData() {

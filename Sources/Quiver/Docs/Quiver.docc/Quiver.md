@@ -73,6 +73,9 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Classification
 - <doc:Naive-Bayes>
+- <doc:Linear-Regression>
+- <doc:KNN-Classification>
+- <doc:KMeans-Clustering>
 - <doc:Evaluation-Metrics>
 
 ### Quick Reference
@@ -100,5 +103,10 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - ``MatrixError``
 - ``ConfusionMatrix``
 - ``GaussianNaiveBayes``
+- ``LinearRegression``
+- ``KNearestNeighbors``
+- ``DistanceMetric``
+- ``VoteWeight``
+- ``KMeans``
 - ``FeatureScaler``
 - ``Panel``

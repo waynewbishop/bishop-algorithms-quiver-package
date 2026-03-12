@@ -4,13 +4,11 @@ Core vocabulary and concepts for understanding classification workflows in Quive
 
 ## Overview
 
-Machine learning is the practice of training a program to recognize patterns in data so it can make predictions on new, unseen examples. Rather than writing rules by hand — "if credit score > 700 and balance < 50000, approve the loan" — we give the algorithm labeled examples and let it discover the decision boundary itself. This primer defines the vocabulary that appears throughout Quiver's classification documentation.
+Machine learning is the practice of training a program to recognize patterns in data so it can make predictions on new, unseen examples. This primer defines the vocabulary that appears throughout Quiver's classification documentation.
 
-## Features and labels
+### Features and labels
 
-Every supervised learning problem starts with a dataset where each row is one example and each column is one measurement. The columns the model uses to make predictions are called **features**. The column the model is trying to predict is called the **label** (also known as the target).
-
-Consider a dataset for predicting loan approval:
+Every supervised learning problem starts with a dataset where each row is one example and each column is one measurement. The columns the model uses to make predictions are called **features**. The column the model is trying to predict is called the **label** (also known as the target). Consider a dataset for predicting loan approval:
 
 ```swift
 import Quiver
@@ -26,7 +24,7 @@ Here, `creditScore` and `balance` are features — the information the model rec
 
 > Tip: A good mental model is features = question, label = answer. We train the model on many question-answer pairs, then ask it new questions and check whether it gives the right answers.
 
-## Training and test data
+### Training and test data
 
 If we evaluate a model on the same data it learned from, we get a misleadingly optimistic score — like grading a student on questions they already saw. To get an honest measure of how well the model generalizes, we split the data into two partitions:
 
@@ -48,7 +46,7 @@ let (train, test) = features.trainTestSplit(testRatio: 0.2, seed: 42)
 
 The `seed` parameter ensures the same split every time, making experiments reproducible. When using a `Panel`, the split is atomic — all columns are partitioned by the same rows, so features and labels stay aligned automatically.
 
-## Data leakage
+### Data leakage
 
 **Data leakage** occurs when information from the test set influences the training process. The most common form is fitting a preprocessor (like a scaler) on the entire dataset before splitting. If the scaler learns the minimum and maximum from all rows — including the test rows — then the training process has indirectly "seen" the test data, and evaluation results will be overly optimistic.
 
@@ -65,7 +63,7 @@ let scaledTest = scaler.transform(testFeatures)
 
 This pattern — fit once on training data, apply everywhere — prevents leakage and gives us an honest evaluation.
 
-## Feature engineering and scaling
+### Feature engineering and scaling
 
 Raw data rarely arrives in a form that works well for models. **Feature engineering** is the process of transforming raw inputs into features that better represent the underlying patterns. This might involve combining columns (ratio of balance to income), extracting components (day of week from a timestamp), or encoding categories as numbers.
 
@@ -81,7 +79,7 @@ let scaled = scaler.transform(trainFeatures)
 
 Quiver's `FeatureScaler` uses min-max normalization by default, scaling each column independently based on its observed range in the training data. For details on custom ranges and constant-column handling, see <doc:Feature-Scaling>.
 
-## Overfitting and underfitting
+### Overfitting and underfitting
 
 A model can fail in two opposite ways:
 
@@ -91,7 +89,7 @@ A model can fail in two opposite ways:
 
 The goal is a model that generalizes — one that learns the true pattern well enough to make accurate predictions on data it has never seen. Splitting data into training and test sets (and checking both scores) is the primary tool for detecting these problems.
 
-## Classification and regression
+### Classification and regression
 
 Supervised learning problems fall into two categories based on what the label represents:
 
@@ -101,7 +99,7 @@ Supervised learning problems fall into two categories based on what the label re
 
 The distinction matters because evaluation metrics differ. Classification uses accuracy, precision, and recall. Regression uses measures like mean squared error and R². Quiver currently focuses on classification workflows.
 
-## Evaluating models
+### Evaluating models
 
 Accuracy — the fraction of correct predictions — is the most intuitive metric, but it can be misleading. If 95% of loan applications are approved, a model that always predicts "approved" achieves 95% accuracy while providing zero useful information.
 
@@ -113,7 +111,7 @@ Better metrics examine the types of errors a model makes:
 
 Which metric matters most depends on the cost of each error type. Missing a fraudulent transaction (low recall) is worse than flagging a legitimate one (low precision). For a full treatment of these metrics and the `ConfusionMatrix` type, see <doc:Evaluation-Metrics>.
 
-## See also
+### See also
 
 - <doc:Train-Test-Split> - Train/test splitting and stratified partitioning
 - <doc:Feature-Scaling> - Min-max normalization with data leakage prevention

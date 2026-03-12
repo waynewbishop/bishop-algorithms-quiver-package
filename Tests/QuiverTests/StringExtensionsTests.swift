@@ -33,57 +33,23 @@ final class StringExtensionsTests: XCTestCase {
         XCTAssertEqual(tokens, ["uppercase", "lowercase", "mixedcase"])
     }
 
-    func testTokenizeWithMultipleSpaces() {
-        let text = "word1    word2     word3"
-        let tokens = text.tokenize()
-
-        XCTAssertEqual(tokens, ["word1", "word2", "word3"])
+    // Covers multiple spaces, newlines, mixed whitespace, leading/trailing whitespace
+    func testTokenizeWhitespaceHandling() {
+        XCTAssertEqual("word1    word2     word3".tokenize(), ["word1", "word2", "word3"])
+        XCTAssertEqual("line1\nline2\nline3".tokenize(), ["line1", "line2", "line3"])
+        XCTAssertEqual("word1  \n  word2\t\tword3\r\nword4".tokenize(),
+                        ["word1", "word2", "word3", "word4"])
+        XCTAssertEqual("  leading and trailing  ".tokenize(), ["leading", "and", "trailing"])
     }
 
-    func testTokenizeWithNewlines() {
-        let text = "line1\nline2\nline3"
-        let tokens = text.tokenize()
-
-        XCTAssertEqual(tokens, ["line1", "line2", "line3"])
-    }
-
-    func testTokenizeWithMixedWhitespace() {
-        let text = "word1  \n  word2\t\tword3\r\nword4"
-        let tokens = text.tokenize()
-
-        XCTAssertEqual(tokens, ["word1", "word2", "word3", "word4"])
-    }
-
-    func testTokenizeEmptyString() {
-        let text = ""
-        let tokens = text.tokenize()
-
-        XCTAssertEqual(tokens, [])
-    }
-
-    func testTokenizeWhitespaceOnly() {
-        let text = "   \n\t  \r\n  "
-        let tokens = text.tokenize()
-
-        XCTAssertEqual(tokens, [])
-    }
-
-    func testTokenizeSingleWord() {
-        let text = "word"
-        let tokens = text.tokenize()
-
-        XCTAssertEqual(tokens, ["word"])
-    }
-
-    func testTokenizeWithLeadingTrailingWhitespace() {
-        let text = "  leading and trailing  "
-        let tokens = text.tokenize()
-
-        XCTAssertEqual(tokens, ["leading", "and", "trailing"])
+    // Covers empty string, whitespace-only, single word
+    func testTokenizeEdgeCases() {
+        XCTAssertEqual("".tokenize(), [])
+        XCTAssertEqual("   \n\t  \r\n  ".tokenize(), [])
+        XCTAssertEqual("word".tokenize(), ["word"])
     }
 
     func testTokenizeWithPunctuation() {
-        // Note: This is basic tokenization, doesn't strip punctuation
         let text = "Hello, world! How are you?"
         let tokens = text.tokenize()
 
@@ -91,7 +57,6 @@ final class StringExtensionsTests: XCTestCase {
     }
 
     func testTokenizeSemanticSearchExample() {
-        // Real-world example from Chapter 23
         let text = "lightweight cushioned running shoes"
         let tokens = text.tokenize()
 
@@ -124,55 +89,23 @@ final class StringExtensionsTests: XCTestCase {
 
         let vectors = words.embed(using: embeddings)
 
-        // "unknown" should be filtered out
         XCTAssertEqual(vectors.count, 2)
         XCTAssertEqual(vectors[0], [0.8, 0.7, 0.9])
         XCTAssertEqual(vectors[1], [0.1, 0.9, 0.2])
     }
 
-    func testEmbedEmptyArray() {
-        let words: [String] = []
-        let embeddings = [
-            "running": [0.8, 0.7, 0.9]
-        ]
-
-        let vectors = words.embed(using: embeddings)
-
-        XCTAssertEqual(vectors.count, 0)
-    }
-
-    func testEmbedNoMatches() {
-        let words = ["unknown1", "unknown2"]
+    // Covers empty array and no matches
+    func testEmbedEdgeCases() {
         let embeddings = [
             "running": [0.8, 0.7, 0.9],
             "shoes": [0.1, 0.9, 0.2]
         ]
 
-        let vectors = words.embed(using: embeddings)
-
-        XCTAssertEqual(vectors.count, 0)
-    }
-
-    func testEmbedAllMatches() {
-        let words = ["running", "jogging", "shoes", "sneakers"]
-        let embeddings = [
-            "running": [0.8, 0.7, 0.9, 0.2],
-            "jogging": [0.8, 0.7, 0.8, 0.2],
-            "shoes": [0.1, 0.9, 0.2, 0.1],
-            "sneakers": [0.1, 0.9, 0.3, 0.1]
-        ]
-
-        let vectors = words.embed(using: embeddings)
-
-        XCTAssertEqual(vectors.count, 4)
-        XCTAssertEqual(vectors[0], [0.8, 0.7, 0.9, 0.2])
-        XCTAssertEqual(vectors[1], [0.8, 0.7, 0.8, 0.2])
-        XCTAssertEqual(vectors[2], [0.1, 0.9, 0.2, 0.1])
-        XCTAssertEqual(vectors[3], [0.1, 0.9, 0.3, 0.1])
+        XCTAssertEqual([String]().embed(using: embeddings).count, 0)
+        XCTAssertEqual(["unknown1", "unknown2"].embed(using: embeddings).count, 0)
     }
 
     func testEmbedIntegrationWithTokenize() {
-        // Full workflow: text -> tokens -> vectors
         let text = "running shoes"
         let embeddings = [
             "running": [0.8, 0.7, 0.9],

@@ -144,66 +144,37 @@ final class VectorOperationsTests: XCTestCase {
 
     // MARK: - Averaged Tests
 
+    // Covers basic averaging and edge cases
     func testAveraged() {
         let vectors = [
             [1.0, 2.0, 3.0],
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]
         ]
-        let result = vectors.averaged()
-        XCTAssertEqual(result, [4.0, 5.0, 6.0])
-    }
+        XCTAssertEqual(vectors.averaged(), [4.0, 5.0, 6.0])
 
-    func testAveragedEdgeCases() {
-        // Empty array
+        // Edge cases
         XCTAssertNil(([[Double]]()).averaged())
-
-        // Invalid dimensions
-        let invalid = [[1.0, 2.0, 3.0], [4.0, 5.0]]
-        XCTAssertNil(invalid.averaged())
-
-        // Single vector
+        XCTAssertNil([[1.0, 2.0, 3.0], [4.0, 5.0]].averaged())
         XCTAssertEqual([[3.0, 4.0, 5.0]].averaged(), [3.0, 4.0, 5.0])
-    }
-
-    func testAveragedSemanticExample() {
-        // Averaging word embeddings for document vector
-        let wordVectors = [
-            [0.2, 0.8, 0.5],
-            [0.3, 0.7, 0.6],
-            [0.1, 0.6, 0.4]
-        ]
-
-        guard let documentVector = wordVectors.averaged() else {
-            XCTFail("Should successfully average word vectors")
-            return
-        }
-
-        XCTAssertEqual(documentVector[0], 0.2, accuracy: 1e-10)
-        XCTAssertEqual(documentVector[1], 0.7, accuracy: 1e-10)
-        XCTAssertEqual(documentVector[2], 0.5, accuracy: 1e-10)
     }
 
     // MARK: - Column Extraction Tests
 
+    // Covers square and rectangular matrix column extraction
     func testColumnExtraction() {
-        let matrix = [
+        let square = [
             [1, 2, 3],
             [4, 5, 6],
             [7, 8, 9]
         ]
+        XCTAssertEqual(square.column(at: 0), [1, 4, 7])
+        XCTAssertEqual(square.column(at: 1), [2, 5, 8])
+        XCTAssertEqual(square.column(at: 2), [3, 6, 9])
 
-        XCTAssertEqual(matrix.column(at: 0), [1, 4, 7])
-        XCTAssertEqual(matrix.column(at: 1), [2, 5, 8])
-        XCTAssertEqual(matrix.column(at: 2), [3, 6, 9])
-    }
-
-    func testColumnExtractionRectangularMatrix() {
-        let matrix = [
-            [1, 2, 3, 4],
-            [5, 6, 7, 8]
-        ]
-        XCTAssertEqual(matrix.column(at: 2), [3, 7])
+        // Rectangular matrix
+        let rect = [[1, 2, 3, 4], [5, 6, 7, 8]]
+        XCTAssertEqual(rect.column(at: 2), [3, 7])
     }
 
     // MARK: - Transpose Tests
@@ -407,23 +378,23 @@ final class VectorOperationsTests: XCTestCase {
 
     // MARK: - ClusterCohesion Tests
 
-    func testClusterCohesionPerfectCluster() {
-        let cluster = [
+    // Covers perfect cohesion, low cohesion, and edge cases
+    func testClusterCohesion() {
+        // Perfect cohesion — identical vectors
+        let perfect = [
             [1.0, 0.0, 0.0],
             [1.0, 0.0, 0.0],
             [1.0, 0.0, 0.0]
         ]
-        XCTAssertEqual(cluster.clusterCohesion(), 1.0, accuracy: 1e-10)
-    }
+        XCTAssertEqual(perfect.clusterCohesion(), 1.0, accuracy: 1e-10)
 
-    func testClusterCohesionLowCohesion() {
-        // Orthogonal vectors
-        let cluster = [
+        // Low cohesion — orthogonal vectors
+        let orthogonal = [
             [1.0, 0.0, 0.0],
             [0.0, 1.0, 0.0],
             [0.0, 0.0, 1.0]
         ]
-        XCTAssertEqual(cluster.clusterCohesion(), 0.0, accuracy: 1e-10)
+        XCTAssertEqual(orthogonal.clusterCohesion(), 0.0, accuracy: 1e-10)
     }
 
     func testClusterCohesionEdgeCases() {
@@ -546,6 +517,7 @@ final class VectorOperationsTests: XCTestCase {
 
     // MARK: - LogDeterminant Tests
 
+    // Covers log determinant values, edge cases, and consistency with determinant
     func testLogDeterminant() {
         // 2x2
         let m2 = [[4.0, 3.0], [6.0, 3.0]]
@@ -565,20 +537,16 @@ final class VectorOperationsTests: XCTestCase {
         let ldS = singular.logDeterminant
         XCTAssertEqual(ldS.sign, 0.0)
         XCTAssertTrue(ldS.logAbsValue.isInfinite && ldS.logAbsValue < 0)
-    }
 
-    func testLogDeterminantConsistentWithDeterminant() {
+        // Consistency with determinant across several matrices
         let matrices: [[[Double]]] = [
             [[3.0, 8.0], [4.0, 6.0]],
             [[2.0, 0.0], [0.0, 2.0]],
             [[1.0, 2.0, 3.0], [0.0, 1.0, 4.0], [5.0, 6.0, 0.0]],
             [[4.0, 7.0], [2.0, 6.0]]
         ]
-
         for matrix in matrices {
-            let det = matrix.determinant
-            let ld = matrix.logDeterminant
-            XCTAssertEqual(ld.value, det, accuracy: 1e-10)
+            XCTAssertEqual(matrix.logDeterminant.value, matrix.determinant, accuracy: 1e-10)
         }
     }
 

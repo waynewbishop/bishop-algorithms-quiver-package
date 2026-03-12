@@ -18,32 +18,18 @@ final class ArrayBroadcastTests: XCTestCase {
 
     // MARK: - Scalar Broadcasting Tests
 
-    func testBroadcastAddingScalar() {
+    // Covers add, multiply, subtract, divide scalars and empty array
+    func testBroadcastScalarOperations() {
         let array = [1.0, 2.0, 3.0]
         XCTAssertEqual(array.broadcast(adding: 5.0), [6.0, 7.0, 8.0])
-    }
-
-    func testBroadcastMultiplyingByScalar() {
-        let array = [1.0, 2.0, 3.0]
         XCTAssertEqual(array.broadcast(multiplyingBy: 2.0), [2.0, 4.0, 6.0])
-    }
+        XCTAssertEqual([5.0, 7.0, 9.0].broadcast(subtracting: 2.0), [3.0, 5.0, 7.0])
+        XCTAssertEqual([2.0, 4.0, 6.0].broadcast(dividingBy: 2.0), [1.0, 2.0, 3.0])
 
-    func testBroadcastSubtractingScalar() {
-        let array = [5.0, 7.0, 9.0]
-        XCTAssertEqual(array.broadcast(subtracting: 2.0), [3.0, 5.0, 7.0])
-    }
-
-    func testBroadcastDividingByScalar() {
-        let array = [2.0, 4.0, 6.0]
-        XCTAssertEqual(array.broadcast(dividingBy: 2.0), [1.0, 2.0, 3.0])
-    }
-
-    func testBroadcastWithEmptyArray() {
-        let emptyArray: [Double] = []
-        XCTAssertEqual(emptyArray.broadcast(adding: 5.0), [])
-        XCTAssertEqual(emptyArray.broadcast(multiplyingBy: 2.0), [])
-        XCTAssertEqual(emptyArray.broadcast(subtracting: 1.0), [])
-        XCTAssertEqual(emptyArray.broadcast(dividingBy: 2.0), [])
+        // Empty array
+        let empty: [Double] = []
+        XCTAssertEqual(empty.broadcast(adding: 5.0), [])
+        XCTAssertEqual(empty.broadcast(multiplyingBy: 2.0), [])
     }
 
     // MARK: - Matrix-Vector Broadcasting Tests

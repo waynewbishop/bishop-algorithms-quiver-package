@@ -45,34 +45,25 @@ final class MatrixArithmeticTests: XCTestCase {
 
     // MARK: - Matrix Scalar Broadcasting
 
-    func testMatrixPlusScalar() {
+    // Covers add, subtract, multiply, divide with scalars (both directions)
+    func testMatrixScalarOperations() {
         let matrix = [[1.0, 2.0], [3.0, 4.0]]
+
+        // Addition (commutative)
         XCTAssertEqual(matrix + 10.0, [[11.0, 12.0], [13.0, 14.0]])
         XCTAssertEqual(10.0 + matrix, [[11.0, 12.0], [13.0, 14.0]])
-    }
 
-    func testMatrixMinusScalar() {
-        let matrix = [[11.0, 12.0], [13.0, 14.0]]
-        XCTAssertEqual(matrix - 10.0, [[1.0, 2.0], [3.0, 4.0]])
+        // Subtraction (non-commutative)
+        XCTAssertEqual([[11.0, 12.0], [13.0, 14.0]] - 10.0, [[1.0, 2.0], [3.0, 4.0]])
+        XCTAssertEqual(10.0 - matrix, [[9.0, 8.0], [7.0, 6.0]])
 
-        // Non-commutative: scalar - matrix
-        let m2 = [[1.0, 2.0], [3.0, 4.0]]
-        XCTAssertEqual(10.0 - m2, [[9.0, 8.0], [7.0, 6.0]])
-    }
+        // Multiplication (commutative)
+        XCTAssertEqual([[2.0, 3.0], [4.0, 5.0]] * 2.0, [[4.0, 6.0], [8.0, 10.0]])
+        XCTAssertEqual(2.0 * [[2.0, 3.0], [4.0, 5.0]], [[4.0, 6.0], [8.0, 10.0]])
 
-    func testMatrixTimesScalar() {
-        let matrix = [[2.0, 3.0], [4.0, 5.0]]
-        XCTAssertEqual(matrix * 2.0, [[4.0, 6.0], [8.0, 10.0]])
-        XCTAssertEqual(2.0 * matrix, [[4.0, 6.0], [8.0, 10.0]])
-    }
-
-    func testMatrixDividedByScalar() {
-        let matrix = [[4.0, 6.0], [8.0, 10.0]]
-        XCTAssertEqual(matrix / 2.0, [[2.0, 3.0], [4.0, 5.0]])
-
-        // Non-commutative: scalar / matrix
-        let m2 = [[2.0, 4.0], [5.0, 10.0]]
-        XCTAssertEqual(20.0 / m2, [[10.0, 5.0], [4.0, 2.0]])
+        // Division (non-commutative)
+        XCTAssertEqual([[4.0, 6.0], [8.0, 10.0]] / 2.0, [[2.0, 3.0], [4.0, 5.0]])
+        XCTAssertEqual(20.0 / [[2.0, 4.0], [5.0, 10.0]], [[10.0, 5.0], [4.0, 2.0]])
     }
 
     // MARK: - Real-World Use Cases
@@ -91,24 +82,14 @@ final class MatrixArithmeticTests: XCTestCase {
 
     // MARK: - Vector Scalar Broadcasting
 
-    func testVectorPlusScalar() {
-        let vector = [1.0, 2.0, 3.0]
-        XCTAssertEqual(vector + 10.0, [11.0, 12.0, 13.0])
-        XCTAssertEqual(10.0 + vector, [11.0, 12.0, 13.0])
-    }
-
-    func testVectorMinusScalar() {
+    // Covers add, subtract, multiply, divide with scalars (both directions)
+    func testVectorScalarOperations() {
+        XCTAssertEqual([1.0, 2.0, 3.0] + 10.0, [11.0, 12.0, 13.0])
+        XCTAssertEqual(10.0 + [1.0, 2.0, 3.0], [11.0, 12.0, 13.0])
         XCTAssertEqual([11.0, 12.0, 13.0] - 10.0, [1.0, 2.0, 3.0])
         XCTAssertEqual(10.0 - [1.0, 2.0, 3.0], [9.0, 8.0, 7.0])
-    }
-
-    func testVectorTimesScalar() {
-        let vector = [2.0, 3.0, 4.0]
-        XCTAssertEqual(vector * 2.0, [4.0, 6.0, 8.0])
-        XCTAssertEqual(2.0 * vector, [4.0, 6.0, 8.0])
-    }
-
-    func testVectorDividedByScalar() {
+        XCTAssertEqual([2.0, 3.0, 4.0] * 2.0, [4.0, 6.0, 8.0])
+        XCTAssertEqual(2.0 * [2.0, 3.0, 4.0], [4.0, 6.0, 8.0])
         XCTAssertEqual([4.0, 6.0, 8.0] / 2.0, [2.0, 3.0, 4.0])
         XCTAssertEqual(20.0 / [2.0, 4.0, 5.0], [10.0, 5.0, 4.0])
     }

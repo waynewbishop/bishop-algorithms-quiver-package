@@ -6,17 +6,15 @@ Train a Gaussian Naive Bayes classifier.
 
 Naive Bayes is one of the simplest and most effective classification algorithms. It applies Bayes' theorem with the **naive** assumption that features are conditionally independent given the class label. Despite this strong assumption, Naive Bayes performs surprisingly well in practice and serves as a reliable baseline for classification tasks.
 
-Quiver provides `GaussianNaiveBayes`, which assumes that the features within each class follow a normal (Gaussian) distribution. The model learns the mean and variance of each feature per class during training, then uses these statistics to classify new samples.
-
 ### How Gaussian classification works
 
-The **Gaussian** in Gaussian Naive Bayes refers to the **probability density function** (PDF) — the mathematical formula that defines the bell curve of a normal distribution. Given a feature value, a class mean, and a class variance, the PDF answers the question: How likely is this feature value if the sample belongs to this class?
+The **Gaussian** in Gaussian Naive Bayes refers to the probability density function (PDF) — the mathematical formula that defines the bell curve of a normal distribution. Given a feature value, a class mean, and a class variance, the PDF answers the question: How likely is this feature value if the sample belongs to this class?
 
 During prediction, the model evaluates the Gaussian PDF for every feature against every class. It then combines these likelihoods with the class prior probabilities (how common each class is in the training data) to determine which class best explains the observed features. The class with the highest combined score wins.
 
 ### Fitting a model
 
-The `fit(features:labels:)` static method learns class statistics from training data and returns a ready-to-use model. There is no separate "unfitted" state — the returned struct is immediately usable.
+The `fit(features:labels:)` static method learns class statistics from training data and returns a ready-to-use model. There is no separate unfitted state — the returned struct is immediately usable.
 
 > Tip: Classification models predict discrete categories, so labels are `[Int]` — each integer represents a class (e.g., `0` for denied, `1` for approved). To predict continuous values like prices or temperatures, a regression model is needed instead. See <doc:Machine-Learning-Primer> for more on the distinction.
 
@@ -42,7 +40,7 @@ for stats in model.classes {
 
 ### Making predictions
 
-The `predict(_:)` method classifies new samples by computing the log-probability of each class and selecting the most likely one:
+The `predict(_:)` method classifies new samples by computing the probability of each class and selecting the most likely one:
 
 ```swift
 import Quiver
@@ -56,14 +54,14 @@ For deeper inspection, `predictLogProbabilities(_:)` returns the raw log-probabi
 
 ### The full pipeline
 
-A typical workflow combines data splitting, model fitting, prediction, and evaluation.
+A typical workflow combines data splitting, feature scaling, model fitting, and evaluation.
 
-> Tip: Quiver's `trainTestSplit(testRatio:seed:)` splits any array into training and test subsets with a single call. For imbalanced datasets where one class is much rarer than another, use `stratifiedSplit(labels:testRatio:seed:)` instead — it preserves the class ratios in both partitions. See <doc:Train-Test-Split> for details.
+> Tip: For imbalanced datasets where one class is much rarer than another, use `stratifiedSplit(labels:testRatio:seed:)` instead of `trainTestSplit` — it preserves the class ratios in both partitions.
 
 ```swift
 import Quiver
 
-// Feature matrix — each row is a customer [credit_score, balance, loyalty]
+// 10 customers: credit score, account balance, loyalty ratio
 let features: [[Double]] = [
     [619, 15000, 0.08], [502, 78000, 0.04], [699, 0, 0.42],
     [850, 11000, 0.12], [645, 125000, 0.35], [720, 98000, 0.18],
@@ -71,34 +69,32 @@ let features: [[Double]] = [
     [680, 62000, 0.28]
 ]
 
-// Labels — 1 means the customer churned
+// 1 = churned, 0 = retained
 let labels = [1, 1, 0, 0, 1, 0, 1, 0, 1, 0]
 
-// Split, scale, fit, predict
+// Split features and labels separately — seeds must match
 let (trainX, testX) = features.trainTestSplit(testRatio: 0.25, seed: 42)
 let (trainY, testY) = labels.trainTestSplit(testRatio: 0.25, seed: 42)
 
+// Scale, fit, predict, evaluate
 let scaler = FeatureScaler.fit(features: trainX)
 let model = GaussianNaiveBayes.fit(features: scaler.transform(trainX), labels: trainY)
 let predictions = model.predict(scaler.transform(testX))
-
-// Evaluate — precision and recall return nil when undefined
 let cm = predictions.confusionMatrix(actual: testY)
 print("Accuracy: \(cm.accuracy)")
-print("Precision: \(cm.precision as Any)")
-print("Recall: \(cm.recall as Any)")
 ```
 
 ### Organizing data with Panel
 
-The pipeline above works directly with arrays, which is the primary way to interact with `GaussianNaiveBayes`. For datasets with many features, Quiver also provides its own ``Panel`` type — an optional named-column container that keeps rows aligned and columns labeled. The same pipeline looks like this with a `Panel`:
+The same pipeline using `Panel` eliminates the need to split features and labels separately. One split keeps all columns aligned automatically:
 
 ```swift
 import Quiver
 
+// Same 10 customers, organized by named columns
 let data = Panel([
-    ("credit_score", [619.0, 502.0, 699.0, 850.0, 645.0,
-                      720.0, 410.0, 780.0, 590.0, 680.0]),
+    ("creditScore", [619.0, 502.0, 699.0, 850.0, 645.0,
+                     720.0, 410.0, 780.0, 590.0, 680.0]),
     ("balance", [15000.0, 78000.0, 0.0, 11000.0, 125000.0,
                  98000.0, 45000.0, 0.0, 175000.0, 62000.0]),
     ("loyalty", [0.08, 0.04, 0.42, 0.12, 0.35,
@@ -106,20 +102,19 @@ let data = Panel([
     ("churned", [1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0])
 ])
 
-// Split once — all columns stay aligned automatically
+// One split — features and labels stay aligned without matching seeds
 let (train, test) = data.trainTestSplit(testRatio: 0.25, seed: 42)
+let featureColumns = ["creditScore", "balance", "loyalty"]
 
-// Extract arrays for the classifier
-let featureColumns = ["credit_score", "balance", "loyalty"]
-let trainX = train.toMatrix(columns: featureColumns)
-let testX = test.toMatrix(columns: featureColumns)
-let trainY = train.labels("churned")
-let testY = test.labels("churned")
-
-// Fit and predict — same API as before
-let scaler = FeatureScaler.fit(features: trainX)
-let model = GaussianNaiveBayes.fit(features: scaler.transform(trainX), labels: trainY)
-let predictions = model.predict(scaler.transform(testX))
+// Scale, fit, predict, evaluate — same API
+let scaler = FeatureScaler.fit(features: train.toMatrix(columns: featureColumns))
+let model = GaussianNaiveBayes.fit(
+    features: scaler.transform(train.toMatrix(columns: featureColumns)),
+    labels: train.labels("churned")
+)
+let predictions = model.predict(scaler.transform(test.toMatrix(columns: featureColumns)))
+let cm = predictions.confusionMatrix(actual: test.labels("churned"))
+print("Accuracy: \(cm.accuracy)")
 ```
 
 `Panel` is entirely optional. The classifier accepts arrays directly, and developers who prefer working with raw arrays can continue to do so. See <doc:Panel> for details.

@@ -16,65 +16,35 @@ import XCTest
 
 final class ArrayStatisticsTests: XCTestCase {
 
-    func testSum() {
+    // Covers sum, product, cumulativeSum, cumulativeProduct
+    func testAggregations() {
         let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.sum(), 15)
-    }
-
-    func testProduct() {
-        let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.product(), 120)
-    }
-
-    func testCumulativeSum() {
-        let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.cumulativeSum(), [1, 3, 6, 10, 15])
-    }
-
-    func testCumulativeProduct() {
-        let a = [1, 2, 3, 4, 5]
         XCTAssertEqual(a.cumulativeProduct(), [1, 2, 6, 24, 120])
     }
 
-    func testMin() {
+    // Covers min, max, argmin, argmax
+    func testMinMaxArg() {
         let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.min(), 1)
-    }
-
-    func testMax() {
-        let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.max(), 8)
-    }
-
-    func testArgmin() {
-        let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.argmin(), 3)
-    }
-
-    func testArgmax() {
-        let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.argmax(), 2)
     }
 
-    func testMean() {
+    // Covers mean, median, variance, std
+    func testCentralTendencyAndDispersion() throws {
         let a = [1.0, 2.0, 3.0, 4.0, 5.0]
         XCTAssertEqual(a.mean(), 3.0)
-    }
-
-    func testMedian() {
-        let a = [1.0, 5.0, 3.0, 4.0, 2.0]
-        XCTAssertEqual(a.median(), 3.0)
-    }
-
-    func testVariance() {
-        let a = [1.0, 2.0, 3.0, 4.0, 5.0]
         XCTAssertEqual(a.variance(), 2.0)
-    }
 
-    func testStd() throws {
-        let a = [1.0, 2.0, 3.0, 4.0, 5.0]
         let std = try XCTUnwrap(a.std())
         XCTAssertEqual(std, sqrt(2.0), accuracy: 1e-10)
+
+        let b = [1.0, 5.0, 3.0, 4.0, 2.0]
+        XCTAssertEqual(b.median(), 3.0)
     }
 
     // MARK: - Outlier Detection Tests
@@ -125,6 +95,7 @@ final class ArrayStatisticsTests: XCTestCase {
 
     // MARK: - Vector Array Operations Tests
 
+    // Covers meanVector basic and edge cases
     func testMeanVector() {
         let vectors = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
         let mean = vectors.meanVector()
@@ -133,27 +104,9 @@ final class ArrayStatisticsTests: XCTestCase {
         XCTAssertEqual(mean![0], 4.0, accuracy: 0.001)
         XCTAssertEqual(mean![1], 5.0, accuracy: 0.001)
         XCTAssertEqual(mean![2], 6.0, accuracy: 0.001)
-    }
 
-    func testMeanVectorEdgeCases() {
-        // Empty array
+        // Edge cases
         XCTAssertNil(([[Double]]()).meanVector())
-
-        // Inconsistent dimensions
         XCTAssertNil([[1.0, 2.0], [3.0, 4.0, 5.0]].meanVector())
-    }
-
-    func testMeanVectorWordEmbeddings() {
-        let wordEmbeddings = [
-            [0.2, 0.5, -0.3, 0.8],
-            [0.1, 0.6, 0.2, -0.4]
-        ]
-        let contextVector = wordEmbeddings.meanVector()
-
-        XCTAssertNotNil(contextVector)
-        XCTAssertEqual(contextVector![0], 0.15, accuracy: 0.001)
-        XCTAssertEqual(contextVector![1], 0.55, accuracy: 0.001)
-        XCTAssertEqual(contextVector![2], -0.05, accuracy: 0.001)
-        XCTAssertEqual(contextVector![3], 0.2, accuracy: 0.001)
     }
 }

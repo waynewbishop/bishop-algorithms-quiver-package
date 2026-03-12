@@ -247,7 +247,60 @@ This approach offers several advantages:
 
 **Important:** The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`.
 
+## Softmax
+
+The softmax function converts a vector of raw scores (logits) into a probability distribution. Each output value falls between 0 and 1, and the outputs sum to 1.0. This makes softmax the standard final step in multi-class classification — and the core operation inside transformer attention mechanisms:
+
+```swift
+import Quiver
+
+let logits = [2.0, 1.0, 0.1]
+let probs = logits.softmax()
+// [0.659, 0.242, 0.099] — sums to 1.0
+```
+
+Quiver uses the numerically stable variant, which subtracts the maximum value before exponentiation. This prevents overflow when working with large scores — for example, `[1000, 1001, 1002]` computes correctly instead of producing infinity:
+
+```swift
+import Quiver
+
+// These large values would overflow naive exp(), but softmax handles them
+let scores = [1000.0, 1001.0, 1002.0]
+let probs = scores.softmax()
+// [0.090, 0.245, 0.665] — still sums to 1.0
+```
+
+## Sigmoid
+
+The sigmoid function squashes each value into the range (0, 1) independently. It is the standard activation function for binary classification — a single output representing the probability that a sample belongs to the positive class:
+
+```swift
+import Quiver
+
+let logits = [-2.0, 0.0, 2.0, 5.0]
+let probs = logits.sigmoid()
+// [0.119, 0.5, 0.881, 0.993]
+```
+
+Sigmoid and softmax serve different purposes. Sigmoid operates element-wise — each output depends only on its own input — making it the right choice for binary classification and multi-label problems (where multiple labels can be true simultaneously). Softmax produces a distribution where outputs sum to 1.0, making it the right choice for multi-class problems (where exactly one label is correct):
+
+```swift
+import Quiver
+
+// Binary: "is this email spam?" — one score, sigmoid
+let spamScore = [1.8].sigmoid()  // [0.858] → 85.8% probability of spam
+
+// Multi-class: "which category?" — one score per class, softmax
+let categoryScores = [2.0, 1.0, 0.1].softmax()  // [0.659, 0.242, 0.099]
+```
+
+A useful mathematical property: σ(x) + σ(−x) = 1.0. This symmetry means the sigmoid of a positive score and the sigmoid of its negation always sum to 1, which is why a single sigmoid output captures both P(positive) and P(negative) without needing two outputs.
+
 ## Topics
+
+### Activation Functions
+- ``Swift/Array/softmax()->[Double]``
+- ``Swift/Array/sigmoid()->[Double]``
 
 ### Boolean comparisons
 - ``Swift/Array/isEqual(to:)``

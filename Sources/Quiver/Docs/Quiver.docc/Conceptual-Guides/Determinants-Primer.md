@@ -6,9 +6,9 @@ Understand how matrices scale space and assess numerical stability.
 
 Every square matrix has a single number associated with it called the **determinant**. This value answers a geometric question: when the matrix transforms space, how much does the area (or volume) change? The determinant tells us whether a transformation is reversible and how it scales the space it acts on.
 
-> Note: This primer builds on concepts from the <doc:Linear-Algebra-Primer>. A basic understanding of matrix transformations — how matrices act on vectors to scale, rotate, and shear space — is recommended before continuing.
+> Note: This primer builds on concepts introduced in the <doc:Linear-Algebra-Primer>, <doc:Shape-And-Size>, and <doc:Transformation-Basics>.
 
-## Scaling space
+### Scaling space
 
 A matrix transforms every vector in a coordinate system. The simplest case is a diagonal matrix, which scales each axis independently. Consider a matrix that stretches space by a factor of `3` horizontally and `5` vertically:
 
@@ -60,7 +60,7 @@ let matrix3x3 = [
 matrix3x3.determinant  // 1.0
 ```
 
-## When the determinant is zero
+#### When the determinant is zero
 
 A determinant of zero signals that the matrix is **singular** — it collapses space into a lower dimension. In 2D, the transformation flattens everything onto a line. In 3D, it compresses a volume into a plane or a line.
 
@@ -106,11 +106,11 @@ do {
 let maybeInverse = try? matrix.inverted()  // nil for singular matrices
 ```
 
-### Why this matters in practice
+#### Why this matters in practice
 
 Singular matrices appear more often than we might expect. In machine learning, a feature matrix becomes singular when one feature is a perfect linear combination of others. In computer graphics, a transformation that projects 3D objects onto a 2D screen is inherently singular — we lose the depth dimension, and that loss is by design.
 
-## Matrix inversion
+### Matrix inversion
 
 When a matrix has a non-zero determinant, we can compute its inverse. The inverse matrix undoes the original transformation: if matrix A rotates a vector `90`° clockwise, then A⁻¹ rotates it `90`° counterclockwise, returning it to its original position.
 
@@ -133,7 +133,7 @@ try A.inverted().determinant   // 0.0769... (1/13)
 
 This makes geometric sense. If the original transformation scales area by a factor of `13`, undoing that transformation must scale area by `1/13` to restore the original size.
 
-### Fractional display
+#### Fractional display
 
 The decimal result `0.0769...` obscures the underlying relationship — the denominator is `13` because the determinant is `13`. The `asFractions()` method reveals this structure:
 
@@ -167,7 +167,7 @@ let solution = try b.transformedBy(A.inverted())
 
 This only works when the determinant is non-zero. A zero determinant means the equations are either contradictory (no solution) or redundant (infinitely many solutions).
 
-## Condition number
+### Condition number
 
 A matrix can have a non-zero determinant and still produce unreliable results when inverted. The **condition number** quantifies this risk by measuring how sensitive the result is to small changes in the input.
 
@@ -203,7 +203,7 @@ singular.conditionNumber  // .infinity
 
 Quiver computes the condition number using the **1-norm** (maximum absolute column sum).
 
-### When to check the condition number
+#### When to check the condition number
 
 In production code, checking the condition number before inverting a matrix prevents silent numerical failures. A recommendation engine computing user-item similarity matrices, a physics simulation solving force equations, or a calibration system fitting sensor data — all benefit from knowing whether their matrix is safe to invert before trusting the result.
 
@@ -220,7 +220,7 @@ if cond < 1_000 {
 }
 ```
 
-## Log determinant
+### Log determinant
 
 For large matrices, the determinant can overflow or underflow the range of `Double`. A `100`×`100` matrix with moderately large entries might produce a determinant of `10³⁰⁰`, which exceeds what floating-point numbers can represent. A matrix with small entries might produce a determinant so close to zero that it rounds to exactly `0.0`, becoming indistinguishable from a truly singular matrix.
 
@@ -265,7 +265,7 @@ ld.sign         // 0.0
 ld.logAbsValue  // -infinity
 ```
 
-### Comparing determinants safely
+#### Comparing determinants safely
 
 The log form is especially useful when comparing the determinants of multiple matrices. Instead of comparing raw values that might be astronomically large or vanishingly small, we compare their logarithms — which are ordinary, well-behaved numbers:
 
@@ -282,7 +282,7 @@ ldB.logAbsValue  // 4.605 (log of 100)
 // Same scaling factor, different axis distributions
 ```
 
-## Putting it all together
+### Putting it all together
 
 These three operations form a diagnostic chain. Before inverting a matrix in a production pipeline, we can verify the operation is safe:
 
@@ -306,7 +306,7 @@ let inverse = try matrix.inverted()
 
 For matrices that fail these diagnostics, we know to handle the situation gracefully — whether that means applying regularization, using a pseudoinverse, or simply reporting that the computation cannot be performed reliably.
 
-## See also
+### See also
 
 - <doc:Matrices-Operations> - Matrix arithmetic, transpose, and multiplication
 - <doc:Transformation-Basics> - Matrix-vector transformations and basis vectors

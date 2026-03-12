@@ -94,4 +94,36 @@ final class ArrayMetricsTests: XCTestCase {
         XCTAssertEqual(p, 1.0)
         XCTAssertEqual(r, 0.5)
     }
+
+    // MARK: - Regression Metrics
+
+    // Perfect predictions — R² is 1.0, MSE and RMSE are 0.0
+    func testRegressionPerfect() {
+        let predicted = [1.0, 2.0, 3.0, 4.0]
+        let actual    = [1.0, 2.0, 3.0, 4.0]
+
+        XCTAssertEqual(predicted.rSquared(actual: actual), 1.0, accuracy: 1e-9)
+        XCTAssertEqual(predicted.meanSquaredError(actual: actual), 0.0, accuracy: 1e-9)
+        XCTAssertEqual(predicted.rootMeanSquaredError(actual: actual), 0.0, accuracy: 1e-9)
+    }
+
+    // Known MSE from manual calculation
+    func testKnownMSE() {
+        let predicted = [2.0, 4.0, 6.0]
+        let actual    = [1.0, 5.0, 6.0]
+        // errors: 1, -1, 0 → squared: 1, 1, 0 → mean: 2/3
+
+        XCTAssertEqual(predicted.meanSquaredError(actual: actual), 2.0 / 3.0, accuracy: 1e-9)
+        XCTAssertEqual(predicted.rootMeanSquaredError(actual: actual),
+                        Foundation.sqrt(2.0 / 3.0), accuracy: 1e-9)
+    }
+
+    // R² of mean prediction should be 0.0
+    func testRSquaredMeanPrediction() {
+        let actual = [1.0, 2.0, 3.0, 4.0, 5.0]
+        let mean = 3.0
+        let predicted = [mean, mean, mean, mean, mean]
+
+        XCTAssertEqual(predicted.rSquared(actual: actual), 0.0, accuracy: 1e-9)
+    }
 }

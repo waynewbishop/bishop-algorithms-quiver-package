@@ -16,38 +16,27 @@ import XCTest
 
 final class ArrayRandomTests: XCTestCase {
 
-    func testRandom1D() {
-        let result = [Double].random(5)
-
-        XCTAssertEqual(result.count, 5)
-        for value in result {
+    // Covers 1D, 2D, empty, and uniqueness
+    func testRandomUniform() {
+        let result1D = [Double].random(5)
+        XCTAssertEqual(result1D.count, 5)
+        for value in result1D {
             XCTAssertGreaterThanOrEqual(value, 0.0)
             XCTAssertLessThanOrEqual(value, 1.0)
         }
-    }
 
-    func testRandom2D() {
-        let result = [Double].random(3, 4)
-
-        XCTAssertEqual(result.count, 3)
-        XCTAssertEqual(result[0].count, 4)
-        for row in result {
+        let result2D = [Double].random(3, 4)
+        XCTAssertEqual(result2D.count, 3)
+        XCTAssertEqual(result2D[0].count, 4)
+        for row in result2D {
             for value in row {
                 XCTAssertGreaterThanOrEqual(value, 0.0)
                 XCTAssertLessThanOrEqual(value, 1.0)
             }
         }
-    }
 
-    func testRandomEmptyArray() {
-        let result = [Double].random(0)
-        XCTAssertTrue(result.isEmpty)
-    }
-
-    func testRandomValuesAreDifferent() {
-        let result1 = [Double].random(10)
-        let result2 = [Double].random(10)
-        XCTAssertNotEqual(result1, result2, "Random arrays should be different")
+        XCTAssertTrue([Double].random(0).isEmpty)
+        XCTAssertNotEqual([Double].random(10), [Double].random(10))
     }
 
     // MARK: - Custom Range Tests
@@ -75,37 +64,23 @@ final class ArrayRandomTests: XCTestCase {
 
     // MARK: - Normal Distribution Tests
 
-    func testRandomNormal1D() {
-        let result = [Double].randomNormal(1000)
-        XCTAssertEqual(result.count, 1000)
+    // Covers 1D default, custom params, 2D, and zero std
+    func testRandomNormal() {
+        let result1D = [Double].randomNormal(1000)
+        XCTAssertEqual(result1D.count, 1000)
+        XCTAssertEqual(result1D.mean()!, 0.0, accuracy: 0.2)
+        XCTAssertEqual(result1D.std()!, 1.0, accuracy: 0.2)
 
-        let mean = result.mean()!
-        let std = result.std()!
-        XCTAssertEqual(mean, 0.0, accuracy: 0.2)
-        XCTAssertEqual(std, 1.0, accuracy: 0.2)
-    }
+        let custom = [Double].randomNormal(1000, mean: 5.0, std: 2.0)
+        XCTAssertEqual(custom.mean()!, 5.0, accuracy: 0.3)
+        XCTAssertEqual(custom.std()!, 2.0, accuracy: 0.3)
 
-    func testRandomNormalCustomParams() {
-        let result = [Double].randomNormal(1000, mean: 5.0, std: 2.0)
-        XCTAssertEqual(result.count, 1000)
+        let result2D = [Double].randomNormal(3, 4)
+        XCTAssertEqual(result2D.count, 3)
+        XCTAssertEqual(result2D[0].count, 4)
 
-        let mean = result.mean()!
-        let std = result.std()!
-        XCTAssertEqual(mean, 5.0, accuracy: 0.3)
-        XCTAssertEqual(std, 2.0, accuracy: 0.3)
-    }
-
-    func testRandomNormal2D() {
-        let result = [Double].randomNormal(3, 4)
-        XCTAssertEqual(result.count, 3)
-        XCTAssertEqual(result[0].count, 4)
-    }
-
-    func testRandomNormalZeroStd() {
-        let result = [Double].randomNormal(10, mean: 3.0, std: 0.0)
-        for value in result {
-            XCTAssertEqual(value, 3.0)
-        }
+        let zeroStd = [Double].randomNormal(10, mean: 3.0, std: 0.0)
+        for value in zeroStd { XCTAssertEqual(value, 3.0) }
     }
 
     // MARK: - Random Integer Tests

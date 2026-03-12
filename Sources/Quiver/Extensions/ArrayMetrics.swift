@@ -145,3 +145,73 @@ public extension Array where Element == Int {
         return cm.f1Score
     }
 }
+
+// MARK: - Regression Metrics
+
+public extension Array where Element == Double {
+
+    /// Coefficient of determination R² comparing these predicted values against actuals.
+    ///
+    /// R² = 1 − SS_res / SS_tot measures how well predictions explain the variance
+    /// in the actual data. A value of 1.0 means perfect prediction; 0.0 means the
+    /// model explains no more variance than predicting the mean.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let predicted = [2.1, 4.0, 5.9, 8.1]
+    /// let actual    = [2.0, 4.0, 6.0, 8.0]
+    /// let r2 = predicted.rSquared(actual: actual)  // ≈ 0.999
+    /// ```
+    ///
+    /// - Parameter actual: The ground truth target values, one per sample.
+    /// - Returns: R² as a value between 0 and 1 (can be negative for very poor models).
+    func rSquared(actual: [Double]) -> Double {
+        precondition(count == actual.count,
+            "Predicted and actual arrays must have the same length")
+        return _Regression.rSquared(predicted: self, actual: actual)
+    }
+
+    /// Mean squared error comparing these predicted values against actuals.
+    ///
+    /// MSE = Σ(yᵢ − ŷᵢ)² / n averages the squared differences between predicted
+    /// and actual values. Lower is better; zero means perfect prediction.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let predicted = [2.5, 4.0, 6.0]
+    /// let actual    = [2.0, 4.0, 6.0]
+    /// let mse = predicted.meanSquaredError(actual: actual)  // ≈ 0.083
+    /// ```
+    ///
+    /// - Parameter actual: The ground truth target values, one per sample.
+    /// - Returns: The mean squared error (always non-negative).
+    func meanSquaredError(actual: [Double]) -> Double {
+        precondition(count == actual.count,
+            "Predicted and actual arrays must have the same length")
+        return _Regression.meanSquaredError(predicted: self, actual: actual)
+    }
+
+    /// Root mean squared error comparing these predicted values against actuals.
+    ///
+    /// RMSE = √MSE provides an error metric in the same units as the target variable,
+    /// making it more interpretable than MSE for reporting.
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let predicted = [2.5, 4.0, 6.0]
+    /// let actual    = [2.0, 4.0, 6.0]
+    /// let rmse = predicted.rootMeanSquaredError(actual: actual)  // ≈ 0.289
+    /// ```
+    ///
+    /// - Parameter actual: The ground truth target values, one per sample.
+    /// - Returns: The root mean squared error (always non-negative).
+    func rootMeanSquaredError(actual: [Double]) -> Double {
+        return Foundation.sqrt(meanSquaredError(actual: actual))
+    }
+}
