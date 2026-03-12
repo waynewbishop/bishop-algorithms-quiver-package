@@ -157,8 +157,8 @@ Uniform random generation uses Swift's built-in `Double.random(in:)` and `Float.
 
 ## See also
 
-- <doc:Statistics>
-- <doc:Generation>
+- <doc:Statistical-Operations>
+- <doc:Array-Generation>
 
 ## Topics
 

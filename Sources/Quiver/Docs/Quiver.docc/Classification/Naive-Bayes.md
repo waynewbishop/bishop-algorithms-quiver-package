@@ -4,19 +4,21 @@ Train a Gaussian Naive Bayes classifier.
 
 ## Overview
 
-Naive Bayes is one of the simplest and most effective classification algorithms. It applies Bayes' theorem with the "naive" assumption that features are conditionally independent given the class label. Despite this strong assumption, Naive Bayes performs surprisingly well in practice and serves as a reliable baseline for classification tasks.
+Naive Bayes is one of the simplest and most effective classification algorithms. It applies Bayes' theorem with the **naive** assumption that features are conditionally independent given the class label. Despite this strong assumption, Naive Bayes performs surprisingly well in practice and serves as a reliable baseline for classification tasks.
 
 Quiver provides `GaussianNaiveBayes`, which assumes that the features within each class follow a normal (Gaussian) distribution. The model learns the mean and variance of each feature per class during training, then uses these statistics to classify new samples.
 
 ### How Gaussian classification works
 
-The "Gaussian" in Gaussian Naive Bayes refers to the probability density function (PDF) — the mathematical formula that defines the bell curve of a normal distribution. Given a feature value, a class mean, and a class variance, the PDF answers the question: "How likely is this feature value if the sample belongs to this class?"
+The **Gaussian** in Gaussian Naive Bayes refers to the **probability density function** (PDF) — the mathematical formula that defines the bell curve of a normal distribution. Given a feature value, a class mean, and a class variance, the PDF answers the question: How likely is this feature value if the sample belongs to this class?
 
 During prediction, the model evaluates the Gaussian PDF for every feature against every class. It then combines these likelihoods with the class prior probabilities (how common each class is in the training data) to determine which class best explains the observed features. The class with the highest combined score wins.
 
 ### Fitting a model
 
-The `fit(features:labels:)` static method learns class statistics from training data and returns a ready-to-use model. There is no separate "unfitted" state — the returned struct is immediately usable:
+The `fit(features:labels:)` static method learns class statistics from training data and returns a ready-to-use model. There is no separate "unfitted" state — the returned struct is immediately usable.
+
+> Tip: Classification models predict discrete categories, so labels are `[Int]` — each integer represents a class (e.g., `0` for denied, `1` for approved). To predict continuous values like prices or temperatures, a regression model is needed instead. See <doc:Machine-Learning-Primer> for more on the distinction.
 
 ```swift
 import Quiver
@@ -56,7 +58,7 @@ For deeper inspection, `predictLogProbabilities(_:)` returns the raw log-probabi
 
 A typical workflow combines data splitting, model fitting, prediction, and evaluation.
 
-> Tip: Quiver's `trainTestSplit(testRatio:seed:)` splits any array into training and test subsets with a single call. For imbalanced datasets where one class is much rarer than another, use `stratifiedSplit(labels:testRatio:seed:)` instead — it preserves the class ratios in both partitions. See <doc:Sampling> for details.
+> Tip: Quiver's `trainTestSplit(testRatio:seed:)` splits any array into training and test subsets with a single call. For imbalanced datasets where one class is much rarer than another, use `stratifiedSplit(labels:testRatio:seed:)` instead — it preserves the class ratios in both partitions. See <doc:Train-Test-Split> for details.
 
 ```swift
 import Quiver
@@ -111,8 +113,8 @@ let (train, test) = data.trainTestSplit(testRatio: 0.25, seed: 42)
 let featureColumns = ["credit_score", "balance", "loyalty"]
 let trainX = train.toMatrix(columns: featureColumns)
 let testX = test.toMatrix(columns: featureColumns)
-let trainY = train["churned"].map { Int($0) }
-let testY = test["churned"].map { Int($0) }
+let trainY = train.labels("churned")
+let testY = test.labels("churned")
 
 // Fit and predict — same API as before
 let scaler = FeatureScaler.fit(features: trainX)
@@ -120,7 +122,7 @@ let model = GaussianNaiveBayes.fit(features: scaler.transform(trainX), labels: t
 let predictions = model.predict(scaler.transform(testX))
 ```
 
-`Panel` is entirely optional. The classifier accepts arrays directly, and developers who prefer working with raw arrays can continue to do so. See <doc:Panel-Overview> for details.
+`Panel` is entirely optional. The classifier accepts arrays directly, and developers who prefer working with raw arrays can continue to do so. See <doc:Panel> for details.
 
 ### Safe by design
 

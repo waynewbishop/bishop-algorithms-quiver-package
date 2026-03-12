@@ -146,8 +146,8 @@ This approach means these operations work directly on standard Swift arrays with
 - ``Swift/Array/transformedBy(_:)``
 
 ### Related articles
-- <doc:Primer>
+- <doc:Linear-Algebra-Primer>
 - <doc:Similarity-Operations>
 - <doc:Transformation-Basics>
 - <doc:Matrices-Operations>
-- <doc:Broadcast>
+- <doc:Broadcasting-Operations>

@@ -41,7 +41,7 @@ matrix.size         // 6
 matrix.transposed() // [[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]]
 ```
 
-> Tip: For a deeper look at shape, size, and dimension operations, see <doc:Dimensions>.
+> Tip: For a deeper look at shape, size, and dimension operations, see <doc:Shape-And-Size>.
 
 ### Aggregation functions
 
@@ -182,6 +182,6 @@ let documentVector = wordEmbeddings.meanVector()
 - ``Swift/Array/meanVector()->[Float]?``
 
 ### Related articles
-- <doc:Charts>
-- <doc:Sampling>
-- <doc:Operations>
+- <doc:Data-Visualization>
+- <doc:Train-Test-Split>
+- <doc:Vector-Operations>

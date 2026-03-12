@@ -122,6 +122,6 @@ let (trainLabels, testLabels) = labels.trainTestSplit(testRatio: 0.25, seed: 42)
 
 - <doc:Machine-Learning-Primer>
 - <doc:Naive-Bayes>
-- <doc:Random>
-- <doc:Statistics>
-- <doc:Dimensions>
+- <doc:Random-Number-Generation>
+- <doc:Statistical-Operations>
+- <doc:Shape-And-Size>

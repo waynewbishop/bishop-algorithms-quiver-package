@@ -6,9 +6,9 @@ A Quiver type that organizes named columns of numeric data into a single contain
 
 When working with multi-feature datasets, raw arrays require the developer to track which column is which by position alone. A feature matrix like `[[619, 15000, 0.08], [502, 78000, 0.04]]` offers no indication of what each column represents, and splitting or filtering requires careful coordination across parallel arrays to keep rows aligned.
 
-Quiver's `Panel` type solves this by giving names to columns of `[Double]` data while keeping rows together as a unit. Developers familiar with Python's pandas `DataFrame` will recognize the concept — `Panel` serves a similar role for labeled columnar data, scoped to Quiver's numeric focus.
+Quiver's `Panel` type solves this by giving names to columns of `[Double]` data while keeping rows together as a unit. Developers familiar with Python's pandas `DataFrame` will recognize the concept — `Panel` serves a similar role for labeled column data, scoped to Quiver's numeric focus.
 
-> Important: `Panel` does not replace Quiver's array and matrix operations — it organizes them. Each column is a standard `[Double]` that supports all existing Quiver vector operations like `.mean()`, `.std()`, `.standardized()`, and boolean masking.
+> Important: `Panel` does not replace Quiver's array and matrix operations — it organizes them. Each column is a standard `[Double]` that supports Quiver vector operations like `.mean()`, `.std()`, `.standardized()`, and boolean masking.
 
 ### Creating a panel
 
@@ -24,18 +24,25 @@ let data = Panel([
 ])
 ```
 
-`Panel` can also be created from a matrix with column names, which is useful when labeling the output of a matrix operation:
+### Creating a panel from a matrix
+
+`Panel` can also be created from an existing matrix by providing column names. This is useful when we already have data in `[[Double]]` form — from a computation, a file import, or another Quiver operation — and want to add column labels:
 
 ```swift
 import Quiver
 
-let matrix: [[Double]] = [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]
-let data = Panel(matrix: matrix, columns: ["x", "y"])
+// Existing matrix from a previous calculation
+let results = [[8.5, 2.1], [7.2, 2.4], [9.1, 1.9]]
+
+// Wrap it in a Panel to give columns meaningful names
+let athletes = Panel(matrix: results, columns: ["speed", "jumpHeight"])
+athletes["speed"].mean()        // 8.27
+athletes["jumpHeight"].std()    // 0.21
 ```
 
 ### Column access
 
-Access any column by name with subscript syntax. The returned array is a standard `[Double]`, so all Quiver vector operations work immediately:
+Access any column by name with subscript syntax. The returned array is a standard `[Double]` vector, so all Quiver vector operations work immediately:
 
 ```swift
 import Quiver
@@ -45,9 +52,16 @@ let data = Panel([
     ("income", [50000.0, 60000.0, 75000.0, 55000.0])
 ])
 
+// Access by name — returns a [Double] vector
 data["income"].mean()          // 60000.0
 data["age"].std()              // standard deviation
 data["income"].standardized()  // z-scores
+```
+
+For classification workflows, use `.labels()` to extract a column as `[Int]` for classifiers:
+
+```swift
+let trainLabels = data.labels("age")  // [25, 30, 35, 28]
 ```
 
 ### Extracting matrices
@@ -65,6 +79,14 @@ let data = Panel([
 
 let all = data.toMatrix()                    // [[1, 2, 3], [4, 5, 6]]
 let selected = data.toMatrix(columns: ["c", "a"])  // [[3, 1], [6, 4]]
+```
+
+Once extracted as a matrix, columns are accessible by index using Quiver's `.column(at:)` method. This is useful for linear algebra calculations where column names are no longer needed:
+
+```swift
+let matrix = data.toMatrix()
+let secondColumn = matrix.column(at: 1)  // [2.0, 5.0]
+secondColumn.magnitude                   // 5.385...
 ```
 
 ### Filtering with boolean masks
@@ -92,6 +114,7 @@ Split a `Panel` into training and testing subsets with a single call. All column
 ```swift
 import Quiver
 
+// 10 samples with two feature columns and a binary label
 let data = Panel([
     ("feature1", [1.0, 2.0, 3.0, 4.0, 5.0,
                   6.0, 7.0, 8.0, 9.0, 10.0]),
@@ -101,9 +124,12 @@ let data = Panel([
                1.0, 0.0, 1.0, 0.0, 1.0])
 ])
 
+// Split 80/20 — all columns partitioned by the same rows
 let (train, test) = data.trainTestSplit(testRatio: 0.2, seed: 42)
+
+// Extract features as a matrix and labels as integers
 let trainFeatures = train.toMatrix(columns: ["feature1", "feature2"])
-let trainLabels = train["label"].map { Int($0) }
+let trainLabels = train.labels("label")
 ```
 
 This eliminates the need to match seeds across parallel array splits, which is error-prone and a common source of row misalignment bugs.
@@ -139,7 +165,7 @@ let testScaled = scaler.transform(test.toMatrix(columns: featureColumns))
 // Fit and predict
 let model = GaussianNaiveBayes.fit(
     features: trainScaled,
-    labels: train["approved"].map { Int($0) }
+    labels: train.labels("approved")
 )
 let predictions = model.predict(testScaled)
 ```
@@ -148,7 +174,3 @@ let predictions = model.predict(testScaled)
 
 `Panel` is intentionally focused on numeric columnar data for ML workflows. It is a value type with a fixed schema — columns are defined at creation and all values are `Double`. This focused design keeps `Panel` lightweight and predictable, optimized for the split-scale-train-evaluate cycle that classification workflows require.
 
-## Topics
-
-### Panel
-- ``Panel``

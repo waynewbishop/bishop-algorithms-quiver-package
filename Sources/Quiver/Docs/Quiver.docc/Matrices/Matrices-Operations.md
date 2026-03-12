@@ -228,7 +228,7 @@ let result2 = floatMatrix * 2.0
 
 ## See also
 
-- <doc:Operations>
+- <doc:Vector-Operations>
 - <doc:Determinants-Primer>
 - <doc:Transformation-Basics>
-- <doc:Composition>
+- <doc:Composing-Transformations>

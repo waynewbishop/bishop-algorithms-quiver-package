@@ -6,7 +6,7 @@ Understand how matrices scale space and assess numerical stability.
 
 Every square matrix has a single number associated with it called the **determinant**. This value answers a geometric question: when the matrix transforms space, how much does the area (or volume) change? The determinant tells us whether a transformation is reversible and how it scales the space it acts on.
 
-> Note: This primer builds on concepts from the <doc:Primer>. A basic understanding of matrix transformations — how matrices act on vectors to scale, rotate, and shear space — is recommended before continuing.
+> Note: This primer builds on concepts from the <doc:Linear-Algebra-Primer>. A basic understanding of matrix transformations — how matrices act on vectors to scale, rotate, and shear space — is recommended before continuing.
 
 ## Scaling space
 
@@ -310,5 +310,5 @@ For matrices that fail these diagnostics, we know to handle the situation gracef
 
 - <doc:Matrices-Operations> - Matrix arithmetic, transpose, and multiplication
 - <doc:Transformation-Basics> - Matrix-vector transformations and basis vectors
-- <doc:Composition> - Composing multiple transformations
-- <doc:Primer> - Linear algebra fundamentals
+- <doc:Composing-Transformations> - Composing multiple transformations
+- <doc:Linear-Algebra-Primer> - Linear algebra fundamentals

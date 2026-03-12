@@ -88,7 +88,7 @@ Each failed call is caught before the code ever runs. The compiler tells us exac
 
 Swift's type system also encodes dimensionality. The compiler distinguishes between `[Double]` (a vector) and `[[Double]]` (a matrix) at compile time, so there is no need for a runtime property to query how many dimensions an array has — the type signature already tells us. Quiver's `.shape` property is constrained to nested arrays, so calling it on a flat `[Double]` is a compile-time error, not a runtime surprise.
 
-> Tip: For a detailed look at `.shape`, `.size`, and working with matrix dimensions, see <doc:Dimensions>.
+> Tip: For a detailed look at `.shape`, `.size`, and working with matrix dimensions, see <doc:Shape-And-Size>.
 
 ### Named tuples as return types
 

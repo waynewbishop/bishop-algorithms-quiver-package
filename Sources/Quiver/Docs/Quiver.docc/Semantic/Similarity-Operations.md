@@ -6,7 +6,7 @@ Compute similarity between vectors using cosine similarity and distance metrics.
 
 Similarity operations measure how **related** two vectors are. These operations are fundamental for machine learning applications including recommendation systems, word prediction, clustering, <doc:Semantic-Search>, and nearest neighbor classification.
 
-> Tip: For selecting top-K results from similarity scores, see <doc:Selection>.
+> Tip: For selecting top-K results from similarity scores, see <doc:Top-K-Selection>.
 
 ## Dot product
 
@@ -132,7 +132,7 @@ v1.angle(with: v2)            // 0.253 radians
 v1.angleInDegrees(with: v2)   // 14.5 degrees
 ```
 
-In machine learning and information retrieval, the raw cosine value is typically all that's needed — "document A is 0.92 similar to document B." In physics and graphics, the actual angle matters — "rotate 45 degrees" or "the force acts at 30 degrees." See <doc:Operations> for more on angle calculations and vector projections.
+In machine learning and information retrieval, the raw cosine value is typically all that's needed — "document A is 0.92 similar to document B." In physics and graphics, the actual angle matters — "rotate 45 degrees" or "the force acts at 30 degrees." See <doc:Vector-Operations> for more on angle calculations and vector projections.
 
 ### Range interpretation
 
@@ -258,8 +258,8 @@ The `topIndices(k:labels:)` method pairs each score with its original label, mak
 ## See also
 
 - <doc:Semantic-Search> - Full text-to-results pipeline using tokenization, embeddings, and similarity
-- <doc:Selection> - Select top-K largest values
-- <doc:Operations> - Vector operations
+- <doc:Top-K-Selection> - Select top-K largest values
+- <doc:Vector-Operations> - Vector operations
 - <doc:Matrices-Operations> - Matrix operations
 
 ## Topics

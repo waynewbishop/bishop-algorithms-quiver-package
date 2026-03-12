@@ -6,7 +6,7 @@ Implementing semantic search through tokenization, embeddings, and cosine simila
 
 Semantic search finds information by comparing **meaning** rather than matching keywords. A traditional keyword search for "running shoes" would miss a document titled "athletic footwear" because the words don't match — even though the concepts are nearly identical. Semantic search solves this by representing words and phrases as numeric vectors, where similar meanings occupy nearby positions in multidimensional space. Comparing those vectors with cosine similarity reveals relationships that keyword matching cannot.
 
-> Tip: This article builds on concepts from <doc:Similarity-Operations> and <doc:Operations>. Familiarity with cosine similarity and the dot product will help, but the examples are self-contained.
+> Tip: This article builds on concepts from <doc:Similarity-Operations> and <doc:Vector-Operations>. Familiarity with cosine similarity and the dot product will help, but the examples are self-contained.
 
 ## Words as vectors
 
@@ -57,7 +57,7 @@ result.cosineOfAngle(with: king)   // ~0.79
 
 The subtraction `king - man` isolates the "royalty" component by removing the "male" direction. Adding `woman` reintroduces a gender direction, landing at "female royalty." This works because word vectors encode semantic properties as geometric directions — the same directions our similarity operations measure.
 
-> Tip: The element-wise arithmetic used here (`king - man + woman`) relies on Quiver's vector operators. See <doc:Elements> for the full set of element-wise operations available on arrays.
+> Tip: The element-wise arithmetic used here (`king - man + woman`) relies on Quiver's vector operators. See <doc:Element-Wise-Operations> for the full set of element-wise operations available on arrays.
 
 ## Tokenizing text
 
@@ -123,7 +123,7 @@ guard let documentVector = queryVectors.meanVector() else {
 
 The averaged vector blends the athletic meaning of "running" with the product meaning of "shoes" and the quality meaning of "comfortable." Documents with similar averages will score highest.
 
-> Tip: The `meanVector()` method returns an optional — it returns `nil` if the array is empty or if vectors have inconsistent dimensions. See <doc:Statistics> for additional aggregation operations on vector collections.
+> Tip: The `meanVector()` method returns an optional — it returns `nil` if the array is empty or if vectors have inconsistent dimensions. See <doc:Statistical-Operations> for additional aggregation operations on vector collections.
 
 ## Ranking results
 
@@ -143,11 +143,11 @@ for result in results {
 
 The pipeline chains together five Quiver operations: `tokenize()`, `embed(using:)`, `meanVector()`, `cosineSimilarities(to:)`, and `topIndices(k:labels:)`.
 
-> Tip: For large collections, pre-compute and store document vectors rather than recalculating them for each query. Only the query vector needs to be built at search time. See <doc:Selection> for more on efficient top-K retrieval.
+> Tip: For large collections, pre-compute and store document vectors rather than recalculating them for each query. Only the query vector needs to be built at search time. See <doc:Top-K-Selection> for more on efficient top-K retrieval.
 
 ## See also
 
 - <doc:Similarity-Operations> - Cosine similarity, batch operations, and cluster analysis
-- <doc:Operations> - Vector properties including magnitude, normalization, and dot product
-- <doc:Statistics> - Statistical operations including `meanVector()`
-- <doc:Selection> - Top-K selection for ranking results
+- <doc:Vector-Operations> - Vector properties including magnitude, normalization, and dot product
+- <doc:Statistical-Operations> - Statistical operations including `meanVector()`
+- <doc:Top-K-Selection> - Top-K selection for ranking results

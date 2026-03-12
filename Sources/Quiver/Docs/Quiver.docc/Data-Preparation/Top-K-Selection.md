@@ -182,8 +182,8 @@ For typical use (10,000 elements, k=10): ~130,000 operations (very fast).
 ## See also
 
 - <doc:Similarity-Operations> - Distance metrics for computing scores
-- <doc:Statistics> - Statistical measures (mean, max, min)
-- <doc:Operations> - Vector operations
+- <doc:Statistical-Operations> - Statistical measures (mean, max, min)
+- <doc:Vector-Operations> - Vector operations
 
 ## Topics
 

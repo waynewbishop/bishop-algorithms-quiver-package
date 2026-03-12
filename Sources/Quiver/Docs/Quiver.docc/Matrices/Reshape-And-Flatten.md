@@ -109,4 +109,4 @@ let rowVec = v.reshaped(rows: 1, columns: 3)
 ## See also
 
 - <doc:Matrices-Operations>
-- <doc:Generation>
+- <doc:Array-Generation>

@@ -325,9 +325,9 @@ let screenPosition = objectDepth.transformedBy(perspective)
 ## See also
 
 - <doc:Transformation-Basics>
-- <doc:Composition>
+- <doc:Composing-Transformations>
 - <doc:Matrices-Operations>
-- <doc:Operations>
+- <doc:Vector-Operations>
 
 ## Topics
 

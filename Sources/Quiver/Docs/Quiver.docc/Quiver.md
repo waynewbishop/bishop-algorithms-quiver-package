@@ -32,48 +32,48 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ## Topics
 
-### Getting started
+### Getting Started
 - <doc:Installation>
-- <doc:How-It-Works>
-- <doc:Primer>
+- <doc:Architecture>
+
+### Conceptual Guides
+- <doc:Linear-Algebra-Primer>
 - <doc:Statistics-Primer>
 - <doc:Determinants-Primer>
 - <doc:Machine-Learning-Primer>
 
 ### Vectors
-- <doc:Operations>
-- <doc:Elements>
+- <doc:Vector-Operations>
+- <doc:Element-Wise-Operations>
+- <doc:Statistical-Operations>
 
 ### Matrices
 - <doc:Matrices-Operations>
-- <doc:Reshape>
-- <doc:Dimensions>
-- <doc:Broadcast>
-- <doc:Generation>
-- <doc:Random>
+- <doc:Shape-And-Size>
+- <doc:Reshape-And-Flatten>
+- <doc:Broadcasting-Operations>
+- <doc:Array-Generation>
+- <doc:Random-Number-Generation>
 
 ### Transformations
 - <doc:Transformation-Basics>
 - <doc:Transformation-Common>
-- <doc:Composition>
+- <doc:Composing-Transformations>
 
-### Similarity and Distance
+### Similarity and Search
 - <doc:Similarity-Operations>
 - <doc:Semantic-Search>
 
-### Statistical Operations
-- <doc:Sampling>
-- <doc:Charts>
-- <doc:Statistics>
+### Data Preparation
+- <doc:Panel>
+- <doc:Train-Test-Split>
+- <doc:Feature-Scaling>
+- <doc:Top-K-Selection>
+- <doc:Data-Visualization>
 
 ### Classification
-- <doc:Panel-Overview>
-- <doc:Feature-Scaling>
 - <doc:Naive-Bayes>
 - <doc:Evaluation-Metrics>
-
-### Sorting and Selection
-- <doc:Selection>
 
 ### Quick Reference
 - ``Swift/Array/dot(_:)``

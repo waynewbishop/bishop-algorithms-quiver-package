@@ -157,6 +157,17 @@ public struct Panel {
         return values
     }
 
+    /// Returns the named column as integer labels for classification.
+    ///
+    /// Converts each `Double` value to `Int` by truncation. Use this to extract
+    /// a label column for classifiers like `GaussianNaiveBayes`.
+    ///
+    /// - Parameter column: The column name to look up.
+    /// - Returns: The column's values as `[Int]`.
+    public func labels(_ column: String) -> [Int] {
+        return self[column].map { Int($0) }
+    }
+
     // MARK: - Conversion
 
     /// Extracts selected columns as a matrix.

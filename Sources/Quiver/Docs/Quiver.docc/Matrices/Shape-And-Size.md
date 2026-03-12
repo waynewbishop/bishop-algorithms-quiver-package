@@ -102,5 +102,5 @@ This is a broader benefit of working in a strongly typed, compiled language. Pro
 
 ## See also
 
-- <doc:Reshape>
+- <doc:Reshape-And-Flatten>
 - <doc:Matrices-Operations>

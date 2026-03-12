@@ -336,6 +336,6 @@ let avgGrowth = growthRates.mean()  // 18.9% average monthly growth
 
 ## See also
 
-- <doc:Statistics> - Complete API reference for statistical operations
-- <doc:Elements> - Boolean operations for data filtering
-- <doc:Primer> - Linear algebra fundamentals
+- <doc:Statistical-Operations> - Complete API reference for statistical operations
+- <doc:Element-Wise-Operations> - Boolean operations for data filtering
+- <doc:Linear-Algebra-Primer> - Linear algebra fundamentals

@@ -115,8 +115,8 @@ Which metric matters most depends on the cost of each error type. Missing a frau
 
 ## See also
 
-- <doc:Sampling> - Train/test splitting and stratified partitioning
+- <doc:Train-Test-Split> - Train/test splitting and stratified partitioning
 - <doc:Feature-Scaling> - Min-max normalization with data leakage prevention
 - <doc:Naive-Bayes> - Gaussian Naive Bayes classifier
 - <doc:Evaluation-Metrics> - Precision, recall, F1, and confusion matrices
-- <doc:Panel-Overview> - Organizing labeled columnar data
+- <doc:Panel> - Organizing labeled columnar data

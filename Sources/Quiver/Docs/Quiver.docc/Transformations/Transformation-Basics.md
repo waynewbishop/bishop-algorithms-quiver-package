@@ -161,9 +161,9 @@ let stretch = [Double].diag([3.0, 0.5])
 ## See also
 
 - <doc:Transformation-Common> - Rotation, scaling, reflection, shearing examples
-- <doc:Composition> - Combining multiple transformations
+- <doc:Composing-Transformations> - Combining multiple transformations
 - <doc:Matrices-Operations> - Matrix arithmetic and operations
-- <doc:Operations> - Vector operations
+- <doc:Vector-Operations> - Vector operations
 
 ## Topics
 

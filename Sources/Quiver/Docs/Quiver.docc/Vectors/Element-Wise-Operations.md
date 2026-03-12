@@ -36,7 +36,7 @@ let product = m1 * m2  // [[5.0, 12.0], [21.0, 32.0]] (Hadamard product)
 let quotient = m1 / m2  // [[0.2, 0.33...], [0.42..., 0.5]]
 ```
 
-> Important: For scalar broadcasting (operations between arrays and single values) and advanced row/column broadcasting, see <doc:Broadcast>.
+> Important: For scalar broadcasting (operations between arrays and single values) and advanced row/column broadcasting, see <doc:Broadcasting-Operations>.
 
 ## Boolean comparisons
 
@@ -268,6 +268,6 @@ This approach offers several advantages:
 
 ## See also
 
-- <doc:Operations>
-- <doc:Statistics>
+- <doc:Vector-Operations>
+- <doc:Statistical-Operations>
 - <doc:Transformation-Basics>

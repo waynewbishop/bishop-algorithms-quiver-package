@@ -10,7 +10,7 @@ Linear algebra forms the mathematical foundation for many fields including compu
 
 ### Introducing vectors
 
-In programming, we often use arrays to store collections of values. In linear algebra, these become **vectors** which represent quantities with both `magnitude` (size) and direction. See <doc:Operations> for comprehensive vector operations.
+In programming, we often use arrays to store collections of values. In linear algebra, these become **vectors** which represent quantities with both `magnitude` (size) and direction. See <doc:Vector-Operations> for comprehensive vector operations.
 
 ```swift
 import Quiver
@@ -103,7 +103,7 @@ Matrices serve two primary purposes: organizing data (where rows might represent
 
 #### Matrix creation
 
-Quiver makes it easy to create common matrices (see <doc:Generation> for more matrix creation methods):
+Quiver makes it easy to create common matrices (see <doc:Array-Generation> for more matrix creation methods):
 
 ```swift
 import Quiver
