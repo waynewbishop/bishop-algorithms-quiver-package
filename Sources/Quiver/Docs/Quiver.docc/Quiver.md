@@ -38,6 +38,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Primer>
 - <doc:Statistics-Primer>
 - <doc:Determinants-Primer>
+- <doc:Machine-Learning-Primer>
 
 ### Vectors
 - <doc:Operations>
@@ -66,6 +67,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Statistics>
 
 ### Classification
+- <doc:Panel-Overview>
 - <doc:Naive-Bayes>
 - <doc:Feature-Scaling>
 - <doc:Evaluation-Metrics>
@@ -99,3 +101,4 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - ``ConfusionMatrix``
 - ``GaussianNaiveBayes``
 - ``FeatureScaler``
+- ``Panel``

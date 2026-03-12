@@ -87,6 +87,41 @@ print("Precision: \(cm.precision as Any)")
 print("Recall: \(cm.recall as Any)")
 ```
 
+### Organizing data with Panel
+
+The pipeline above works directly with arrays, which is the primary way to interact with `GaussianNaiveBayes`. For datasets with many features, Quiver also provides its own ``Panel`` type — an optional named-column container that keeps rows aligned and columns labeled. The same pipeline looks like this with a `Panel`:
+
+```swift
+import Quiver
+
+let data = Panel([
+    ("credit_score", [619.0, 502.0, 699.0, 850.0, 645.0,
+                      720.0, 410.0, 780.0, 590.0, 680.0]),
+    ("balance", [15000.0, 78000.0, 0.0, 11000.0, 125000.0,
+                 98000.0, 45000.0, 0.0, 175000.0, 62000.0]),
+    ("loyalty", [0.08, 0.04, 0.42, 0.12, 0.35,
+                 0.18, 0.06, 0.50, 0.10, 0.28]),
+    ("churned", [1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0])
+])
+
+// Split once — all columns stay aligned automatically
+let (train, test) = data.trainTestSplit(testRatio: 0.25, seed: 42)
+
+// Extract arrays for the classifier
+let featureColumns = ["credit_score", "balance", "loyalty"]
+let trainX = train.toMatrix(columns: featureColumns)
+let testX = test.toMatrix(columns: featureColumns)
+let trainY = train["churned"].map { Int($0) }
+let testY = test["churned"].map { Int($0) }
+
+// Fit and predict — same API as before
+let scaler = FeatureScaler.fit(features: trainX)
+let model = GaussianNaiveBayes.fit(features: scaler.transform(trainX), labels: trainY)
+let predictions = model.predict(scaler.transform(testX))
+```
+
+`Panel` is entirely optional. The classifier accepts arrays directly, and developers who prefer working with raw arrays can continue to do so. See <doc:Panel-Overview> for details.
+
 ### Safe by design
 
 `GaussianNaiveBayes` is a Swift struct, which means it cannot be accidentally changed after creation. This design prevents three common mistakes:
@@ -112,13 +147,12 @@ Naive Bayes multiplies together one probability for every feature in every class
 
 ### Prediction
 - ``GaussianNaiveBayes/predict(_:)``
+
+### Related
+- <doc:Machine-Learning-Primer>
 - ``GaussianNaiveBayes/predictLogProbabilities(_:)``
 
 ### Data Splitting
 - ``Swift/Array/trainTestSplit(testRatio:seed:)``
 - ``Swift/Array/stratifiedSplit(labels:testRatio:seed:)``
 
-### Related
-- <doc:Feature-Scaling>
-- <doc:Evaluation-Metrics>
-- <doc:Sampling>

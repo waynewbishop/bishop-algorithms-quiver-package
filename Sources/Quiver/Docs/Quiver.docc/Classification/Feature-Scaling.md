@@ -70,6 +70,4 @@ let scaled = scaler.transform(features)
 - ``FeatureScaler``
 
 ### Related
-- <doc:Naive-Bayes>
-- <doc:Evaluation-Metrics>
-- <doc:Sampling>
+- <doc:Machine-Learning-Primer>

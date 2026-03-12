@@ -120,15 +120,13 @@ let unusual = weeklyData.isGreaterThan(threshold)
 Reduce noise using moving averages:
 
 ```swift
+import Quiver
+
 // Raw sensor readings
 let rawData = [0.12, 0.15, 0.11, 0.14, 0.13, 0.12, 0.16]
 
-// Moving average smoothing
-let windowSize = 3
-let smoothed = stride(from: 0, to: rawData.count - windowSize + 1, by: 1)
-    .map { start in
-        Array(rawData[start..<start + windowSize]).mean() ?? 0.0
-    }
+// Smooth noisy data with a 3-point rolling mean
+let smoothed = rawData.rollingMean(window: 3)
 // [0.127, 0.133, 0.127, 0.130, 0.137]
 ```
 
