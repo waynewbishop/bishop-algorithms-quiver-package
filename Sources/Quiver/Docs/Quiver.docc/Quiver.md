@@ -68,8 +68,8 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Classification
 - <doc:Panel-Overview>
-- <doc:Naive-Bayes>
 - <doc:Feature-Scaling>
+- <doc:Naive-Bayes>
 - <doc:Evaluation-Metrics>
 
 ### Sorting and Selection
