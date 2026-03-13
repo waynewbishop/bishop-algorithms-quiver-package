@@ -174,9 +174,18 @@ public struct KMeans {
         var bestIndex = 0
         var bestDistance = Double.infinity
         for i in 0..<centroids.count {
-            let d = sample.distance(to: centroids[i])
-            if d < bestDistance {
-                bestDistance = d
+            // Performance: Inlines squared Euclidean distance to avoid the temporary
+            // difference array that distance(to:) allocates. Also skips sqrt since
+            // we only need relative ordering. Called n * k times per iteration.
+            var sum = 0.0
+            let centroid = centroids[i]
+            for d in 0..<sample.count {
+                let diff = sample[d] - centroid[d]
+                sum += diff * diff
+            }
+            // Compare squared distances — avoids sqrt per comparison
+            if sum < bestDistance {
+                bestDistance = sum
                 bestIndex = i
             }
         }
@@ -221,10 +230,15 @@ public struct KMeans {
     private static func _computeInertia(
         data: [[Double]], labels: [Int], centroids: [[Double]]
     ) -> Double {
+        // Performance: Inlines squared distance — same rationale as _nearestCentroidStatic.
         var inertia = 0.0
         for i in 0..<data.count {
-            let d = data[i].distance(to: centroids[labels[i]])
-            inertia += d * d
+            let centroid = centroids[labels[i]]
+            let sample = data[i]
+            for d in 0..<sample.count {
+                let diff = sample[d] - centroid[d]
+                inertia += diff * diff
+            }
         }
         return inertia
     }

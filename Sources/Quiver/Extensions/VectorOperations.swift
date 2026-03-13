@@ -869,12 +869,37 @@ public extension Array where Element == [Double] {
     /// - Parameter threshold: Minimum cosine similarity (0.0 to 1.0). Default is 0.95.
     /// - Returns: Array of tuples containing pair indices and similarity scores, sorted by similarity (highest first)
     func findDuplicates(threshold: Double = 0.95) -> [(index1: Int, index2: Int, similarity: Double)] {
-        return self.enumerated().flatMap { i, vec1 in
-            self.dropFirst(i + 1).enumerated().compactMap { j, vec2 in
-                let similarity = vec1.cosineOfAngle(with: vec2)
-                return similarity >= threshold ? (i, i + j + 1, similarity) : nil
+        let n = self.count
+        guard n > 1 else { return [] }
+
+        // Performance: This inlines the cosine similarity formula rather than calling
+        // cosineOfAngle(with:) in the inner loop. With n² pair comparisons, the _Vector
+        // wrapper allocation overhead per call becomes the dominant cost. Precomputing
+        // magnitudes avoids n² redundant magnitude calculations. The math is identical
+        // to cosineOfAngle(with:): dot(a,b) / (|a| * |b|).
+        let magnitudes = self.map { vec -> Double in
+            var sum = 0.0
+            for v in vec { sum += v * v }
+            return Foundation.sqrt(sum)
+        }
+
+        var results = [(index1: Int, index2: Int, similarity: Double)]()
+        for i in 0..<n {
+            let magI = magnitudes[i]
+            guard magI > 0 else { continue }
+            let vecI = self[i]
+            for j in (i + 1)..<n {
+                let magJ = magnitudes[j]
+                guard magJ > 0 else { continue }
+                var dot = 0.0
+                for d in 0..<vecI.count { dot += vecI[d] * self[j][d] }
+                let similarity = dot / (magI * magJ)
+                if similarity >= threshold {
+                    results.append((i, j, similarity))
+                }
             }
-        }.sorted { $0.similarity > $1.similarity }
+        }
+        return results.sorted { $0.similarity > $1.similarity }
     }
 
     /// Calculate average pairwise similarity as a measure of cluster cohesion.
@@ -896,13 +921,35 @@ public extension Array where Element == [Double] {
     ///
     /// - Returns: Average pairwise similarity (0.0 to 1.0), or 0.0 if fewer than 2 vectors
     func clusterCohesion() -> Double {
-        guard self.count > 1 else { return 0.0 }
+        let n = self.count
+        guard n > 1 else { return 0.0 }
 
-        let similarities = self.enumerated().flatMap { i, vec in
-            self.dropFirst(i + 1).map { vec.cosineOfAngle(with: $0) }
+        // Performance: Inlines cosine similarity and accumulates directly rather than
+        // building an intermediate array of all pairwise results. Same math as
+        // cosineOfAngle(with:) — see findDuplicates comment for rationale.
+        let magnitudes = self.map { vec -> Double in
+            var sum = 0.0
+            for v in vec { sum += v * v }
+            return Foundation.sqrt(sum)
         }
 
-        return similarities.reduce(0.0, +) / Double(similarities.count)
+        var totalSimilarity = 0.0
+        var pairCount = 0
+        for i in 0..<n {
+            let magI = magnitudes[i]
+            guard magI > 0 else { continue }
+            let vecI = self[i]
+            for j in (i + 1)..<n {
+                let magJ = magnitudes[j]
+                guard magJ > 0 else { continue }
+                var dot = 0.0
+                for d in 0..<vecI.count { dot += vecI[d] * self[j][d] }
+                totalSimilarity += dot / (magI * magJ)
+                pairCount += 1
+            }
+        }
+
+        return pairCount > 0 ? totalSimilarity / Double(pairCount) : 0.0
     }
 }
 

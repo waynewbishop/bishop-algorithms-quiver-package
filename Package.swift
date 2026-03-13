@@ -22,8 +22,16 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "Quiver"),
+
+        // Unit tests — runs by default with `swift test`
         .testTarget(
             name: "QuiverTests",
+            dependencies: ["Quiver"]),
+
+        // Performance stress tests — run on demand with `swift test --filter QuiverStressTests`
+        // Skip during normal development with `swift test --skip QuiverStressTests`
+        .testTarget(
+            name: "QuiverStressTests",
             dependencies: ["Quiver"])
     ]
 )

@@ -143,11 +143,10 @@ for result in results {
 
 The pipeline chains together five Quiver operations: `tokenize()`, `embed(using:)`, `meanVector()`, `cosineSimilarities(to:)`, and `topIndices(k:labels:)`.
 
-> Tip: For large collections, pre-compute and store document vectors rather than recalculating them for each query. Only the query vector needs to be built at search time. See <doc:Top-K-Selection> for more on efficient top-K retrieval.
+> Tip: For large collections, pre-compute and store document vectors rather than recalculating them for each query. Only the query vector needs to be built at search time.
 
 ## See also
 
 - <doc:Similarity-Operations> - Cosine similarity, batch operations, and cluster analysis
 - <doc:Vector-Operations> - Vector properties including magnitude, normalization, and dot product
 - <doc:Statistical-Operations> - Statistical operations including `meanVector()`
-- <doc:Top-K-Selection> - Top-K selection for ranking results

@@ -6,8 +6,6 @@ Compute similarity between vectors using cosine similarity and distance metrics.
 
 Similarity operations measure how **related** two vectors are. These operations are fundamental for machine learning applications including recommendation systems, word prediction, clustering, <doc:Semantic-Search>, and nearest neighbor classification.
 
-> Tip: For selecting top-K results from similarity scores, see <doc:Top-K-Selection>.
-
 ## Dot product
 
 The dot product computes the sum of element-wise products between two vectors. It's the fundamental operation underlying cosine similarity and many machine learning algorithms.
@@ -114,10 +112,7 @@ cosine_similarity(v, w) = (v · w) / (||v|| × ||w||)
 
 ### When to use cosine similarity
 
-- **Text analysis:** Document length doesn't affect similarity
-- **Recommendations:** Compare user/item preference vectors
-- **Clustering:** Group by semantic meaning
-- **Face recognition:** Compare feature vectors
+Cosine similarity is the right choice when direction matters more than magnitude. In text analysis, it ensures that a long document and a short document on the same topic score as similar. In recommendation systems, it compares user preference vectors regardless of how many items each user has rated. In classification, `KNearestNeighbors` supports cosine distance (`1 − cosine similarity`) as a metric for finding nearest neighbors in high-dimensional spaces like text embeddings — see <doc:Nearest-Neighbors-Classification>. In clustering, `KMeans` uses Euclidean distance by default, but cosine similarity can pre-filter or validate cluster coherence.
 
 ### From similarity to angle
 
@@ -258,7 +253,6 @@ The `topIndices(k:labels:)` method pairs each score with its original label, mak
 ## See also
 
 - <doc:Semantic-Search> - Full text-to-results pipeline using tokenization, embeddings, and similarity
-- <doc:Top-K-Selection> - Select top-K largest values
 - <doc:Vector-Operations> - Vector operations
 - <doc:Matrices-Operations> - Matrix operations
 

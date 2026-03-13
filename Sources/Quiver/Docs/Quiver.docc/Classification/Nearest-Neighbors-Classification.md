@@ -75,7 +75,7 @@ let model = KNearestNeighbors.fit(
 let predictions = model.predict(scaler.transform(testX))
 ```
 
-**Cosine distance** measures the angle between vectors, ignoring their magnitude. It is preferred for text embeddings, TF-IDF vectors, and high-dimensional sparse data where direction matters more than scale:
+**Cosine distance** measures the angle between vectors, ignoring their magnitude. It is preferred for text embeddings and other cases where direction matters more than scale:
 
 ```swift
 import Quiver
@@ -87,6 +87,8 @@ let model = KNearestNeighbors.fit(
     metric: .cosine
 )
 ```
+
+> Tip: Cosine similarity measures how closely two vectors point in the same direction — a high score means similar. **Cosine distance** flips this: `1 − similarity`, so a low score means similar. Nearest Neighbors uses the distance form because the algorithm looks for the smallest values to find the closest neighbors. For more on cosine similarity, see <doc:Similarity-Operations>.
 
 ### Vote weighting
 

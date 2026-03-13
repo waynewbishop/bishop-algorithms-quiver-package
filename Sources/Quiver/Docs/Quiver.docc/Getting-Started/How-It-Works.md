@@ -128,3 +128,9 @@ let (stores, days) = sales.shape
 ```
 
 This is **tuple destructuring** — we choose names that match our domain rather than the generic `.rows` and `.columns`. The binding works by position, so the first value is always the row count and the second is always the column count. The result is code that reads like a sentence: "this data has two stores and seven days."
+
+## Performance characteristics
+
+Quiver is pure Swift with zero external dependencies. The design prioritizes clarity and portability — the same code runs identically on macOS, iOS, watchOS, visionOS, and Linux. Most operations — vector arithmetic, statistics, broadcasting, boolean masking, element-wise math — are linear and scale predictably to millions of elements.
+
+The operations worth thinking about are matrix multiplication, matrix inversion, and pairwise comparisons like `findDuplicates(threshold:)` and `clusterCohesion()`. These grow quadratically or cubically with input size, so they perform well for the hundreds-to-low-thousands range typical in educational and on-device use cases.

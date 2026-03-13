@@ -34,11 +34,10 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Getting Started
 - <doc:Installation>
-- <doc:Architecture>
+- <doc:How-It-Works>
 
 ### Conceptual Guides
 - <doc:Linear-Algebra-Primer>
-- <doc:Statistics-Primer>
 - <doc:Determinants-Primer>
 - <doc:Machine-Learning-Primer>
 
@@ -68,7 +67,6 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Panel>
 - <doc:Train-Test-Split>
 - <doc:Feature-Scaling>
-- <doc:Top-K-Selection>
 - <doc:Data-Visualization>
 
 ### Classification

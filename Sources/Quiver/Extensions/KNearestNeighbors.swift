@@ -193,7 +193,16 @@ public struct KNearestNeighbors {
             }
             return Foundation.sqrt(sum)
         case .cosine:
-            return 1.0 - a.cosineOfAngle(with: b)
+            // Performance: Inlines cosine distance to avoid _Vector wrapper overhead
+            // per prediction. Same formula as 1.0 - cosineOfAngle(with:).
+            var dot = 0.0, magA = 0.0, magB = 0.0
+            for i in 0..<a.count {
+                dot += a[i] * b[i]
+                magA += a[i] * a[i]
+                magB += b[i] * b[i]
+            }
+            let denom = Foundation.sqrt(magA) * Foundation.sqrt(magB)
+            return denom > 0 ? 1.0 - dot / denom : 1.0
         }
     }
 
