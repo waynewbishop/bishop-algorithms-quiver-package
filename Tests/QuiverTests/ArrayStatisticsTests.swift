@@ -25,13 +25,13 @@ final class ArrayStatisticsTests: XCTestCase {
         XCTAssertEqual(a.cumulativeProduct(), [1, 2, 6, 24, 120])
     }
 
-    // Covers min, max, argmin, argmax
+    // Covers min, max, argMin, argMax
     func testMinMaxArg() {
         let a = [5, 3, 8, 1, 7]
         XCTAssertEqual(a.min(), 1)
         XCTAssertEqual(a.max(), 8)
-        XCTAssertEqual(a.argmin(), 3)
-        XCTAssertEqual(a.argmax(), 2)
+        XCTAssertEqual(a.argMin(), 3)
+        XCTAssertEqual(a.argMax(), 2)
     }
 
     // Covers mean, median, variance, std

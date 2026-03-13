@@ -19,7 +19,7 @@ As a pure Swift library with zero external dependencies, Quiver runs on every Ap
   * Duplicate detection and cluster analysis
 
 * **Statistical Functions**
-  * Basic statistics (mean, median, min, max, argmin, argmax)
+  * Basic statistics (mean, median, min, max, argMin, argMax)
   * Variance and standard deviation
   * Cumulative operations (sum, product)
   * Outlier detection (z-score method)

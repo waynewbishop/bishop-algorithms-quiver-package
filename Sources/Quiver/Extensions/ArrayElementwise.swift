@@ -121,12 +121,12 @@ public extension Array where Element == Double {
     /// import Quiver
     ///
     /// let logits = [2.0, 1.0, 0.1]
-    /// let probs = logits.softmax()
+    /// let probs = logits.softMax()
     /// // [0.659, 0.242, 0.099] — sums to 1.0
     /// ```
     ///
     /// - Returns: A probability distribution with the same length as the input.
-    func softmax() -> [Double] {
+    func softMax() -> [Double] {
         guard let maxVal = self.max() else { return [] }
         let shifted = self.map { Foundation.exp($0 - maxVal) }
         let total = shifted.reduce(0.0, +)
@@ -139,7 +139,7 @@ public extension Array where Element == Double {
     /// activation function for binary classification. Large positive values map
     /// near 1.0, large negative values map near 0.0, and 0 maps to exactly 0.5.
     ///
-    /// While ``softmax()->[Double]`` converts a vector of scores into a multi-class
+    /// While ``softMax()->[Double]`` converts a vector of scores into a multi-class
     /// probability distribution, sigmoid operates element-wise — each output depends
     /// only on its own input. This makes sigmoid the right choice for binary
     /// classification (one output) and multi-label classification (independent outputs),
@@ -250,11 +250,11 @@ public extension Array where Element == Float {
 
     /// Converts raw scores into a probability distribution that sums to 1.0.
     ///
-    /// Float version of ``Swift/Array/softmax()->[Double]``. See the Double version
+    /// Float version of ``Swift/Array/softMax()->[Double]``. See the Double version
     /// for full documentation and usage examples.
     ///
     /// - Returns: A probability distribution with the same length as the input.
-    func softmax() -> [Float] {
+    func softMax() -> [Float] {
         guard let maxVal = self.max() else { return [] }
         let shifted = self.map { Foundation.expf($0 - maxVal) }
         let total = shifted.reduce(0.0, +)

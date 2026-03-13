@@ -4,7 +4,7 @@ Partition data into clusters by iteratively refining centroid positions.
 
 ## Overview
 
-K-Means is the most widely used clustering algorithm. Given a set of data points, it groups them into `k` clusters where each point belongs to the cluster with the nearest centroid. Unlike classifiers like ``KNearestNeighbors`` and ``GaussianNaiveBayes``, K-Means is unsupervised — it discovers structure in unlabeled data.
+K-Means is the most widely used clustering algorithm. Given a set of data points, it groups them into `k` clusters where each point belongs to the cluster with the nearest centroid. Unlike classifiers like `KNearestNeighbors` and `GaussianNaiveBayes`, K-Means is unsupervised — it discovers structure in unlabeled data.
 
 ### How it works
 
@@ -17,7 +17,7 @@ This cycle continues until the centroids stop moving (convergence) or the maximu
 
 ### The distance connection
 
-At its core, K-Means relies on the same `distance(to:)` operation used throughout Quiver's vector mathematics. This is Euclidean distance — the straight-line distance between two points in n-dimensional space, computed as √Σ(aᵢ − bᵢ)². The same function powers nearest-neighbor search in ``KNearestNeighbors`` and similarity operations in <doc:Similarity-Operations>. Understanding this single linear algebra concept — that vectors are points in space and distance measures how far apart they are — unlocks clustering, classification, and similarity search simultaneously.
+At its core, K-Means relies on the same `distance(to:)` operation used throughout Quiver's vector mathematics. This is Euclidean distance — the straight-line distance between two points in n-dimensional space, computed as √Σ(aᵢ − bᵢ)². The same function powers nearest-neighbor search in `KNearestNeighbors` and similarity operations in <doc:Similarity-Operations>. Understanding this single linear algebra concept — that vectors are points in space and distance measures how far apart they are — unlocks clustering, classification, and similarity search simultaneously.
 
 ### Fitting a model
 
@@ -148,7 +148,7 @@ K-Means works best when:
 - Clusters are roughly spherical and similarly sized
 - The number of clusters is known or can be estimated
 - Data has continuous (not categorical) features
-- Features are scaled to similar ranges (use ``FeatureScaler``)
+- Features are scaled to similar ranges (use `FeatureScaler`)
 
 K-Means struggles with:
 - Non-spherical cluster shapes (elongated, curved, or nested)
@@ -173,5 +173,5 @@ K-Means struggles with:
 
 ### Related
 - <doc:Machine-Learning-Primer>
-- <doc:KNN-Classification>
+- <doc:Nearest-Neighbors-Classification>
 - <doc:Feature-Scaling>

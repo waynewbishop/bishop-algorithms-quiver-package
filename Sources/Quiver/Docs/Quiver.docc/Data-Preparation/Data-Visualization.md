@@ -107,6 +107,82 @@ let sixHourlyMax = hourlyTemps.downsample(factor: 6, using: .max)
 
 The `AggregationMethod` parameter controls how values within each window are combined: `.mean` for smoothed trends, `.max` or `.min` for extremes, `.sum` for totals, and `.count` for frequency.
 
+### Visualizing machine learning results
+
+Quiver's ML models produce outputs that map directly to Swift Charts marks.
+
+**Confusion matrix heatmap.** A binary classifier's `ConfusionMatrix` contains four counts — true positives, false positives, true negatives, and false negatives. These map to a 2×2 `RectangleMark` heatmap using `heatmapData`:
+
+```swift
+import Quiver
+
+let predictions = model.predict(scaler.transform(testX))
+let cm = predictions.confusionMatrix(actual: testY)
+
+// Build the 2×2 grid as a matrix
+let grid: [[Double]] = [
+    [Double(cm.trueNegatives), Double(cm.falsePositives)],
+    [Double(cm.falseNegatives), Double(cm.truePositives)]
+]
+
+// Flatten to (x, y, value) tuples for RectangleMark
+let labels = ["Predicted 0", "Predicted 1"]
+let heatmap = grid.heatmapData(labels: labels)
+```
+
+Each tuple in `heatmap` carries the row label, column label, and count — ready for a `RectangleMark` with color intensity driven by the value. This visualization makes it immediately clear where the model confuses one class for another.
+
+**Elbow method for K-Means.** Choosing the right number of clusters is the central question in K-Means. The elbow method runs the algorithm for several values of `k` and plots inertia (total within-cluster distance) against `k`. The "elbow" — where inertia stops dropping sharply — suggests the natural number of clusters:
+
+```swift
+import Quiver
+
+let data: [[Double]] = // ... feature matrix
+
+// Compute inertia for k = 1 through 8
+let kRange = Array(1...8)
+let inertias = kRange.map { k in
+    KMeans.fit(data: data, k: k, seed: 42).inertia
+}
+
+// kRange and inertias are parallel arrays — plot as LineMark
+// x: kRange[i], y: inertias[i]
+```
+
+The result is a line chart where each point is one `LineMark`. A sharp bend in the curve indicates the point where adding more clusters stops providing meaningful improvement.
+
+**Regression line overlay.** Linear regression produces coefficients that define a line (or hyperplane). For single-feature regression, we can overlay the fitted line on a scatter plot of the original data:
+
+```swift
+import Quiver
+
+let model = LinearRegression.fit(features: trainX, targets: trainY)
+
+// Generate prediction line across the feature range
+let xValues = Array.linspace(start: 0.0, end: 10.0, count: 50)
+let yValues = model.predict(xValues.map { [$0] })
+
+// Plot trainX vs trainY as PointMark (scatter)
+// Plot xValues vs yValues as LineMark (fitted line)
+```
+
+The scatter shows the raw data, and the line shows what the model learned. The gap between points and line is the residual error — visible at a glance.
+
+**SoftMax probability distribution.** The `softMax` function converts raw scores into a probability distribution that sums to 1.0. This maps naturally to a `BarMark` showing confidence per class:
+
+```swift
+import Quiver
+
+let logits = [2.1, 0.8, -0.3, 1.5]
+let probs = logits.softMax()
+// [0.48, 0.13, 0.04, 0.26]
+
+let classNames = ["cat", "dog", "bird", "fish"]
+// Plot classNames[i] vs probs[i] as BarMark
+```
+
+The tallest bar is the model's prediction. The relative heights show how confident the model is — a single dominant bar means high confidence, while similar heights across bars suggest uncertainty.
+
 ## Topics
 
 ### Scaling and normalization

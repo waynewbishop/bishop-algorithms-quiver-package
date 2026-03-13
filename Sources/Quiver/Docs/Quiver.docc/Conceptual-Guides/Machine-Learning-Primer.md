@@ -46,6 +46,19 @@ let (train, test) = features.trainTestSplit(testRatio: 0.2, seed: 42)
 
 The `seed` parameter ensures the same split every time, making experiments reproducible. When using a `Panel`, the split is atomic — all columns are partitioned by the same rows, so features and labels stay aligned automatically.
 
+### Stratified splitting
+
+When classes are imbalanced — say 95% approved and 5% denied — a random split might leave the test set with no denied examples at all. A **stratified split** preserves class proportions in both partitions:
+
+```swift
+import Quiver
+
+let (trainX, testX, trainY, testY) = features.stratifiedSplit(
+    labels: labels, testRatio: 0.2, seed: 42
+)
+// Both partitions reflect the original class balance
+```
+
 ### Data leakage
 
 **Data leakage** occurs when information from the test set influences the training process. The most common form is fitting a preprocessor (like a scaler) on the entire dataset before splitting. If the scaler learns the minimum and maximum from all rows — including the test rows — then the training process has indirectly "seen" the test data, and evaluation results will be overly optimistic.
@@ -91,30 +104,47 @@ The goal is a model that generalizes — one that learns the true pattern well e
 
 ### Classification and regression
 
-Supervised learning problems fall into two categories based on what the label represents:
+Supervised learning problems fall into two categories:
 
 **Classification** predicts a discrete category — spam or not spam, approved or denied, which digit (0–9) an image contains. The label is a class identifier, and the model's output is a predicted class (sometimes with a confidence score). Quiver's `GaussianNaiveBayes` is a classification model.
 
-**Regression** predicts a continuous value — tomorrow's temperature, a house's sale price, how long a user session will last. The label is a number, and the model's output is a number.
+**Regression** predicts a continuous value — tomorrow's temperature, a house's sale price, how long a user session will last. The label is a number, and the model's output is a number. Quiver's `LinearRegression` is a regression model.
 
-The distinction matters because evaluation metrics differ. Classification uses accuracy, precision, and recall. Regression uses measures like mean squared error and R². Quiver currently focuses on classification workflows.
+The distinction matters because evaluation metrics differ. Classification uses accuracy, precision, and recall. Regression uses measures like mean squared error and R².
+
+### Fit and predict
+
+Every Quiver model follows the same two-step pattern: **fit**, then **predict**. Fitting is the learning phase — the model examines the training data and builds whatever internal representation it needs. For `LinearRegression`, fitting computes the optimal coefficients. For `GaussianNaiveBayes`, it calculates the mean and variance of each feature per class. For `KNearestNeighbors`, fitting simply stores the training data (all the real work happens later). The result of `fit` is always a ready-to-use model.
+
+Predicting is the application phase — we hand the fitted model new samples it has never seen, and it returns answers. Classification models return class labels; regression models return continuous values. The model uses what it learned during fitting but never modifies itself — calling `predict` twice on the same input always gives the same result. This separation keeps the workflow clear: `fit` looks backward at training data to learn, `predict` looks forward at new data to answer.
 
 ### Evaluating models
 
 Accuracy — the fraction of correct predictions — is the most intuitive metric, but it can be misleading. If 95% of loan applications are approved, a model that always predicts "approved" achieves 95% accuracy while providing zero useful information.
 
-Better metrics examine the types of errors a model makes:
-
-- **Precision** — of all the examples the model labeled positive, how many actually were? High precision means few false alarms.
-- **Recall** — of all the actually positive examples, how many did the model catch? High recall means few missed cases.
-- **F1 score** — the harmonic mean of precision and recall, balancing both concerns.
+Better metrics examine the types of errors a model makes. **Precision** measures how many of the model's positive predictions were actually correct — high precision means few false alarms. **Recall** measures how many of the actually positive examples the model caught — high recall means few missed cases. The **F1 score** is the harmonic mean of precision and recall, balancing both concerns into a single number.
 
 Which metric matters most depends on the cost of each error type. Missing a fraudulent transaction (low recall) is worse than flagging a legitimate one (low precision). For a full treatment of these metrics and the `ConfusionMatrix` type, see <doc:Evaluation-Metrics>.
+
+### Choosing an algorithm
+
+**Gaussian Naive Bayes** trains quickly and works well with small datasets, but assumes features are independent of each other. When that assumption roughly holds, it is hard to beat as a starting point. See <doc:Naive-Bayes>.
+
+**K-Nearest Neighbors** makes no assumptions about data distribution — it classifies new points by finding the most similar training examples. The tradeoff is performance: every prediction scans the entire training set, and feature scaling is critical because `distance(to:)` is sensitive to magnitude differences. See <doc:Nearest-Neighbors-Classification>.
+
+**Linear Regression** predicts continuous values rather than categories. Its coefficients are directly interpretable — "each additional bedroom adds $X to the price" — but it assumes a linear relationship between features and target. See <doc:Linear-Regression>.
+
+**K-Means** is unsupervised — it discovers natural groupings in data that has no labels. Useful for segmentation and anomaly detection, but we must choose the number of clusters in advance. See <doc:KMeans-Clustering>.
+
+Start simple: Naive Bayes for classification, Linear Regression for continuous targets, Nearest Neighbors when the decision boundary is nonlinear, K-Means for unlabeled data. The evaluation techniques in the previous section tell us whether our choice is working.
 
 ### See also
 
 - <doc:Train-Test-Split> - Train/test splitting and stratified partitioning
 - <doc:Feature-Scaling> - Min-max normalization with data leakage prevention
 - <doc:Naive-Bayes> - Gaussian Naive Bayes classifier
+- <doc:Nearest-Neighbors-Classification> - Nearest Neighbors classifier
+- <doc:Linear-Regression> - Linear regression for continuous targets
+- <doc:KMeans-Clustering> - K-Means clustering for unsupervised learning
 - <doc:Evaluation-Metrics> - Precision, recall, F1, and confusion matrices
 - <doc:Panel> - Organizing labeled columnar data

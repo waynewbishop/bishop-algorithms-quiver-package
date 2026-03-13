@@ -41,6 +41,7 @@ The `predict(_:)` method computes target values for new samples using the fitted
 ```swift
 import Quiver
 
+// Each row is one sample with the same features used in training
 let newHomes: [[Double]] = [[1800], [3500]]
 let prices = model.predict(newHomes)
 // prices ≈ [236000, 424000]
@@ -53,7 +54,7 @@ Linear regression naturally extends to multiple features. Each feature gets its 
 ```swift
 import Quiver
 
-// square footage, bedrooms, age
+// Each row: [square footage, bedrooms, age in years]
 let features: [[Double]] = [
     [1200, 2, 20], [1800, 3, 10], [2400, 4, 5],
     [1600, 3, 15], [2000, 3, 8], [2800, 5, 2]
@@ -61,6 +62,7 @@ let features: [[Double]] = [
 let targets = [180000.0, 260000.0, 350000.0,
                230000.0, 290000.0, 420000.0]
 
+// Fit produces one coefficient per feature plus an intercept
 let model = try LinearRegression.fit(features: features, targets: targets)
 print("Features: \(model.featureCount)")  // 3
 ```
@@ -72,9 +74,13 @@ Regression metrics tell us how well the model's predictions match the actual val
 ```swift
 import Quiver
 
+// Predict on the training data to check how well the model fits
 let predictions = model.predict(features)
 
+// R² measures fraction of variance explained (1.0 = perfect)
 let r2   = predictions.rSquared(actual: targets)
+
+// MSE and RMSE measure average prediction error
 let mse  = predictions.meanSquaredError(actual: targets)
 let rmse = predictions.rootMeanSquaredError(actual: targets)
 
@@ -89,26 +95,23 @@ A typical workflow combines data splitting, model fitting, and evaluation:
 ```swift
 import Quiver
 
-// 20 houses: sqft, bedrooms
-var features: [[Double]] = []
-var targets: [Double] = []
+// 10 houses: [square footage, bedrooms]
+let features: [[Double]] = [
+    [1200, 2], [1800, 3], [2400, 4], [1600, 3], [2000, 3],
+    [2800, 5], [1400, 2], [2200, 4], [1000, 2], [3000, 5]
+]
+let targets = [180000.0, 260000.0, 350000.0, 230000.0, 290000.0,
+               420000.0, 195000.0, 320000.0, 160000.0, 450000.0]
 
-for _ in 0..<20 {
-    let sqft = Double.random(in: 800...3500)
-    let beds = Double(Int.random(in: 1...5))
-    features.append([sqft, beds])
-    targets.append(50000 + 100 * sqft + 15000 * beds + Double.random(in: -10000...10000))
-}
-
-// Split
+// Hold out 20% for evaluation — seed ensures reproducible splits
 let (trainX, testX) = features.trainTestSplit(testRatio: 0.2, seed: 42)
 let (trainY, testY) = targets.trainTestSplit(testRatio: 0.2, seed: 42)
 
-// Fit and predict
+// Train on 80%, predict on the held-out 20%
 let model = try LinearRegression.fit(features: trainX, targets: trainY)
 let predictions = model.predict(testX)
 
-// Evaluate
+// Evaluate on data the model never saw during training
 let r2 = predictions.rSquared(actual: testY)
 let rmse = predictions.rootMeanSquaredError(actual: testY)
 print("R²: \(r2), RMSE: \(rmse)")
@@ -121,6 +124,7 @@ The same pipeline using `Panel` eliminates the need to split features and target
 ```swift
 import Quiver
 
+// Named columns keep features and targets together in one structure
 let data = Panel([
     ("sqft", [1200.0, 1800.0, 2400.0, 1600.0, 2000.0,
               2800.0, 1400.0, 2200.0, 1000.0, 3000.0]),
@@ -130,15 +134,17 @@ let data = Panel([
                420000.0, 195000.0, 320000.0, 160000.0, 450000.0])
 ])
 
-// One split — features and targets stay aligned without matching seeds
+// One split partitions all columns by the same rows automatically
 let (train, test) = data.trainTestSplit(testRatio: 0.2, seed: 42)
 let featureColumns = ["sqft", "bedrooms"]
 
-// Fit, predict, evaluate
+// Extract feature matrix and target vector by column name
 let model = try LinearRegression.fit(
     features: train.toMatrix(columns: featureColumns),
     targets: train["price"]
 )
+
+// Predict and evaluate on the held-out partition
 let predictions = model.predict(test.toMatrix(columns: featureColumns))
 let r2 = predictions.rSquared(actual: test["price"])
 print("R²: \(r2)")
@@ -149,6 +155,8 @@ print("R²: \(r2)")
 ### When the normal equation fails
 
 The normal equation requires inverting the matrix X'X. If the features are linearly dependent — for example, including both temperature in Celsius and Fahrenheit — the matrix is singular and cannot be inverted. In this case, `fit` throws `MatrixError.singular`. The fix is to remove redundant features before fitting.
+
+> Tip: A singular matrix means the determinant is zero — the features collapse into a lower-dimensional space and the equation has no unique solution. For a deeper look at what determinants measure and why singularity matters, see <doc:Determinants-Primer>.
 
 ### Safe by design
 

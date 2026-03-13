@@ -58,11 +58,11 @@ let smallest = data.min()  // 2.0
 let largest = data.max()  // 9.0
 
 // Find the indices of minimum and maximum values
-let minIndex = data.argmin()  // 2
-let maxIndex = data.argmax()  // 3
+let minIndex = data.argMin()  // 2
+let maxIndex = data.argMax()  // 3
 ```
 
-> Tip: Use `argmin()` and `argmax()` to find not just the extreme values but also where they occur in the data.
+> Tip: Use `argMin()` and `argMax()` to find not just the extreme values but also where they occur in the data.
 
 ### Central tendency
 
@@ -162,8 +162,8 @@ let documentVector = wordEmbeddings.meanVector()
 - ``Swift/Array/product()``
 - ``Swift/Array/min()``
 - ``Swift/Array/max()``
-- ``Swift/Array/argmin()``
-- ``Swift/Array/argmax()``
+- ``Swift/Array/argMin()``
+- ``Swift/Array/argMax()``
 
 ### Central tendency
 - ``Swift/Array/mean()``

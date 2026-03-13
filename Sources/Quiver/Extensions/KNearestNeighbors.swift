@@ -60,7 +60,7 @@ public enum VoteWeight {
 
 /// A trained K-Nearest Neighbors classifier.
 ///
-/// KNN is a "lazy learning" algorithm — it stores the training data and defers
+/// Nearest Neighbors is a "lazy learning" algorithm — it stores the training data and defers
 /// all computation to prediction time. For each new sample, it finds the `k`
 /// closest training points and predicts the most common label among them.
 ///
@@ -103,7 +103,7 @@ public struct KNearestNeighbors {
 
     /// Fits a K-Nearest Neighbors model to the given training data.
     ///
-    /// KNN is a lazy learner — this method simply stores the training data
+    /// Nearest Neighbors is a lazy learner — this method simply stores the training data
     /// for use during prediction. No computation happens at fit time, which
     /// makes fitting instantaneous regardless of dataset size.
     ///

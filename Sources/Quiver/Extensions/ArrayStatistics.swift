@@ -103,7 +103,7 @@ public extension Array where Element: Numeric & Comparable {
     /// Returns the smallest element in the array.
     ///
     /// Scans every element and returns the one with the lowest value. Returns `nil`
-    /// for an empty array. Use `argmin()` to find the index of the minimum instead
+    /// for an empty array. Use `argMin()` to find the index of the minimum instead
     /// of the value itself.
     ///
     /// Example:
@@ -123,7 +123,7 @@ public extension Array where Element: Numeric & Comparable {
     /// Returns the largest element in the array.
     ///
     /// Scans every element and returns the one with the highest value. Returns `nil`
-    /// for an empty array. Use `argmax()` to find the index of the maximum instead
+    /// for an empty array. Use `argMax()` to find the index of the maximum instead
     /// of the value itself.
     ///
     /// Example:
@@ -151,11 +151,11 @@ public extension Array where Element: Numeric & Comparable {
     /// import Quiver
     ///
     /// let scores = [88.0, 72.0, 95.0, 81.0]
-    /// let worstIndex = scores.argmin()  // 1 (72.0 is at index 1)
+    /// let worstIndex = scores.argMin()  // 1 (72.0 is at index 1)
     /// ```
     ///
     /// - Returns: The index of the minimum element, or nil if the array is empty
-    func argmin() -> Int? {
+    func argMin() -> Int? {
         let vector = _Vector(elements: self)
         return vector.minWithIndex()?.index
     }
@@ -171,11 +171,11 @@ public extension Array where Element: Numeric & Comparable {
     /// import Quiver
     ///
     /// let scores = [88.0, 72.0, 95.0, 81.0]
-    /// let bestIndex = scores.argmax()  // 2 (95.0 is at index 2)
+    /// let bestIndex = scores.argMax()  // 2 (95.0 is at index 2)
     /// ```
     ///
     /// - Returns: The index of the maximum element, or nil if the array is empty
-    func argmax() -> Int? {
+    func argMax() -> Int? {
         let vector = _Vector(elements: self)
         return vector.maxWithIndex()?.index
     }

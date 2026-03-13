@@ -19,7 +19,7 @@ import Foundation
 ///
 /// In machine learning, features often have very different scales — for example,
 /// credit scores range from 300 to 850 while loyalty ratios range from 0 to 1.
-/// Many algorithms (KNN, logistic regression, Naive Bayes, K-means) perform
+/// Many algorithms (Nearest Neighbors, logistic regression, Naive Bayes, K-Means) perform
 /// poorly when features are on different scales because larger values dominate
 /// distance and probability calculations.
 ///

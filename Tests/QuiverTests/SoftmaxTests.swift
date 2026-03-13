@@ -19,21 +19,21 @@ final class SoftmaxTests: XCTestCase {
     // Known values and sum-to-one property
     func testSoftmaxBasic() {
         let logits = [2.0, 1.0, 0.1]
-        let probs = logits.softmax()
+        let probs = logits.softMax()
         XCTAssertEqual(probs[0], 0.6590, accuracy: 0.001)
         XCTAssertEqual(probs[1], 0.2424, accuracy: 0.001)
         XCTAssertEqual(probs[2], 0.0986, accuracy: 0.001)
         XCTAssertEqual(probs.reduce(0, +), 1.0, accuracy: 1e-9)
 
         // Also verify with different input
-        let probs2 = [1.0, 2.0, 3.0, 4.0, 5.0].softmax()
+        let probs2 = [1.0, 2.0, 3.0, 4.0, 5.0].softMax()
         XCTAssertEqual(probs2.reduce(0, +), 1.0, accuracy: 1e-9)
     }
 
     // Uniform input → uniform output
     func testSoftmaxUniform() {
         let logits = [3.0, 3.0, 3.0, 3.0]
-        let probs = logits.softmax()
+        let probs = logits.softMax()
         for p in probs {
             XCTAssertEqual(p, 0.25, accuracy: 1e-9)
         }
@@ -42,7 +42,7 @@ final class SoftmaxTests: XCTestCase {
     // Large values should not overflow (numerical stability)
     func testSoftmaxNumericalStability() {
         let logits = [1000.0, 1001.0, 1002.0]
-        let probs = logits.softmax()
+        let probs = logits.softMax()
         XCTAssertEqual(probs.reduce(0, +), 1.0, accuracy: 1e-9)
         XCTAssertGreaterThan(probs[2], probs[1])
         XCTAssertGreaterThan(probs[1], probs[0])
@@ -50,7 +50,7 @@ final class SoftmaxTests: XCTestCase {
 
     // Single element → probability 1.0
     func testSoftmaxSingleElement() {
-        let probs = [42.0].softmax()
+        let probs = [42.0].softMax()
         XCTAssertEqual(probs, [1.0])
     }
 

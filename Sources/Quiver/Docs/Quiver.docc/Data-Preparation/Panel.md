@@ -4,9 +4,9 @@ A Quiver type that organizes named columns of numeric data into a single contain
 
 ## Overview
 
-When working with multi-feature datasets, raw arrays require the developer to track which column is which by position alone. A feature matrix like `[[619, 15000, 0.08], [502, 78000, 0.04]]` offers no indication of what each column represents, and splitting or filtering requires careful coordination across parallel arrays to keep rows aligned.
+Panel takes a matrix of rows and pivots it into named columns. Each column is a `[Double]` — effectively a named vector. The data is the same, just organized by column instead of by row. Without Panel, a feature matrix like `[[619, 15000, 0.08], [502, 78000, 0.04]]` offers no indication of what each column represents, and splitting or filtering requires careful coordination across parallel arrays to keep rows aligned.
 
-Quiver's `Panel` type solves this by giving names to columns of `[Double]` data while keeping rows together as a unit. Developers familiar with Python's pandas `DataFrame` will recognize the concept — `Panel` serves a similar role for labeled column data, scoped to Quiver's numeric focus.
+With Panel, each column gets a name and all rows stay together as a unit. Developers familiar with Python's pandas `DataFrame` will recognize the concept — Panel serves a similar role for labeled column data, scoped to Quiver's numeric focus.
 
 > Important: `Panel` does not replace Quiver's array and matrix operations — it organizes them. Each column is a standard `[Double]` that supports Quiver vector operations like `.mean()`, `.std()`, `.standardized()`, and boolean masking.
 
@@ -88,6 +88,35 @@ let matrix = data.toMatrix()
 let secondColumn = matrix.column(at: 1)  // [2.0, 5.0]
 secondColumn.magnitude                   // 5.385...
 ```
+
+### Converting to vectors and matrices
+
+Panel stores everything as `[Double]` columns, but ML models need different shapes. Three methods handle every conversion:
+
+```swift
+import Quiver
+
+let data = Panel([
+    ("creditScore", [720.0, 650.0, 580.0, 710.0]),
+    ("balance",     [15000.0, 78000.0, 42000.0, 8000.0]),
+    ("approved",    [1.0, 0.0, 0.0, 1.0])
+])
+
+// Vector — single column as [Double] for regression targets or statistics
+let balances = data["balance"]              // [15000.0, 78000.0, 42000.0, 8000.0]
+balances.mean()                             // 35750.0
+
+// Integer labels — single column as [Int] for classification labels
+let labels = data.labels("approved")        // [1, 0, 0, 1]
+
+// Matrix — multiple columns as [[Double]] for feature input
+let features = data.toMatrix(columns: ["creditScore", "balance"])
+// [[720.0, 15000.0], [650.0, 78000.0], [580.0, 42000.0], [710.0, 8000.0]]
+```
+
+The subscript returns a `[Double]` vector for continuous values like regression targets. The `labels()` method converts to `[Int]` for classifiers that expect integer class identifiers. The `toMatrix()` method assembles selected columns into the `[[Double]]` format that every Quiver model accepts.
+
+Quiver's models — `LinearRegression`, `GaussianNaiveBayes`, `KNearestNeighbors`, and `KMeans` — all accept `[[Double]]` and `[Double]` or `[Int]` directly. None of them accept Panel. This is a deliberate design choice: models stay simple and decoupled from how data is organized. Panel handles the naming and alignment; the extraction step above converts to the shapes models expect.
 
 ### Filtering with boolean masks
 
