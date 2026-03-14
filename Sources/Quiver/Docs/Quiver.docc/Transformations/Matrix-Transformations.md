@@ -126,7 +126,7 @@ When all diagonal values are equal, the matrix performs uniform scaling. When th
 
 ## Common transformations
 
-For detailed transformation examples (rotation, scaling, reflection, shearing), see <doc:Transformation-Common>.
+For detailed transformation examples (rotation, scaling, reflection, shearing), see <doc:Common-Transformations>.
 
 ### Rotation example
 
@@ -160,9 +160,9 @@ let stretch = [Double].diag([3.0, 0.5])
 
 ## See also
 
-- <doc:Transformation-Common> - Rotation, scaling, reflection, shearing examples
+- <doc:Common-Transformations> - Rotation, scaling, reflection, shearing examples
 - <doc:Composing-Transformations> - Combining multiple transformations
-- <doc:Matrices-Operations> - Matrix arithmetic and operations
+- <doc:Matrix-Operations> - Matrix arithmetic and operations
 - <doc:Vector-Operations> - Vector operations
 
 ## Topics

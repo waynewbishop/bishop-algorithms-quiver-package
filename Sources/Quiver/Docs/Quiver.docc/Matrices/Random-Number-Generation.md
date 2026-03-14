@@ -91,7 +91,7 @@ let floatRange = [Float].random(5, in: 0.0...10.0)
 
 ### Random vectors and transformations
 
-Generate random vectors and apply the matrix transformations covered in <doc:Transformation-Basics>:
+Generate random vectors and apply the matrix transformations covered in <doc:Matrix-Transformations>:
 
 ```swift
 // Create a random 2D position

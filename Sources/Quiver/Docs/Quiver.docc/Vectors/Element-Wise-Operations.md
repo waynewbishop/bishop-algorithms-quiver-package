@@ -323,4 +323,4 @@ A useful mathematical property: σ(x) + σ(−x) = 1.0. This symmetry means the 
 
 - <doc:Vector-Operations>
 - <doc:Statistical-Operations>
-- <doc:Transformation-Basics>
+- <doc:Matrix-Transformations>

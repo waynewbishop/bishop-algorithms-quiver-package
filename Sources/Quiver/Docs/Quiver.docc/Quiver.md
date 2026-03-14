@@ -47,7 +47,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Statistical-Operations>
 
 ### Matrices
-- <doc:Matrices-Operations>
+- <doc:Matrix-Operations>
 - <doc:Shape-And-Size>
 - <doc:Reshape-And-Flatten>
 - <doc:Broadcasting-Operations>
@@ -55,8 +55,8 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Random-Number-Generation>
 
 ### Transformations
-- <doc:Transformation-Basics>
-- <doc:Transformation-Common>
+- <doc:Matrix-Transformations>
+- <doc:Common-Transformations>
 - <doc:Composing-Transformations>
 
 ### Similarity and Search

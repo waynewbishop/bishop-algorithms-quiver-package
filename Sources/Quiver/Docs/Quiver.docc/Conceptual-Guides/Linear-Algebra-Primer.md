@@ -119,7 +119,7 @@ let zeros = [Double].zeros(2, 3)
 
 #### Transforming with matrices
 
-One of the most powerful applications of matrices is transforming vectors (see <doc:Transformation-Basics> for detailed transformation concepts):
+One of the most powerful applications of matrices is transforming vectors (see <doc:Matrix-Transformations> for detailed transformation concepts):
 
 ```swift
 // A 2D rotation matrix (90° counterclockwise)

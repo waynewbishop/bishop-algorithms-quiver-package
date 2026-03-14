@@ -254,7 +254,7 @@ The `topIndices(k:labels:)` method pairs each score with its original label, mak
 
 - <doc:Semantic-Search> - Full text-to-results pipeline using tokenization, embeddings, and similarity
 - <doc:Vector-Operations> - Vector operations
-- <doc:Matrices-Operations> - Matrix operations
+- <doc:Matrix-Operations> - Matrix operations
 
 ## Topics
 

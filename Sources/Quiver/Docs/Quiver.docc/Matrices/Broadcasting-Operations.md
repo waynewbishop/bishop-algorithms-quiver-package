@@ -211,4 +211,4 @@ The broadcasting implementations verify dimension compatibility at runtime, prov
 - ``Swift/Array/broadcast(withColumnVector:operation:)``
 
 ### Related articles
-- <doc:Matrices-Operations>
+- <doc:Matrix-Operations>

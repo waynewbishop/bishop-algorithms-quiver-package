@@ -301,8 +301,8 @@ let result2 = vertices.map { $0.transformedBy(AB) }
 
 ## See also
 
-- <doc:Transformation-Basics>
-- <doc:Transformation-Common>
+- <doc:Matrix-Transformations>
+- <doc:Common-Transformations>
 - <doc:Vector-Operations>
 
 ## Topics

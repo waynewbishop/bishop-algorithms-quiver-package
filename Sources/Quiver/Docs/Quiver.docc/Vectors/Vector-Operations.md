@@ -148,6 +148,6 @@ This approach means these operations work directly on standard Swift arrays with
 ### Related articles
 - <doc:Linear-Algebra-Primer>
 - <doc:Similarity-Operations>
-- <doc:Transformation-Basics>
-- <doc:Matrices-Operations>
+- <doc:Matrix-Transformations>
+- <doc:Matrix-Operations>
 - <doc:Broadcasting-Operations>

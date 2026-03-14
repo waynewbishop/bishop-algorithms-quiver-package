@@ -69,7 +69,7 @@ let diag = [Int].diag([1, 2, 3])
 
 Identity and diagonal matrices are commonly used in linear algebra operations and transformations.
 
-> Tip: For a deep understanding of identity matrices and their role in transformations, see <doc:Transformation-Basics>.
+> Tip: For a deep understanding of identity matrices and their role in transformations, see <doc:Matrix-Transformations>.
 
 ## Common patterns
 
@@ -132,5 +132,5 @@ The array generation functions in Quiver are implemented as static methods on Ar
 - ``Swift/Array/diag(_:)``
 
 ### Related articles
-- <doc:Matrices-Operations>
-- <doc:Transformation-Basics>
+- <doc:Matrix-Operations>
+- <doc:Matrix-Transformations>

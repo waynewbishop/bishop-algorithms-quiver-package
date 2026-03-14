@@ -48,7 +48,7 @@ let product = m1 * m2     // [[5.0, 12.0], [21.0, 32.0]] (Hadamard)
 let quotient = m1 / m2    // [[0.2, 0.33...], [0.42..., 0.5]]
 ```
 
-> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`. See <doc:Transformation-Basics> for how matrix-vector multiplication uses the dot product internally.
+> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`. See <doc:Matrix-Transformations> for how matrix-vector multiplication uses the dot product internally.
 
 ### Scalar broadcasting
 
@@ -230,5 +230,5 @@ let result2 = floatMatrix * 2.0
 
 - <doc:Vector-Operations>
 - <doc:Determinants-Primer>
-- <doc:Transformation-Basics>
+- <doc:Matrix-Transformations>
 - <doc:Composing-Transformations>
