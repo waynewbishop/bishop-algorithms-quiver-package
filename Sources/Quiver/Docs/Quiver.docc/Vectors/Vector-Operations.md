@@ -27,8 +27,6 @@ vector.normalized  // [0.6, 0.8]
 vector.normalized.asFractions()  // [3/5, 4/5]
 ```
 
-> Note: These vector properties are only available for arrays with elements that conform to `FloatingPoint` (like `Double` or `Float`).
-
 > Important: Calling `normalized` on a zero vector returns a zero vector.
 
 ### Vector relationships
