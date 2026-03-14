@@ -18,6 +18,12 @@ import Foundation
 public extension Array where Element: Numeric {
     /// Element-wise addition of two vectors.
     ///
+    /// ```swift
+    /// let velocity = [3.0, 0.0]
+    /// let current = [0.0, 2.0]
+    /// velocity + current  // [3.0, 2.0]
+    /// ```
+    ///
     /// - Parameters:
     ///   - lhs: The first vector
     ///   - rhs: The second vector (must have the same length as `lhs`)
@@ -30,6 +36,15 @@ public extension Array where Element: Numeric {
 
     /// Element-wise subtraction of two vectors.
     ///
+    /// Subtraction produces the displacement between two points. The ``Swift/Array/distance(to:)``
+    /// method uses this internally: `(self - other).magnitude`.
+    ///
+    /// ```swift
+    /// let player = [100.0, 200.0]
+    /// let enemy = [130.0, 170.0]
+    /// player - enemy  // [-30.0, 30.0]
+    /// ```
+    ///
     /// - Parameters:
     ///   - lhs: The first vector
     ///   - rhs: The second vector (must have the same length as `lhs`)
@@ -41,6 +56,15 @@ public extension Array where Element: Numeric {
     }
 
     /// Element-wise multiplication of two vectors (Hadamard product).
+    ///
+    /// This is not matrix multiplication — each element is multiplied by its
+    /// corresponding element. For matrix multiplication, use `multiplyMatrix(_:)`.
+    ///
+    /// ```swift
+    /// let features = [2.0, 5.0, 3.0]
+    /// let weights = [0.5, 0.3, 0.2]
+    /// features * weights  // [1.0, 1.5, 0.6]
+    /// ```
     ///
     /// - Parameters:
     ///   - lhs: The first vector
@@ -57,6 +81,12 @@ public extension Array where Element: Numeric {
 public extension Array where Element: FloatingPoint {
     /// Element-wise division of two vectors.
     ///
+    /// ```swift
+    /// let values = [10.0, 20.0, 30.0]
+    /// let scales = [2.0, 5.0, 10.0]
+    /// values / scales  // [5.0, 4.0, 3.0]
+    /// ```
+    ///
     /// - Parameters:
     ///   - lhs: The dividend vector
     ///   - rhs: The divisor vector (must have the same length as `lhs`, no element may be zero)
@@ -71,7 +101,14 @@ public extension Array where Element: FloatingPoint {
 // MARK: - Matrix Arithmetic Operations (Double)
 
 public extension Array where Element == [Double] {
-    /// Element-wise addition of two matrices
+    /// Element-wise addition of two matrices.
+    ///
+    /// ```swift
+    /// let m1 = [[1.0, 2.0], [3.0, 4.0]]
+    /// let m2 = [[5.0, 6.0], [7.0, 8.0]]
+    /// m1 + m2  // [[6.0, 8.0], [10.0, 12.0]]
+    /// ```
+    ///
     /// - Parameters:
     ///   - lhs: The first matrix
     ///   - rhs: The second matrix
@@ -85,7 +122,14 @@ public extension Array where Element == [Double] {
         }
     }
 
-    /// Element-wise subtraction of two matrices
+    /// Element-wise subtraction of two matrices.
+    ///
+    /// ```swift
+    /// let actual = [[90.0, 85.0], [78.0, 92.0]]
+    /// let predicted = [[88.0, 87.0], [80.0, 90.0]]
+    /// actual - predicted  // [[2.0, -2.0], [-2.0, 2.0]]
+    /// ```
+    ///
     /// - Parameters:
     ///   - lhs: The first matrix
     ///   - rhs: The second matrix
@@ -99,7 +143,14 @@ public extension Array where Element == [Double] {
         }
     }
 
-    /// Element-wise multiplication of two matrices (Hadamard product)
+    /// Element-wise multiplication of two matrices (Hadamard product).
+    ///
+    /// ```swift
+    /// let data = [[1.0, 2.0], [3.0, 4.0]]
+    /// let mask = [[1.0, 0.0], [0.0, 1.0]]
+    /// data * mask  // [[1.0, 0.0], [0.0, 4.0]]
+    /// ```
+    ///
     /// - Parameters:
     ///   - lhs: The first matrix
     ///   - rhs: The second matrix
@@ -113,7 +164,14 @@ public extension Array where Element == [Double] {
         }
     }
 
-    /// Element-wise division of two matrices
+    /// Element-wise division of two matrices.
+    ///
+    /// ```swift
+    /// let totals = [[100.0, 200.0], [300.0, 400.0]]
+    /// let counts = [[4.0, 5.0], [6.0, 8.0]]
+    /// totals / counts  // [[25.0, 40.0], [50.0, 50.0]]
+    /// ```
+    ///
     /// - Parameters:
     ///   - lhs: The first matrix
     ///   - rhs: The second matrix

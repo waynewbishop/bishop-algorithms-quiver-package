@@ -107,6 +107,35 @@ let sixHourlyMax = hourlyTemps.downsample(factor: 6, using: .max)
 
 The `AggregationMethod` parameter controls how values within each window are combined: `.mean` for smoothed trends, `.max` or `.min` for extremes, `.sum` for totals, and `.count` for frequency.
 
+### Filtering with boolean masks
+
+Boolean masks split a dataset into separate series based on conditions. This is useful for separating outliers from normal readings, highlighting predictions above a confidence threshold, or splitting data into labeled groups before charting:
+
+```swift
+import Quiver
+
+let readings = [23.5, 24.1, 150.0, 23.8, 22.9, -10.0, 24.5]
+let timestamps = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+
+// Split into valid readings and outliers
+let valid = readings.isGreaterThanOrEqual(0.0)
+    .and(readings.isLessThanOrEqual(50.0))
+
+let normalReadings = readings.masked(by: valid)
+let normalTimes = timestamps.masked(by: valid)
+// normalReadings: [23.5, 24.1, 23.8, 22.9, 24.5]
+// normalTimes:    [1.0, 2.0, 4.0, 5.0, 7.0]
+
+let outlierReadings = readings.masked(by: valid.not)
+let outlierTimes = timestamps.masked(by: valid.not)
+// outlierReadings: [150.0, -10.0]
+// outlierTimes:    [3.0, 6.0]
+```
+
+The two arrays — normal and outlier — are parallel arrays ready for separate chart series. Normal readings can render as one color and outliers as another, making anomalies visually distinct without any manual filtering logic.
+
+> Tip: For more on boolean comparisons, logical operators, and masking, see <doc:Boolean-Masking>.
+
 ### Visualizing machine learning results
 
 Quiver's ML models produce outputs that map directly to Swift Charts marks.
@@ -141,9 +170,7 @@ let data: [[Double]] = // ... feature matrix
 
 // Compute inertia for k = 1 through 8
 let kRange = Array(1...8)
-let inertias = kRange.map { k in
-    KMeans.fit(data: data, k: k, seed: 42).inertia
-}
+let inertias = KMeans.elbowMethod(data: data, kRange: kRange, seed: 42)
 
 // kRange and inertias are parallel arrays — plot as LineMark
 // x: kRange[i], y: inertias[i]
@@ -156,14 +183,14 @@ The result is a line chart where each point is one `LineMark`. A sharp bend in t
 ```swift
 import Quiver
 
-let model = LinearRegression.fit(features: trainX, targets: trainY)
+let model = try LinearRegression.fit(features: trainX, targets: trainY)
 
 // Generate prediction line across the feature range
 let xValues = Array.linspace(start: 0.0, end: 10.0, count: 50)
-let yValues = model.predict(xValues.map { [$0] })
+let yValues = model.predict(xValues)
 
-// Plot trainX vs trainY as PointMark (scatter)
-// Plot xValues vs yValues as LineMark (fitted line)
+// trainX/trainY — scatter points
+// xValues/yValues — fitted trend line (50 evenly spaced points)
 ```
 
 The scatter shows the raw data, and the line shows what the model learned. The gap between points and line is the residual error — visible at a glance.

@@ -57,7 +57,7 @@ result.cosineOfAngle(with: king)   // ~0.79
 
 The subtraction `king - man` isolates the "royalty" component by removing the "male" direction. Adding `woman` reintroduces a gender direction, landing at "female royalty." This works because word vectors encode semantic properties as geometric directions — the same directions our similarity operations measure.
 
-> Tip: The element-wise arithmetic used here (`king - man + woman`) relies on Quiver's vector operators. See <doc:Element-Wise-Operations> for the full set of element-wise operations available on arrays.
+> Tip: The element-wise arithmetic used here (`king - man + woman`) relies on Quiver's vector operators. See <doc:Vector-Operations> for the full set of vector operations available on arrays.
 
 ## Tokenizing text
 

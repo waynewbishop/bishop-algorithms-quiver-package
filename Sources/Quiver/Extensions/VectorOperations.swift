@@ -697,6 +697,12 @@ public extension Array where Element: FloatingPoint {
     /// is essential for cosine similarity, direction comparisons, and any operation
     /// where only orientation matters.
     ///
+    /// ```swift
+    /// let v = [3.0, 4.0]
+    /// v.normalized           // [0.6, 0.8]
+    /// v.normalized.magnitude // 1.0
+    /// ```
+    ///
     /// - Returns: A new array with the same direction and magnitude 1.0, or a zero vector if the original has zero magnitude
     var normalized: [Element] {
         let v = _Vector(elements: self)
@@ -706,7 +712,14 @@ public extension Array where Element: FloatingPoint {
     /// Calculates the Euclidean distance between two points or vectors.
     ///
     /// The distance is computed as the magnitude of the difference vector,
-    /// equivalent to `(self - other).magnitude`.
+    /// equivalent to `(self - other).magnitude`. This operation powers
+    /// nearest-neighbor search and cluster assignment in Quiver's ML models.
+    ///
+    /// ```swift
+    /// let a = [1.0, 2.0]
+    /// let b = [4.0, 6.0]
+    /// a.distance(to: b)  // 5.0
+    /// ```
     ///
     /// - Parameter other: The vector to measure distance to (must have the same number of elements)
     /// - Returns: The Euclidean distance between the two vectors
@@ -761,6 +774,12 @@ public extension Array where Element: FloatingPoint {
     /// onto the direction of the other vector. A positive value means the vectors point
     /// in the same general direction; a negative value means they point in opposite directions.
     ///
+    /// ```swift
+    /// let v = [3.0, 4.0]
+    /// let axis = [1.0, 0.0]
+    /// v.scalarProjection(onto: axis)  // 3.0
+    /// ```
+    ///
     /// - Parameter vector: The vector to project onto (must not be a zero vector)
     /// - Returns: The scalar length of the projection along the target vector's direction
     func scalarProjection(onto vector: [Element]) -> Element {
@@ -775,6 +794,12 @@ public extension Array where Element: FloatingPoint {
     /// the direction of the target vector. Together with `orthogonalComponent(to:)`,
     /// it decomposes this vector into parallel and perpendicular parts.
     ///
+    /// ```swift
+    /// let v = [3.0, 4.0]
+    /// let axis = [1.0, 0.0]
+    /// v.vectorProjection(onto: axis)  // [3.0, 0.0]
+    /// ```
+    ///
     /// - Parameter vector: The vector to project onto (must not be a zero vector)
     /// - Returns: A new vector pointing in the direction of the target with the projected magnitude
     func vectorProjection(onto vector: [Element]) -> [Element] {
@@ -788,6 +813,12 @@ public extension Array where Element: FloatingPoint {
     /// The orthogonal component is computed as `self - vectorProjection(onto: vector)`.
     /// Together with `vectorProjection(onto:)`, it decomposes this vector into
     /// parallel and perpendicular parts relative to the reference vector.
+    ///
+    /// ```swift
+    /// let v = [3.0, 4.0]
+    /// let axis = [1.0, 0.0]
+    /// v.orthogonalComponent(to: axis)  // [0.0, 4.0]
+    /// ```
     ///
     /// - Parameter vector: The reference vector to measure perpendicularity against (must not be a zero vector)
     /// - Returns: A new vector perpendicular to the reference vector
@@ -816,6 +847,15 @@ public extension Array where Element == [Double] {
     /// Each element in the result is the mean of the corresponding elements across all vectors.
     /// This is commonly used to compute centroids for clustering, average word embeddings
     /// into document vectors, and aggregate feature vectors.
+    ///
+    /// ```swift
+    /// let wordVectors = [
+    ///     [0.8, 0.2, 0.1],  // "running"
+    ///     [0.7, 0.3, 0.2],  // "athletic"
+    ///     [0.6, 0.1, 0.3]   // "shoes"
+    /// ]
+    /// wordVectors.averaged()  // [0.7, 0.2, 0.2]
+    /// ```
     ///
     /// - Returns: A vector where each element is the mean across all input vectors, or `nil` if the array is empty or vectors have inconsistent dimensions
     func averaged() -> [Double]? {

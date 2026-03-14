@@ -47,6 +47,20 @@ let prices = model.predict(newHomes)
 // prices ≈ [236000, 424000]
 ```
 
+For single-feature models, a convenience overload accepts a flat `[Double]` instead of wrapping each value in an array. Combined with `linspace`, this generates a smooth trend line across the feature range:
+
+```swift
+import Quiver
+
+// Generate a trend line from x=500 to x=3500
+let trendX = Array.linspace(start: 500.0, end: 3500.0, count: 50)
+let trendY = model.predict(trendX)
+
+// trendX and trendY are parallel arrays ready for charting
+```
+
+> Important: The single-feature `predict(_:)` overload requires a model trained on exactly one feature. For multi-feature models, use the standard `predict([[Double]])` form.
+
 ### Multiple features
 
 Linear regression naturally extends to multiple features. Each feature gets its own coefficient weight:
@@ -169,9 +183,6 @@ The normal equation requires inverting the matrix X'X. If the features are linea
 
 ### Training
 - ``LinearRegression/fit(features:targets:intercept:)``
-
-### Prediction
-- ``LinearRegression/predict(_:)``
 
 ### Evaluation
 - ``Swift/Array/rSquared(actual:)``

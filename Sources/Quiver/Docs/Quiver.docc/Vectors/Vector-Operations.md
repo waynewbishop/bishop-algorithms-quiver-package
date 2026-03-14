@@ -49,17 +49,76 @@ These angle functions work with vectors of any dimension. The `cosineOfAngle(wit
 
 > Tip: The dot product is zero when vectors are perpendicular.
 
-### Vector averaging
+### Distance
 
-Compute the element-wise average of two vectors:
+Both `magnitude` and `distance(to:)` use the Pythagorean theorem, but they measure different things. `magnitude` measures a single vector's length from the origin — how far a point is from `[0, 0, ...]`. `distance(to:)` measures the gap between any two points by computing the `magnitude` of their difference vector:
 
 ```swift
-let v1 = [2.0, 8.0]
-let v2 = [6.0, 4.0]
+let a = [1.0, 2.0]
+let b = [4.0, 6.0]
 
-// Average corresponding elements
-let avg = [v1, v2].averaged()  // [4.0, 6.0]
+// Magnitude: distance from origin
+a.magnitude  // √(1² + 2²) = √5 ≈ 2.24
+
+// Euclidean distance: distance between two points
+a.distance(to: b)  // √((4-1)² + (6-2)²) = √25 = 5.0
+
+// Magnitude is the special case — distance from origin
+[0.0, 0.0].distance(to: a)  // √5 ≈ 2.24 (same as a.magnitude)
 ```
+
+This distinction matters throughout Quiver. Cosine similarity divides by both magnitudes to remove length bias and isolate direction. Quiver's models use `distance(to:)` to find the most similar training examples, group data points into clusters, and rank how related two arrays are. For a deeper look at how distance and similarity work together, see <doc:Similarity-Operations>.
+
+### Vector arithmetic
+
+Quiver overloads `+`, `-`, `*`, and `/` to work element-wise on arrays. These operators are the foundation that higher-level vector operations build on:
+
+```swift
+import Quiver
+
+let a = [1.0, 2.0, 3.0]
+let b = [4.0, 5.0, 6.0]
+
+// Element-wise operations
+let sum = a + b         // [5.0, 7.0, 9.0]
+let difference = a - b  // [-3.0, -3.0, -3.0]
+let product = a * b     // [4.0, 10.0, 18.0]
+let quotient = a / b    // [0.25, 0.4, 0.5]
+```
+
+These operators appear throughout Quiver's ML pipeline. `distance(to:)` is implemented as `(self - other).magnitude` — it subtracts two vectors element-wise, then computes the `magnitude` of the difference. Every time `KNearestNeighbors` finds the closest training example or `KMeans` assigns a point to a cluster, it relies on this subtraction:
+
+```swift
+let sample = [5.2, 3.1]
+let trainingPoint = [4.8, 3.5]
+
+// distance(to:) subtracts, then takes magnitude
+let diff = sample - trainingPoint       // [0.4, -0.4]
+diff.magnitude                          // √(0.16 + 0.16) ≈ 0.566
+sample.distance(to: trainingPoint)      // 0.566 (same result)
+```
+
+Addition and division power `averaged()`, which combines multiple word embedding vectors into a single document vector for semantic search. Individual word vectors each capture one word's meaning — averaging them produces a vector that represents the entire document's meaning in the same vector space:
+
+```swift
+// Word embedding vectors (simplified to 3 dimensions)
+let wordVectors = [
+    [0.8, 0.2, 0.1],   // "running"
+    [0.7, 0.3, 0.2],   // "athletic"
+    [0.6, 0.1, 0.3],   // "shoes"
+    [0.1, 0.6, 0.4]    // "comfortable"
+]
+
+// Average into a single document vector
+let documentVector = wordVectors.averaged()
+// [0.55, 0.3, 0.25] — represents the full document
+```
+
+> Tip: For a complete walkthrough of the embedding-to-search pipeline, see <doc:Semantic-Search>.
+
+Subtraction also gives displacement — the vector from one point to another. A player at `[100, 200]` and an enemy at `[130, 170]` have displacement `[100, 200] - [130, 170] = [-30, 30]`. The `magnitude` of that displacement is the distance between them. Addition combines forces or velocities — a boat moving at `[3, 0]` in a current of `[0, 2]` has actual velocity `[3, 0] + [0, 2] = [3, 2]`.
+
+> Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `multiplyMatrix()`.
 
 ### Vector projections
 
@@ -107,6 +166,7 @@ Vector operations in Quiver are based on well-established mathematical principle
 - **Magnitude**: √(x₁² + x₂² + ... + xₙ²)
 - **Normalization**: v / ||v||
 - **Dot product**: v₁·v₂ = v₁₁×v₂₁ + v₁₂×v₂₂ + ... + v₁ₙ×v₂ₙ
+- **Euclidean distance**: d(v₁, v₂) = √((v₁₁−v₂₁)² + (v₁₂−v₂₂)² + ... + (v₁ₙ−v₂ₙ)²)
 - **Cosine similarity**: cos(θ) = (v₁·v₂) / (||v₁|| × ||v₂||)
 - **Vector projection**: proj_u(v) = (v·u / u·u) × u
 
@@ -128,7 +188,8 @@ This approach means these operations work directly on standard Swift arrays with
 - ``Swift/Array/magnitude``
 - ``Swift/Array/normalized``
 
-### Vector Relationships 
+### Vector Relationships
+- ``Swift/Array/distance(to:)``
 - ``Swift/Array/dot(_:)``
 - ``Swift/Array/angle(with:)-piry``
 - ``Swift/Array/angleInDegrees(with:)-7n2tx``
@@ -146,6 +207,8 @@ This approach means these operations work directly on standard Swift arrays with
 ### Related articles
 - <doc:Linear-Algebra-Primer>
 - <doc:Similarity-Operations>
+- <doc:Boolean-Masking>
+- <doc:Semantic-Search>
 - <doc:Matrix-Transformations>
 - <doc:Matrix-Operations>
 - <doc:Broadcasting-Operations>

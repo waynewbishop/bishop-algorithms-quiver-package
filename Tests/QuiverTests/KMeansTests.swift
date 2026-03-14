@@ -112,6 +112,26 @@ final class KMeansTests: XCTestCase {
         XCTAssertEqual(model1.inertia, model2.inertia)
     }
 
+    // Elbow method returns one inertia value per k
+    func testElbowMethod() {
+        let data: [[Double]] = [
+            [0.0, 0.0], [1.0, 0.0], [0.0, 1.0],
+            [10.0, 10.0], [11.0, 10.0], [10.0, 11.0]
+        ]
+
+        let kRange = Array(1...4)
+        let inertias = KMeans.elbowMethod(data: data, kRange: kRange, seed: 42)
+
+        // One result per k value
+        XCTAssertEqual(inertias.count, 4)
+
+        // Inertia should decrease as k increases
+        XCTAssertGreaterThan(inertias[0], inertias[1])
+
+        // k=2 should capture the structure well (big drop from k=1)
+        XCTAssertGreaterThan(inertias[0] - inertias[1], inertias[1] - inertias[2])
+    }
+
     // Single cluster should assign all points the same label
     func testSingleCluster() {
         let data: [[Double]] = [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]

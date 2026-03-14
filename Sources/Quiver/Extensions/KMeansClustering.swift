@@ -145,6 +145,40 @@ public struct KMeans {
             .min(by: { $0.inertia < $1.inertia })!
     }
 
+    /// Computes inertia for a range of k values (elbow method).
+    ///
+    /// Runs K-Means for each value of k and returns the inertia at each step.
+    /// Plot the result against the k values to find the "elbow" — the point where
+    /// adding more clusters stops providing meaningful improvement.
+    ///
+    /// ```swift
+    /// let data: [[Double]] = [
+    ///     [1.0, 2.0], [1.5, 1.8], [1.2, 2.1],
+    ///     [8.0, 8.0], [8.5, 7.5], [9.0, 8.5]
+    /// ]
+    ///
+    /// let kRange = Array(1...6)
+    /// let inertias = KMeans.elbowMethod(data: data, kRange: kRange, seed: 42)
+    /// // kRange and inertias are parallel arrays ready for charting
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - data: 2D array where each row is a sample and each column is a feature.
+    ///   - kRange: The k values to evaluate.
+    ///   - maxIterations: Maximum iterations per fit. Defaults to 100.
+    ///   - seed: Random seed for reproducible results. Defaults to nil.
+    /// - Returns: An array of inertia values, one per k value.
+    public static func elbowMethod(
+        data: [[Double]],
+        kRange: [Int],
+        maxIterations: Int = 100,
+        seed: UInt64? = nil
+    ) -> [Double] {
+        return kRange.map { k in
+            fit(data: data, k: k, maxIterations: maxIterations, seed: seed).inertia
+        }
+    }
+
     /// Assigns cluster labels to new data points based on the trained centroids.
     ///
     /// For each sample, computes the distance to every centroid and assigns the

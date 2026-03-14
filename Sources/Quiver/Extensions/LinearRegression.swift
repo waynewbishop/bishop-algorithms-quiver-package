@@ -102,4 +102,27 @@ public struct LinearRegression {
             intercept: hasIntercept
         )
     }
+
+    /// Predicts target values for single-feature regression.
+    ///
+    /// A convenience overload that accepts a flat `[Double]` instead of `[[Double]]`
+    /// when the model was trained on a single feature. Each element is treated as
+    /// one sample with one feature.
+    ///
+    /// ```swift
+    /// let model = try LinearRegression.fit(
+    ///     features: [[1.0], [2.0], [3.0]],
+    ///     targets: [2.0, 4.0, 6.0]
+    /// )
+    /// let trendX = Array.linspace(start: 0.0, end: 4.0, count: 50)
+    /// let trendY = model.predict(trendX)
+    /// ```
+    ///
+    /// - Parameter values: 1D array of feature values for single-feature prediction.
+    /// - Returns: An array of predicted values, one per input.
+    public func predict(_ values: [Double]) -> [Double] {
+        precondition(featureCount == 1,
+            "Single-feature predict requires a model trained on 1 feature, got \(featureCount)")
+        return predict(values.map { [$0] })
+    }
 }

@@ -84,6 +84,23 @@ final class LinearRegressionTests: XCTestCase {
         XCTAssertGreaterThan(r2, 0.99)
     }
 
+    // Single-feature convenience predict accepts [Double] instead of [[Double]]
+    func testSingleFeaturePredict() throws {
+        let features: [[Double]] = [[1.0], [2.0], [3.0], [4.0]]
+        let targets = [3.0, 5.0, 7.0, 9.0]  // y = 2x + 1
+
+        let model = try LinearRegression.fit(features: features, targets: targets)
+
+        // Convenience overload
+        let convenience = model.predict([5.0, 10.0])
+        // Standard overload
+        let standard = model.predict([[5.0], [10.0]])
+
+        XCTAssertEqual(convenience, standard)
+        XCTAssertEqual(convenience[0], 11.0, accuracy: 1e-9)
+        XCTAssertEqual(convenience[1], 21.0, accuracy: 1e-9)
+    }
+
     // Full pipeline: trainTestSplit → fit → predict → evaluate
     func testFullPipeline() throws {
         // Generate noisy linear data: y ≈ 3x + 2

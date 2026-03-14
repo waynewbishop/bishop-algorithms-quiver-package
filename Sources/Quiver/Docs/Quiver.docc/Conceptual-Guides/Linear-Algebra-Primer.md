@@ -37,7 +37,7 @@ v.normalized.asFractions()  // [3/5, 4/5]
 
 `magnitude` is calculated using the Pythagorean theorem extended to any dimension. For a 2D vector `[x, y]`, magnitude equals √(x² + y²). For vector `[3, 4]`, that gives √(9 + 16) = √25 = 5. The same formula works whether the vector has 2 dimensions or 200.
 
-**Normalization** separates "how much" from "which way" by dividing each element by the `magnitude`. The result is a **unit vector** — an `Array` with length 1 that preserves only the direction of the original. This matters when comparing arrays where scale varies but direction is what we care about. Two customer profiles with the same preference ratios but different spending levels point in the same direction — normalization reveals that similarity by stripping away the magnitude.
+**Normalization** separates "how much" from "which way" by dividing each element by the `magnitude`. The result is a **unit vector** — an `Array` with length 1 that preserves only the direction of the original. This matters when comparing arrays where scale varies but direction is what we care about. Two customer profiles with the same preference ratios but different spending levels point in the same direction — normalization reveals that similarity by removing the magnitude.
 
 ### Vectors live in space
 
@@ -82,6 +82,8 @@ product1.cosineOfAngle(with: product2)  // ~0.998 (very similar)
 ```
 
 This separation of direction from magnitude is why cosine similarity powers recommendation engines, search ranking, and duplicate detection. Two customer profiles with identical preferences but different engagement levels point in the same direction — cosine similarity scores them as nearly identical, while the raw dot product would not.
+
+> Tip: Learn the mathematics behind dot product, cosine similarity, and matrix multiplication in [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/20-vectors.html).
 
 ### What matrices do
 
@@ -128,7 +130,7 @@ a.distance(to: b)  // √((4-1)² + (6-2)²) = √25 = 5.0
 
 > Tip: Distance builds on vector subtraction — each (aᵢ − bᵢ) term is one element of the difference vector. The `magnitude` of that difference vector is the distance between the two points.
 
-`Distance` is what connects linear algebra to machine learning. Quiver's classification models use distance to find the most similar training examples. Its clustering model uses distance to group data points together. Its similarity operations use distance and direction to rank how related two arrays are. The <doc:Machine-Learning-Primer> explores each of these models and how they apply these concepts.
+`Distance` is what connects linear algebra to machine learning. Quiver's models use distance to find the most similar training examples, group data points together, and rank how related two arrays are. The <doc:Machine-Learning-Primer> explores each of these models and how they apply these concepts.
 
 ### See also
 

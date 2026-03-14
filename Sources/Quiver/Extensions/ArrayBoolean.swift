@@ -13,7 +13,14 @@ import Foundation
 // MARK: - Boolean Comparison Operations
 
 public extension Array where Element: Comparable {
-    /// Checks if this array is equal to another array element-wise
+    /// Checks if this array is equal to another array element-wise.
+    ///
+    /// ```swift
+    /// let predicted = [3, 5, 2, 5]
+    /// let actual = [3, 4, 2, 5]
+    /// predicted.isEqual(to: actual)  // [true, false, true, true]
+    /// ```
+    ///
     /// - Parameter other: The array to compare with
     /// - Returns: An array of boolean values indicating equality at each position
     func isEqual(to other: [Element]) -> [Bool] {
@@ -22,7 +29,13 @@ public extension Array where Element: Comparable {
         return v1.isEqual(to: v2)
     }
     
-    /// Checks if each element in this array is greater than the specified value
+    /// Checks if each element in this array is greater than the specified value.
+    ///
+    /// ```swift
+    /// let scores = [85.0, 45.0, 92.0, 38.0]
+    /// scores.isGreaterThan(80.0)  // [true, false, true, false]
+    /// ```
+    ///
     /// - Parameter value: The value to compare against
     /// - Returns: An array of boolean values
     func isGreaterThan(_ value: Element) -> [Bool] {
@@ -30,7 +43,13 @@ public extension Array where Element: Comparable {
         return vector.isGreaterThan(value)
     }
     
-    /// Checks if each element in this array is less than the specified value
+    /// Checks if each element in this array is less than the specified value.
+    ///
+    /// ```swift
+    /// let readings = [23.5, 150.0, 22.9, -10.0]
+    /// readings.isLessThan(0.0)  // [false, false, false, true]
+    /// ```
+    ///
     /// - Parameter value: The value to compare against
     /// - Returns: An array of boolean values
     func isLessThan(_ value: Element) -> [Bool] {
@@ -38,7 +57,13 @@ public extension Array where Element: Comparable {
         return vector.isLessThan(value)
     }
     
-    /// Checks if each element in this array is greater than or equal to the specified value
+    /// Checks if each element in this array is greater than or equal to the specified value.
+    ///
+    /// ```swift
+    /// let confidence = [0.92, 0.45, 0.87, 0.31, 0.78]
+    /// confidence.isGreaterThanOrEqual(0.75)  // [true, false, true, false, true]
+    /// ```
+    ///
     /// - Parameter value: The value to compare against
     /// - Returns: An array of boolean values
     func isGreaterThanOrEqual(_ value: Element) -> [Bool] {
@@ -46,7 +71,13 @@ public extension Array where Element: Comparable {
         return vector.isGreaterThanOrEqual(value)
     }
     
-    /// Checks if each element in this array is less than or equal to the specified value
+    /// Checks if each element in this array is less than or equal to the specified value.
+    ///
+    /// ```swift
+    /// let temperatures = [15.0, 22.0, 35.0, 18.0]
+    /// temperatures.isLessThanOrEqual(20.0)  // [true, false, false, true]
+    /// ```
+    ///
     /// - Parameter value: The value to compare against
     /// - Returns: An array of boolean values
     func isLessThanOrEqual(_ value: Element) -> [Bool] {
@@ -59,6 +90,11 @@ public extension Array where Element: Comparable {
 public extension Array where Element == Bool {
     /// Returns the indices of all `true` elements in the boolean array.
     ///
+    /// ```swift
+    /// let mask = [true, false, true, false, true]
+    /// mask.trueIndices  // [0, 2, 4]
+    /// ```
+    ///
     /// - Returns: An array of integer indices where the value is `true`
     var trueIndices: [Int] {
         return self.enumerated()
@@ -67,6 +103,12 @@ public extension Array where Element == Bool {
     }
 
     /// Performs element-wise logical AND with another boolean array.
+    ///
+    /// ```swift
+    /// let ageOk = [true, true, false, true]
+    /// let hasLicense = [true, false, false, true]
+    /// ageOk.and(hasLicense)  // [true, false, false, true]
+    /// ```
     ///
     /// - Parameter other: The boolean array to combine with (must have the same length)
     /// - Returns: A new boolean array where each element is `true` only if both corresponding elements are `true`
@@ -77,6 +119,12 @@ public extension Array where Element == Bool {
     
     /// Performs element-wise logical OR with another boolean array.
     ///
+    /// ```swift
+    /// let tempHigh = [false, false, true, false]
+    /// let humidHigh = [false, true, false, false]
+    /// tempHigh.or(humidHigh)  // [false, true, true, false]
+    /// ```
+    ///
     /// - Parameter other: The boolean array to combine with (must have the same length)
     /// - Returns: A new boolean array where each element is `true` if either corresponding element is `true`
     func or(_ other: [Bool]) -> [Bool] {
@@ -86,6 +134,11 @@ public extension Array where Element == Bool {
     
     /// Returns the element-wise logical negation of the boolean array.
     ///
+    /// ```swift
+    /// let valid = [true, true, false, true, false]
+    /// valid.not  // [false, false, true, false, true]
+    /// ```
+    ///
     /// - Returns: A new boolean array where each element is inverted
     var not: [Bool] {
         return self.map { !$0 }
@@ -94,7 +147,14 @@ public extension Array where Element == Bool {
 
 // MARK: - Boolean Indexing
 public extension Array {
-    /// Returns elements where the mask is true (like NumPy's array[mask])
+    /// Returns elements where the mask is true (like NumPy's `array[mask]`).
+    ///
+    /// ```swift
+    /// let scores = [85.0, 45.0, 92.0, 38.0, 76.0]
+    /// let passing = scores.isGreaterThanOrEqual(50.0)
+    /// scores.masked(by: passing)  // [85.0, 92.0, 76.0]
+    /// ```
+    ///
     /// - Parameter mask: The boolean mask to apply
     /// - Returns: Array containing only elements where the mask is true
     func masked(by mask: [Bool]) -> [Element] {
@@ -104,7 +164,17 @@ public extension Array {
             .map { $0.0 }
     }
     
-    /// Returns a new array with elements conditionally chosen from this array or another
+    /// Returns a new array with elements conditionally chosen from this array or another.
+    ///
+    /// ```swift
+    /// let readings = [23.5, 150.0, 22.9, -10.0]
+    /// let valid = readings.isGreaterThanOrEqual(0.0)
+    ///     .and(readings.isLessThanOrEqual(50.0))
+    /// let defaults = [Double](repeating: 25.0, count: readings.count)
+    /// readings.choose(where: valid, otherwise: defaults)
+    /// // [23.5, 25.0, 22.9, 25.0]
+    /// ```
+    ///
     /// - Parameters:
     ///   - condition: Boolean mask determining which array to choose from
     ///   - other: The alternative array to choose elements from when condition is false

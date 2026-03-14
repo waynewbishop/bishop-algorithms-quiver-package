@@ -43,7 +43,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Vectors
 - <doc:Vector-Operations>
-- <doc:Element-Wise-Operations>
+- <doc:Boolean-Masking>
 - <doc:Statistical-Operations>
 
 ### Matrices
@@ -75,6 +75,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Nearest-Neighbors-Classification>
 - <doc:KMeans-Clustering>
 - <doc:Evaluation-Metrics>
+- <doc:Activation-Functions>
 
 ### Quick Reference
 - ``Swift/Array/dot(_:)``
