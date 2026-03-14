@@ -16,7 +16,7 @@ As programmers, we work with `Array` types constantly — storing coordinates, p
 
 > Tip: For details on how Quiver extends the Swift `Array` see <doc:How-It-Works>.
 
-Consider the arrays we already use every day. An array tracking wind speed and bearing captures both "how much" and "which way". An array of RGB values describes a color as a point in three-dimensional space. An array of customer preferences across product features places that customer at a specific location in a multidimensional space. These are all vectors — we just haven't been calling them that.
+Consider the arrays we already use every day. An array tracking wind speed and bearing captures both "how much" and "which way". An array of RGB values describes a color as a point in three-dimensional space. An array of customer preferences across product features places that customer at a specific location in a multidimensional space. These can all be considered vectors.
 
 Quiver bridges this gap by adding vector operations directly to Swift `Array` types. No new types to learn, no conversion step — the arrays we already have gain mathematical capabilities:
 
@@ -47,7 +47,7 @@ This is the key idea behind all of Quiver's operations. Vector space is what mak
 
 ### Distance, direction, and meaning
 
-Two product feature vectors that are close together in vector space represent similar products. Two word embeddings that point in the same direction represent related concepts. A cluster of data points near each other form a natural group. The math doesn't care what the numbers represent — it only cares about position, distance, and direction.
+Two product feature vectors that are close together in vector space represent similar products. A cluster of data points near each other form a natural group. The math doesn't care what the numbers represent — it only cares about position, distance, and direction.
 
 This is also how semantic search works. Words can be represented as high-dimensional vectors called **embeddings** — arrays of hundreds of numbers that capture meaning. The word "running" and the word "jogging" end up near each other in vector space because they appear in similar contexts. Searching for related content becomes a matter of finding the nearest vectors using `cosineOfAngle(with:)`. Quiver's <doc:Semantic-Search> page walks through building this from scratch.
 
@@ -111,7 +111,7 @@ Beyond transformations, matrices organize collections of data. In a dataset, eac
 
 ### From arrays to algorithms
 
-Linear algebra isn't just math exercises — they are the building blocks for ML models in Quiver. The key concept connecting them is **distance** — the measurement of how far apart two points sit in vector space.
+Linear algebra isn't just math exercises — these concepts are the building blocks for ML models in Quiver. The key concept connecting them is **distance** — the measurement of how far apart two points sit in vector space.
 
 Both `magnitude` and `distance(to:)` use the Pythagorean theorem, but they measure different things. Think of `magnitude` as the answer to "how far is this point from the origin" — it measures a single vector's length. `distance(to:)` answers a broader version of the same question — how far apart are any two points — by subtracting one vector from the other and computing the length of the difference.
 
