@@ -121,6 +121,30 @@ public struct KMeans {
         )
     }
 
+    /// Fits multiple K-Means models with different seeds and returns the best one.
+    ///
+    /// Random centroid initialization can produce poor clusterings due to local minima.
+    /// This method runs the algorithm `attempts` times with different seeds and returns
+    /// the model with the lowest inertia (tightest clusters).
+    ///
+    /// - Parameters:
+    ///   - data: 2D array where each row is a sample and each column is a feature.
+    ///   - k: Number of clusters to form.
+    ///   - maxIterations: Maximum number of assign-update cycles per attempt. Defaults to 100.
+    ///   - attempts: Number of times to run the algorithm with different seeds. Defaults to 10.
+    /// - Returns: The ``KMeans`` model with the lowest inertia across all attempts.
+    public static func bestFit(
+        data: [[Double]],
+        k: Int,
+        maxIterations: Int = 100,
+        attempts: Int = 10
+    ) -> KMeans {
+        precondition(attempts > 0, "attempts must be positive")
+        return (0..<attempts)
+            .map { fit(data: data, k: k, maxIterations: maxIterations, seed: UInt64($0)) }
+            .min(by: { $0.inertia < $1.inertia })!
+    }
+
     /// Assigns cluster labels to new data points based on the trained centroids.
     ///
     /// For each sample, computes the distance to every centroid and assigns the

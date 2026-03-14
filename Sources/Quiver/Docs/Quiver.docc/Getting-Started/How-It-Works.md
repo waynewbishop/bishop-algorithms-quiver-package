@@ -18,7 +18,7 @@ position.magnitude  // 5.0
 
 In this example, the `position` array could be passed to SwiftUI, Swift Charts, SwiftData, or any other Swift API.
 
-## What are extensions
+### What are extensions
 
 An **extension** in Swift adds new methods, computed properties, and initializers to a type that already exists — even one we did not write. The capability is added directly to the type, and every instance gains it automatically.
 
@@ -40,7 +40,7 @@ Swift's standard library uses this same mechanism extensively. Methods like `.so
 
 > Tip: Extensions can add new functionality to a type, but they cannot override or modify existing behavior. Quiver's extensions are purely additive — they never change how `Array` already works.
 
-## Constrained extensions
+### Constrained extensions
 
 Not every array operation makes sense for every element type. Computing a mean requires division, which integers cannot do precisely. Computing magnitude requires a square root, which strings cannot produce. Quiver needs a way to say "this method only exists when the elements are the right kind of number."
 
@@ -63,7 +63,7 @@ The `where Element: FloatingPoint` clause is the gate. It means `.magnitude` app
 
 This is the Pythagorean theorem expressed in Swift: sum the squares of each element, then take the square root. For the vector `[3.0, 4.0]`, the calculation is `√(3² + 4²) = √(9 + 16) = √25 = 5.0`.
 
-## The type system at work
+### The type system at work
 
 In Swift, the compiler verifies that every operation we call is mathematically valid for the element type we are using. If it is not, the code does not build.
 
@@ -84,13 +84,13 @@ integers.magnitude       // Int is not FloatingPoint
 
 Each failed call is caught before the code ever runs. The compiler tells us exactly which protocol the element type is missing. When we refactor an array from `[Double]` to `[Int]`, the build itself flags every Quiver call that no longer applies — `mean()`, `magnitude`, `normalized`, `dot()`. We do not discover these issues through test failures or runtime crashes.
 
-### Dimensions encoded in types
+#### Dimensions encoded in types
 
 Swift's type system also encodes dimensionality. The compiler distinguishes between `[Double]` (a vector) and `[[Double]]` (a matrix) at compile time, so there is no need for a runtime property to query how many dimensions an array has — the type signature already tells us. Quiver's `.shape` property is constrained to nested arrays, so calling it on a flat `[Double]` is a compile-time error, not a runtime surprise.
 
 > Tip: For a detailed look at `.shape`, `.size`, and working with matrix dimensions, see <doc:Shape-And-Size>.
 
-### Named tuples as return types
+#### Named tuples as return types
 
 When Quiver returns structured data, Swift's **named tuples** make each value self-documenting:
 
@@ -118,7 +118,7 @@ if let q = scores.quartiles() {
 }
 ```
 
-### Tuple destructuring
+#### Tuple destructuring
 
 Because these return types are tuples, Swift lets us unpack them directly into named constants:
 
@@ -129,7 +129,7 @@ let (stores, days) = sales.shape
 
 This is **tuple destructuring** — we choose names that match our domain rather than the generic `.rows` and `.columns`. The binding works by position, so the first value is always the row count and the second is always the column count. The result is code that reads like a sentence: "this data has two stores and seven days."
 
-## Performance characteristics
+### Performance characteristics
 
 Quiver is pure Swift with zero external dependencies. The design prioritizes clarity and portability — the same code runs identically on macOS, iOS, watchOS, visionOS, and Linux. Most operations — vector arithmetic, statistics, broadcasting, boolean masking, element-wise math — are linear and scale predictably to millions of elements.
 

@@ -12,7 +12,7 @@
 
 @Options(scope: local)
 
-A Swift package that provides vector mathematics, numerical computing, and statistical operations.
+A Swift package for vector mathematics, numerical computing, and machine learning.
 
 ## Overview
 
@@ -69,7 +69,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - <doc:Feature-Scaling>
 - <doc:Data-Visualization>
 
-### Classification
+### Models
 - <doc:Naive-Bayes>
 - <doc:Linear-Regression>
 - <doc:Nearest-Neighbors-Classification>

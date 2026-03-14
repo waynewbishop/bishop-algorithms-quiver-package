@@ -8,6 +8,10 @@ A classification model is only as useful as its evaluation. Accuracy — the fra
 
 Quiver provides these metrics as extensions on `[Int]`, where the calling array represents predicted labels and the `actual:` parameter provides the ground truth.
 
+### How it works
+
+Every binary classification outcome falls into one of four categories. A **true positive** is a correct positive prediction — the model said "yes" and the answer was yes. A **false positive** is an incorrect positive prediction — the model said "yes" but the answer was no. A **true negative** is a correct negative prediction, and a **false negative** is a missed positive. All evaluation metrics are ratios of these four counts: accuracy uses all four, precision focuses on positive predictions, recall focuses on actual positives, and the F1 score balances precision and recall into a single number.
+
 ### The confusion matrix
 
 Every binary classification metric derives from four counts — true positives, false positives, true negatives, and false negatives. The `ConfusionMatrix` struct captures all four and computes the derived metrics as properties:
@@ -15,15 +19,17 @@ Every binary classification metric derives from four counts — true positives, 
 ```swift
 import Quiver
 
+// 8 predictions compared against ground truth
 let predictions = [1, 0, 1, 1, 0, 0, 1, 0]
 let actual      = [1, 0, 0, 1, 0, 1, 1, 0]
 
+// Build a confusion matrix from predictions and actual labels
 let cm = predictions.confusionMatrix(actual: actual)
 
-cm.truePositives   // 3
-cm.falsePositives  // 1
-cm.trueNegatives   // 3
-cm.falseNegatives  // 1
+cm.truePositives   // 3 — correct positive predictions
+cm.falsePositives  // 1 — incorrectly predicted positive
+cm.trueNegatives   // 3 — correct negative predictions
+cm.falseNegatives  // 1 — missed positive
 cm.accuracy        // 0.75
 cm.precision       // Optional(0.75)
 cm.recall          // Optional(0.75)
@@ -39,13 +45,15 @@ Quiver returns `nil` instead, surfacing the problem at the type level:
 ```swift
 import Quiver
 
-let predictions = [0, 0, 0, 0, 0]  // model predicts all negative
+// A model that predicts all negative — a common failure mode
+let predictions = [0, 0, 0, 0, 0]
 let actual      = [1, 0, 1, 0, 0]
 
+// nil signals that the metric is undefined, not zero
 let p = predictions.precision(actual: actual)  // nil — no positives predicted
 let r = predictions.recall(actual: actual)     // Optional(0.0) — caught 0 of 2
 
-// Swift forces you to handle the nil case
+// Swift forces explicit handling of the undefined case
 if let precision = p {
     print("Precision: \(precision)")
 } else {
@@ -70,13 +78,43 @@ In positional APIs, swapping the two arguments silently produces wrong results w
 
 ### Choosing the right metric
 
-The right metric depends on the cost of errors in the specific domain:
+The right metric depends on the cost of errors in the specific domain. In recall-first scenarios — malware detection, medical screening, customer churn — missing a positive case is expensive, so we optimize for catching every true positive even at the cost of some false alarms. In precision-first scenarios — spam filtering, content moderation, fraud alerts — false positives are expensive because flagging a legitimate email or freezing a valid transaction has real consequences for the user. When neither error type clearly dominates, the F1 score provides a single balanced metric. It is the harmonic mean of precision and recall, which penalizes extreme imbalances more heavily than an arithmetic mean would.
 
-**Recall-first scenarios** — When missing a positive case is expensive. Malware detection, medical screening, and customer churn prediction all benefit from high recall. A false alarm (false positive) is inconvenient, but a missed detection (false negative) is dangerous or costly.
+### The full pipeline
 
-**Precision-first scenarios** — When false positives are expensive. Spam filtering, content moderation, and fraud alerts benefit from high precision. Flagging a legitimate email as spam or freezing a valid transaction has real consequences for the user.
+A typical workflow fits a model, predicts on held-out data, and evaluates the results:
 
-**F1 score** — When neither error type clearly dominates, the F1 score provides a single balanced metric. It is the harmonic mean of precision and recall, which penalizes extreme imbalances more heavily than an arithmetic mean would.
+```swift
+import Quiver
+
+// 10 samples: credit score, account balance
+let features: [[Double]] = [
+    [720.0, 15000.0], [650.0, 78000.0], [580.0, 42000.0],
+    [710.0, 8000.0], [690.0, 55000.0], [620.0, 91000.0],
+    [750.0, 12000.0], [600.0, 63000.0], [680.0, 37000.0],
+    [640.0, 84000.0]
+]
+let labels = [1, 0, 0, 1, 1, 0, 1, 0, 1, 0]
+
+// Split into training and test sets
+let (trainX, testX) = features.trainTestSplit(testRatio: 0.3, seed: 42)
+let (trainY, testY) = labels.trainTestSplit(testRatio: 0.3, seed: 42)
+
+// Scale, fit, predict
+let scaler = FeatureScaler.fit(features: trainX)
+let model = GaussianNaiveBayes.fit(
+    features: scaler.transform(trainX),
+    labels: trainY
+)
+let predictions = model.predict(scaler.transform(testX))
+
+// Evaluate on data the model never saw during training
+let cm = predictions.confusionMatrix(actual: testY)
+print("Accuracy: \(cm.accuracy)")
+print("Precision: \(cm.precision ?? 0)")
+print("Recall: \(cm.recall ?? 0)")
+print("F1: \(cm.f1Score ?? 0)")
+```
 
 ## Topics
 
@@ -92,3 +130,6 @@ The right metric depends on the cost of errors in the specific domain:
 
 ### Related
 - <doc:Machine-Learning-Primer>
+- <doc:Naive-Bayes>
+- <doc:Nearest-Neighbors-Classification>
+- <doc:Linear-Regression>
