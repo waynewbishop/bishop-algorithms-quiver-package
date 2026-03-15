@@ -120,28 +120,6 @@ Subtraction also gives displacement — the vector from one point to another. A 
 
 > Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `multiplyMatrix()`.
 
-### Vector projections
-
-Projections help decompose vectors into components:
-
-```swift
-let v = [3.0, 4.0]
-let axis = [1.0, 0.0]  // x-axis
-
-// Calculate scalar projection (length of shadow)
-v.scalarProjection(onto: axis)  // 3.0
-
-// Calculate vector projection (component along axis)
-v.vectorProjection(onto: axis)  // [3.0, 0.0]
-
-// Calculate orthogonal component (perpendicular to axis)
-v.orthogonalComponent(to: axis)  // [0.0, 4.0]
-```
-
-These operations are particularly useful in physics calculations, computer graphics, and geometric algorithms.
-
-> Important: When projecting onto another vector, the target vector cannot be a zero vector (a vector with zero magnitude).
-
 ### Matrix-vector operations
 
 Transform vectors using matrices:
@@ -168,7 +146,6 @@ Vector operations in Quiver are based on well-established mathematical principle
 - **Dot product**: v₁·v₂ = v₁₁×v₂₁ + v₁₂×v₂₂ + ... + v₁ₙ×v₂ₙ
 - **Euclidean distance**: d(v₁, v₂) = √((v₁₁−v₂₁)² + (v₁₂−v₂₂)² + ... + (v₁ₙ−v₂ₙ)²)
 - **Cosine similarity**: cos(θ) = (v₁·v₂) / (||v₁|| × ||v₂||)
-- **Vector projection**: proj_u(v) = (v·u / u·u) × u
 
 > Note: Quiver follows standard mathematical conventions for vector operations, making it easier to translate mathematical formulas directly into code.
 
@@ -186,15 +163,11 @@ Vector operations in Quiver are based on well-established mathematical principle
 - ``Swift/Array/cosineOfAngle(with:)``
 - ``Swift/Array/averaged()``
 
-### Vector projections
-- ``Swift/Array/scalarProjection(onto:)``
-- ``Swift/Array/vectorProjection(onto:)``
-- ``Swift/Array/orthogonalComponent(to:)``
-
 ### Matrix operations
 - ``Swift/Array/transformedBy(_:)``
 
 ### Related articles
+- <doc:Vector-Projections>
 - <doc:Linear-Algebra-Primer>
 - <doc:Similarity-Operations>
 - <doc:Boolean-Masking>

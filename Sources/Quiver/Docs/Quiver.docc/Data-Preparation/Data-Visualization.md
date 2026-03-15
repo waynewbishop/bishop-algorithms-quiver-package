@@ -6,6 +6,8 @@ Prepare, scale, and reshape data for Swift Charts and other visualization framew
 
 Quiver provides a set of functions that bridge numerical data and chart-ready output. These operations handle the data preparation step — scaling values to a target range, computing frequency distributions, stacking series for area charts, and downsampling large datasets for responsive rendering. Each function returns structured output that maps directly to Swift Charts mark types.
 
+> Tip: The `#Playground` macro lets us combine Quiver and Swift Charts in a live Canvas — prepare data, build marks, and see the chart update as we type. See <doc:Usage> for how to get started.
+
 ### Scaling and normalization
 
 Raw data often needs scaling before visualization. Quiver offers three approaches depending on the use case:

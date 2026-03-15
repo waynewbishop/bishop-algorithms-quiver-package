@@ -134,7 +134,8 @@ a.distance(to: b)  // √((4-1)² + (6-2)²) = √25 = 5.0
 
 ### See also
 
-- <doc:Vector-Operations> - Magnitude, dot product, projections, and angle measurements
+- <doc:Vector-Operations> - Magnitude, dot product, and angle measurements
+- <doc:Vector-Projections> - Decompose vectors into parallel and perpendicular components
 - <doc:Matrix-Operations> - Multiply, transpose, invert, and determinant
 - <doc:Matrix-Transformations> - Rotation, scaling, reflection, and composition
 - <doc:Similarity-Operations> - Cosine similarity, batch comparisons, and semantic search

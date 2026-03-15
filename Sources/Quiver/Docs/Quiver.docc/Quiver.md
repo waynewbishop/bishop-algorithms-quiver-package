@@ -35,6 +35,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 ### Getting Started
 - <doc:Installation>
 - <doc:How-It-Works>
+- <doc:Usage>
 
 ### Conceptual Guides
 - <doc:Linear-Algebra-Primer>
@@ -43,6 +44,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 
 ### Vectors
 - <doc:Vector-Operations>
+- <doc:Vector-Projections>
 - <doc:Boolean-Masking>
 - <doc:Statistical-Operations>
 
@@ -107,5 +109,6 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 - ``DistanceMetric``
 - ``VoteWeight``
 - ``KMeans``
+- ``Cluster``
 - ``FeatureScaler``
 - ``Panel``
