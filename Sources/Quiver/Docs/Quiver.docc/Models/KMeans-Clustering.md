@@ -70,6 +70,24 @@ print(model.inertia)     // sum of squared distances to centroids
 print(model.iterations)  // typically 2-10 for well-separated data
 ```
 
+The `clusters(from:)` method groups data points by their assigned centroid, returning an array of `Cluster` values that conform to `Sequence`. This provides a natural way to iterate over the results:
+
+```swift
+import Quiver
+
+// Group the training data into Cluster values
+let clusters = model.clusters(from: data)
+
+for cluster in clusters {
+    print("Center: \(cluster.centroid), size: \(cluster.count)")
+    for point in cluster {
+        print("  \(point)")
+    }
+}
+```
+
+Each `Cluster` holds a `centroid`, the `points` assigned to it, and a `count`. Because `Cluster` conforms to `Sequence`, standard Swift patterns like `for-in` loops, `map`, and `filter` work directly on the cluster's data points.
+
 ### Predicting new points
 
 The `predict(_:)` method assigns new data points to the nearest centroid without retraining:
@@ -132,9 +150,8 @@ let scaled = scaler.transform(data)
 let model = KMeans.fit(data: scaled, k: 3, seed: 42)
 
 // Inspect cluster sizes
-for cluster in 0..<3 {
-    let count = model.labels.filter { $0 == cluster }.count
-    print("Cluster \(cluster): \(count) customers")
+for cluster in model.clusters(from: scaled) {
+    print("Center: \(cluster.centroid), customers: \(cluster.count)")
 }
 ```
 
@@ -153,6 +170,7 @@ let customers = Panel([
 let features = customers.toMatrix(columns: ["spending", "income"])
 let scaler = FeatureScaler.fit(features: features)
 let model = KMeans.fit(data: scaler.transform(features), k: 3, seed: 42)
+
 print(model.labels)
 ```
 
@@ -172,6 +190,7 @@ K-Means struggles with non-spherical cluster shapes (elongated, curved, or neste
 
 ### Model
 - ``KMeans``
+- ``Cluster``
 
 ### Training
 - ``KMeans/fit(data:k:maxIterations:seed:)``
@@ -179,6 +198,7 @@ K-Means struggles with non-spherical cluster shapes (elongated, curved, or neste
 
 ### Prediction
 - ``KMeans/predict(_:)``
+- ``KMeans/clusters(from:)``
 
 ### Related
 - <doc:Machine-Learning-Primer>

@@ -172,16 +172,6 @@ Vector operations in Quiver are based on well-established mathematical principle
 
 > Note: Quiver follows standard mathematical conventions for vector operations, making it easier to translate mathematical formulas directly into code.
 
-### Implementation details
-
-Vector operations in Quiver are implemented as extensions to the `Array` type with appropriate type constraints:
-
-- Basic properties like `magnitude` and `normalized` are available when elements conform to `FloatingPoint`
-- Dot product is available when elements conform to `Numeric`
-- Angle calculations use the mathematical relationship between dot product and vector magnitudes
-
-This approach means these operations work directly on standard Swift arrays without conversion to special types.
-
 ## Topics
 
 ### Vector properties

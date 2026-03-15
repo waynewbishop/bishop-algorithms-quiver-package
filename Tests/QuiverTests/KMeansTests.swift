@@ -132,6 +132,37 @@ final class KMeansTests: XCTestCase {
         XCTAssertGreaterThan(inertias[0] - inertias[1], inertias[1] - inertias[2])
     }
 
+    // Clusters method groups data by label and provides Sequence conformance
+    func testClustersFromData() {
+        let data: [[Double]] = [
+            [0.0, 0.0], [1.0, 0.0], [0.0, 1.0],
+            [10.0, 10.0], [11.0, 10.0], [10.0, 11.0]
+        ]
+
+        let model = KMeans.fit(data: data, k: 2, seed: 42)
+        let clusters = model.clusters(from: data)
+
+        // One cluster per centroid
+        XCTAssertEqual(clusters.count, 2)
+
+        // Total points across all clusters equals input count
+        let totalPoints = clusters.reduce(0) { $0 + $1.count }
+        XCTAssertEqual(totalPoints, data.count)
+
+        // Each cluster should have 3 points
+        let sortedClusters = clusters.sorted { $0.centroid[0] < $1.centroid[0] }
+        XCTAssertEqual(sortedClusters[0].count, 3)
+        XCTAssertEqual(sortedClusters[1].count, 3)
+
+        // Sequence conformance — can iterate over points
+        var iteratedCount = 0
+        for point in sortedClusters[0] {
+            XCTAssertEqual(point.count, 2)
+            iteratedCount += 1
+        }
+        XCTAssertEqual(iteratedCount, 3)
+    }
+
     // Single cluster should assign all points the same label
     func testSingleCluster() {
         let data: [[Double]] = [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]

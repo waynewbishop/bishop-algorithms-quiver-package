@@ -169,7 +169,7 @@ This only works when the determinant is non-zero. A zero determinant means the e
 
 ### Condition number
 
-A matrix can have a non-zero determinant and still produce unreliable results when inverted. The **condition number** quantifies this risk by measuring how sensitive the result is to small changes in the input.
+A matrix can have a non-zero determinant and still produce unreliable results when inverted. The **condition number** quantifies this risk by measuring how sensitive the result is to small changes in the input. Think of it like a lever — a well-conditioned matrix amplifies small input changes only slightly, while an ill-conditioned matrix amplifies them enormously.
 
 ```swift
 let identity = [[1.0, 0.0],
@@ -201,7 +201,7 @@ let singular = [[1.0, 2.0],
 singular.conditionNumber  // .infinity
 ```
 
-Quiver computes the condition number using the **1-norm** (maximum absolute column sum).
+Quiver computes the condition number by comparing the largest absolute column sum of the matrix with that of its inverse.
 
 #### When to check the condition number
 
@@ -304,7 +304,7 @@ let ld = matrix.logDeterminant
 let inverse = try matrix.inverted()
 ```
 
-For matrices that fail these diagnostics, we know to handle the situation gracefully — whether that means applying regularization, using a pseudoinverse, or simply reporting that the computation cannot be performed reliably.
+For matrices that fail these diagnostics, we know to handle the situation gracefully — whether that means adjusting the data to make the matrix better behaved, removing redundant features, or simply reporting that the computation cannot be performed reliably.
 
 ### See also
 

@@ -55,7 +55,7 @@ final class ArrayGenerationTests: XCTestCase {
     }
     
     func testLinspace() {
-        let result = [Double].linspace(0, 10, num: 5)
+        let result = [Double].linspace(start: 0, end: 10, count: 5)
         XCTAssertEqual(result, [0.0, 2.5, 5.0, 7.5, 10.0])
     }
     

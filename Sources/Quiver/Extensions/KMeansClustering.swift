@@ -13,6 +13,39 @@
 
 import Foundation
 
+// MARK: - Cluster
+
+/// A single cluster from a K-Means model, containing a centroid and its assigned data points.
+///
+/// Each cluster holds the centroid position and the data points assigned to it.
+/// Conforms to `Sequence` so you can iterate directly over the points:
+///
+/// ```swift
+/// let clusters = model.clusters(from: data)
+/// for cluster in clusters {
+///     print("Center: \(cluster.centroid), size: \(cluster.count)")
+///     for point in cluster {
+///         print(point)
+///     }
+/// }
+/// ```
+public struct Cluster: Sequence {
+
+    /// The centroid position for this cluster.
+    public let centroid: [Double]
+
+    /// The data points assigned to this cluster.
+    public let points: [[Double]]
+
+    /// The number of data points in this cluster.
+    public var count: Int { points.count }
+
+    /// Returns an iterator over the data points in this cluster.
+    public func makeIterator() -> IndexingIterator<[[Double]]> {
+        return points.makeIterator()
+    }
+}
+
 // MARK: - K-Means Clustering
 
 /// A trained K-Means clustering model.
@@ -177,6 +210,33 @@ public struct KMeans {
         return kRange.map { k in
             fit(data: data, k: k, maxIterations: maxIterations, seed: seed).inertia
         }
+    }
+
+    /// Groups the original training data into clusters with their centroids.
+    ///
+    /// This method pairs each centroid with the data points assigned to it,
+    /// returning an array of ``Cluster`` values that conform to `Sequence`.
+    /// Each cluster can be iterated directly to access its points.
+    ///
+    /// ```swift
+    /// let model = KMeans.fit(data: data, k: 3, seed: 42)
+    /// let clusters = model.clusters(from: data)
+    ///
+    /// for cluster in clusters {
+    ///     print("Center: \(cluster.centroid), size: \(cluster.count)")
+    /// }
+    /// ```
+    ///
+    /// - Parameter data: The same data used for fitting (or any data with matching feature count).
+    /// - Returns: An array of ``Cluster`` values, one per centroid, in centroid order.
+    public func clusters(from data: [[Double]]) -> [Cluster] {
+        let k = centroids.count
+        var grouped = [[[Double]]](repeating: [], count: k)
+        let assignedLabels = predict(data)
+        for i in 0..<data.count {
+            grouped[assignedLabels[i]].append(data[i])
+        }
+        return (0..<k).map { Cluster(centroid: centroids[$0], points: grouped[$0]) }
     }
 
     /// Assigns cluster labels to new data points based on the trained centroids.

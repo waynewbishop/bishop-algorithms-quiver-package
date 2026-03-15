@@ -18,7 +18,7 @@ import Foundation
 /// A trained ordinary least squares regression model.
 ///
 /// Linear regression finds the best-fit line (or hyperplane) through training data
-/// by minimizing the sum of squared residuals. This implementation uses the normal
+/// by minimizing prediction error. This implementation uses the normal
 /// equation θ = (X'X)⁻¹X'y, which gives an exact closed-form solution without
 /// iterative optimization.
 ///

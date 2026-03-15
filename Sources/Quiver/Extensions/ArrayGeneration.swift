@@ -201,11 +201,11 @@ public extension Array where Element: FloatingPoint {
     ///
     /// - Parameters:
     ///   - start: The starting value of the sequence
-    ///   - stop: The ending value of the sequence (included)
-    ///   - num: The number of evenly spaced values to generate
-    /// - Returns: An array of `num` evenly spaced values from start to stop (inclusive)
-    static func linspace(_ start: Element, _ stop: Element, num: Int) -> [Element] {
-        return _Vector<Element>.linspace(start, stop, num: num).elements
+    ///   - end: The ending value of the sequence (included)
+    ///   - count: The number of evenly spaced values to generate
+    /// - Returns: An array of `count` evenly spaced values from start to end (inclusive)
+    static func linspace(start: Element, end: Element, count: Int) -> [Element] {
+        return _Vector<Element>.linspace(start: start, end: end, count: count).elements
     }
     
     /// Creates a sequence of evenly spaced values within a half-open interval.

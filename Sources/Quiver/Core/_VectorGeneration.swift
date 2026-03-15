@@ -96,20 +96,20 @@ extension _Vector where Element: Numeric {
 
 extension _Vector where Element: FloatingPoint {
     /// Creates evenly spaced numbers over a specified interval
-    static func linspace(_ start: Element, _ stop: Element, num: Int) -> _Vector<Element> {
-        precondition(num > 0, "Number of samples must be positive")
-        
-        if num == 1 {
+    static func linspace(start: Element, end: Element, count: Int) -> _Vector<Element> {
+        precondition(count > 0, "Number of samples must be positive")
+
+        if count == 1 {
             return _Vector(elements: [start])
         }
-        
+
         var result = [Element]()
-        let step = (stop - start) / Element(num - 1)
-        
-        for i in 0..<num {
+        let step = (end - start) / Element(count - 1)
+
+        for i in 0..<count {
             result.append(start + step * Element(i))
         }
-        
+
         return _Vector(elements: result)
     }
     

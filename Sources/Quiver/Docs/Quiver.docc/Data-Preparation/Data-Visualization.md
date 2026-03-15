@@ -195,13 +195,14 @@ let yValues = model.predict(xValues)
 
 The scatter shows the raw data, and the line shows what the model learned. The gap between points and line is the residual error — visible at a glance.
 
-**SoftMax probability distribution.** The `softMax` function converts raw scores into a probability distribution that sums to 1.0. This maps naturally to a `BarMark` showing confidence per class:
+**SoftMax probability distribution.** The `softMax` function converts raw model scores into a probability distribution that sums to 1.0. This maps naturally to a `BarMark` showing confidence per class:
 
 ```swift
 import Quiver
 
-let logits = [2.1, 0.8, -0.3, 1.5]
-let probs = logits.softMax()
+// Raw model scores (logits) — higher means more confident
+let scores = [2.1, 0.8, -0.3, 1.5]
+let probs = scores.softMax()
 // [0.48, 0.13, 0.04, 0.26]
 
 let classNames = ["cat", "dog", "bird", "fish"]

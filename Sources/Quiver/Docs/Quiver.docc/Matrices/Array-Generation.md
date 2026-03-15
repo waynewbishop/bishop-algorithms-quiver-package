@@ -27,7 +27,7 @@ Generate arrays with evenly spaced values:
 
 ```swift
 // Create evenly spaced values
-let linear = [Double].linspace(0, 10, num: 5)  // [0.0, 2.5, 5.0, 7.5, 10.0]
+let linear = [Double].linspace(start: 0, end: 10, count: 5)  // [0.0, 2.5, 5.0, 7.5, 10.0]
 
 // Create sequences with specific step sizes
 let range = [Double].arange(0, 10, step: 2.5)  // [0.0, 2.5, 5.0, 7.5]
@@ -91,7 +91,7 @@ let factors = [Double].ones(n)
 import Foundation
 
 // Generate x-coordinates for plotting
-let x = [Double].linspace(0, 2 * Double.pi, num: 100)
+let x = [Double].linspace(start: 0, end: 2 * Double.pi, count: 100)
 
 // Generate y-coordinates (sine wave)
 let y = x.map { sin($0) }
@@ -121,7 +121,7 @@ The array generation functions in Quiver are implemented as static methods on Ar
 - ``Swift/Array/full(_:value:)``
 
 ### Sequence generation
-- ``Swift/Array/linspace(_:_:num:)``
+- ``Swift/Array/linspace(start:end:count:)``
 - ``Swift/Array/arange(_:_:step:)-8fjm5``
 
 ### Matrix creation

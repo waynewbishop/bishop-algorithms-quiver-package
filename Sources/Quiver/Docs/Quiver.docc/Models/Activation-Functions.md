@@ -57,6 +57,12 @@ let categoryScores = [2.0, 1.0, 0.1].softMax()  // [0.659, 0.242, 0.099]
 
 A useful mathematical property: σ(x) + σ(−x) = 1.0. This symmetry means the sigmoid of a positive score and the sigmoid of its negation always sum to 1, which is why a single sigmoid output captures both P(positive) and P(negative) without needing two outputs.
 
+### Where activation functions fit
+
+Quiver's built-in models handle probability conversion internally, so calling `softMax()` or `sigmoid()` on their output is not necessary. These functions are most useful when working with external model output — many models return raw logits, and converting them with `softMax()` or `sigmoid()` produces human-readable probabilities that pair naturally with Quiver's visualization tools.
+
+Activation functions also work well for custom scoring systems. Any time we have raw numerical scores — user ratings, feature importance weights, similarity rankings — these functions convert them into a normalized probability scale for comparison and visualization.
+
 ## Topics
 
 ### Functions
