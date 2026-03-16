@@ -85,7 +85,7 @@ let dependent = [
 dependent.determinant  // 0.0
 ```
 
-The third equation adds no new information. We have three unknowns but only two independent equations, not enough to find a unique solution.
+The third equation adds no new information. We have three unknowns but only two independent equations. That is not enough to find a unique solution.
 
 > Important: Calling `.inverted()` on a singular matrix throws a `MatrixError.singular` error. Handle this with `do-catch`, `try?`, or check the determinant first:
 
@@ -124,7 +124,7 @@ let identity = A.multiplyMatrix(inv)
 //  [0.0, 1.0]]
 ```
 
-The product A × A⁻¹ always equals the identity matrix, the transformation that leaves everything unchanged. The determinant connects directly to inversion: the determinant of the inverse equals the reciprocal of the original determinant:
+The product A × A⁻¹ always equals the identity matrix, which is the transformation that leaves everything unchanged. The determinant connects directly to inversion: the determinant of the inverse equals the reciprocal of the original determinant:
 
 ```swift
 A.determinant                  // 13.0
@@ -149,7 +149,7 @@ inverse.asFractions()
 A.determinant.asFraction()  // 13
 ```
 
-Every element shares the determinant as its denominator, a pattern hidden by decimal representation. The `Fraction` type is presentation-only; all operations continue to use standard `Double` values internally. Use `asFractions()` on any `[Double]` or `[[Double]]` result, or `asFraction()` on a single `Double`.
+Every element shares the determinant as its denominator. This pattern is hidden by decimal representation. The `Fraction` type is presentation-only; all operations continue to use standard `Double` values internally. Use `asFractions()` on any `[Double]` or `[[Double]]` result, or `asFraction()` on a single `Double`.
 
 ### Solving linear systems
 

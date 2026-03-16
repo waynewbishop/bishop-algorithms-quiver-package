@@ -18,7 +18,7 @@ Nearest Neighbors relies on the same `distance(to:)` operation used throughout Q
 
 ### Fitting a model
 
-The `fit(features:labels:k:metric:weight:)` static method stores the training data and returns a ready-to-use model. Because Nearest Neighbors is a lazy learner, fitting is instantaneous, because no computation happens until prediction:
+The `fit(features:labels:k:metric:weight:)` static method stores the training data and returns a ready-to-use model. Because Nearest Neighbors is a lazy learner, fitting is instantaneous. No computation happens until prediction:
 
 ```swift
 import Quiver
