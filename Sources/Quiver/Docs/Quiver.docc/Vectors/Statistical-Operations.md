@@ -53,18 +53,13 @@ let data = [4.0, 7.0, 2.0, 9.0, 3.0]
 // Calculate the sum of all elements
 let total = data.sum()  // 25.0
 
-// Find the minimum and maximum values
-if let smallest = data.min(), let largest = data.max() {
-    print(smallest, largest)  // 2.0, 9.0
-}
-
 // Find the indices of minimum and maximum values
 if let minIndex = data.argMin(), let maxIndex = data.argMax() {
     print(minIndex, maxIndex)  // 2, 3
 }
 ```
 
-> Tip: Use `argMin()` and `argMax()` to find not just the extreme values but also where they occur in the data.
+> Tip: Use `argMin()` and `argMax()` to find not just the extreme values but also where they occur in the data. For the values themselves, use Swift's built-in `min()` and `max()` methods.
 
 ### Central tendency
 
@@ -169,8 +164,6 @@ if let documentVector = wordEmbeddings.meanVector() {
 ### Basic aggregations
 - ``Swift/Array/sum()``
 - ``Swift/Array/product()``
-- ``Swift/Array/min()``
-- ``Swift/Array/max()``
 - ``Swift/Array/argMin()``
 - ``Swift/Array/argMax()``
 

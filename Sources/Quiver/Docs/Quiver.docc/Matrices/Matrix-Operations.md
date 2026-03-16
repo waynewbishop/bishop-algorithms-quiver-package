@@ -42,13 +42,13 @@ let m1 = [[1.0, 2.0], [3.0, 4.0]]
 let m2 = [[5.0, 6.0], [7.0, 8.0]]
 
 // Perform element-wise arithmetic on two matrices
-let sum = m1 + m2         // [[6.0, 8.0], [10.0, 12.0]]
-let difference = m1 - m2  // [[-4.0, -4.0], [-4.0, -4.0]]
-let product = m1 * m2     // [[5.0, 12.0], [21.0, 32.0]] (Hadamard)
-let quotient = m1 / m2    // [[0.2, 0.33...], [0.42..., 0.5]]
+let sum = m1.add(m2)            // [[6.0, 8.0], [10.0, 12.0]]
+let difference = m1.subtract(m2)  // [[-4.0, -4.0], [-4.0, -4.0]]
+let product = m1.multiply(m2)     // [[5.0, 12.0], [21.0, 32.0]] (Hadamard)
+let quotient = m1.divide(m2)      // [[0.2, 0.33...], [0.42..., 0.5]]
 ```
 
-> Important: The `*` operator performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`. See <doc:Matrix-Transformations> for how matrix-vector multiplication uses the dot product internally.
+> Important: The `multiply(_:)` method performs **element-wise** multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `.multiplyMatrix()`. See <doc:Matrix-Transformations> for how matrix-vector multiplication uses the dot product internally.
 
 ### Scalar broadcasting
 

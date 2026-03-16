@@ -100,46 +100,6 @@ public extension Array where Element: Numeric {
 // MARK: - Operations requiring comparison
 
 public extension Array where Element: Numeric & Comparable {
-    /// Returns the smallest element in the array.
-    ///
-    /// Scans every element and returns the one with the lowest value. Returns `nil`
-    /// for an empty array. Use `argMin()` to find the index of the minimum instead
-    /// of the value itself.
-    ///
-    /// Example:
-    /// ```swift
-    /// import Quiver
-    ///
-    /// let temperatures = [72.0, 68.0, 73.0, 65.0, 75.0]
-    /// let coldest = temperatures.min()  // 65.0
-    /// ```
-    ///
-    /// - Returns: The minimum element, or nil if the array is empty
-    func min() -> Element? {
-        let vector = _Vector(elements: self)
-        return vector.minWithIndex()?.value
-    }
-    
-    /// Returns the largest element in the array.
-    ///
-    /// Scans every element and returns the one with the highest value. Returns `nil`
-    /// for an empty array. Use `argMax()` to find the index of the maximum instead
-    /// of the value itself.
-    ///
-    /// Example:
-    /// ```swift
-    /// import Quiver
-    ///
-    /// let temperatures = [72.0, 68.0, 73.0, 65.0, 75.0]
-    /// let hottest = temperatures.max()  // 75.0
-    /// ```
-    ///
-    /// - Returns: The maximum element, or nil if the array is empty
-    func max() -> Element? {
-        let vector = _Vector(elements: self)
-        return vector.maxWithIndex()?.value
-    }
-    
     /// Returns the index of the smallest element in the array.
     ///
     /// Finds the position of the minimum value rather than the value itself. This is

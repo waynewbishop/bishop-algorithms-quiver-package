@@ -21,37 +21,33 @@ public extension Array where Element: Numeric {
     /// ```swift
     /// let velocity = [3.0, 0.0]
     /// let current = [0.0, 2.0]
-    /// velocity + current  // [3.0, 2.0]
+    /// velocity.add(current)  // [3.0, 2.0]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The first vector
-    ///   - rhs: The second vector (must have the same length as `lhs`)
+    /// - Parameter other: The second vector (must have the same length as `self`)
     /// - Returns: A new array where each element is the sum of corresponding elements
-    static func + (lhs: [Element], rhs: [Element]) -> [Element] {
-        let v1 = _Vector(elements: lhs)
-        let v2 = _Vector(elements: rhs)
+    func add(_ other: [Element]) -> [Element] {
+        let v1 = _Vector(elements: self)
+        let v2 = _Vector(elements: other)
         return _Vector.add(v1, v2).elements
     }
 
     /// Element-wise subtraction of two vectors.
     ///
     /// Subtraction produces the displacement between two points. The ``Swift/Array/distance(to:)``
-    /// method uses this internally: `(self - other).magnitude`.
+    /// method uses this internally: `self.subtract(other).magnitude`.
     ///
     /// ```swift
     /// let player = [100.0, 200.0]
     /// let enemy = [130.0, 170.0]
-    /// player - enemy  // [-30.0, 30.0]
+    /// player.subtract(enemy)  // [-30.0, 30.0]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The first vector
-    ///   - rhs: The second vector (must have the same length as `lhs`)
+    /// - Parameter other: The second vector (must have the same length as `self`)
     /// - Returns: A new array where each element is the difference of corresponding elements
-    static func - (lhs: [Element], rhs: [Element]) -> [Element] {
-        let v1 = _Vector(elements: lhs)
-        let v2 = _Vector(elements: rhs)
+    func subtract(_ other: [Element]) -> [Element] {
+        let v1 = _Vector(elements: self)
+        let v2 = _Vector(elements: other)
         return _Vector.subtract(v1, v2).elements
     }
 
@@ -63,16 +59,14 @@ public extension Array where Element: Numeric {
     /// ```swift
     /// let features = [2.0, 5.0, 3.0]
     /// let weights = [0.5, 0.3, 0.2]
-    /// features * weights  // [1.0, 1.5, 0.6]
+    /// features.multiply(weights)  // [1.0, 1.5, 0.6]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The first vector
-    ///   - rhs: The second vector (must have the same length as `lhs`)
+    /// - Parameter other: The second vector (must have the same length as `self`)
     /// - Returns: A new array where each element is the product of corresponding elements
-    static func * (lhs: [Element], rhs: [Element]) -> [Element] {
-        let v1 = _Vector(elements: lhs)
-        let v2 = _Vector(elements: rhs)
+    func multiply(_ other: [Element]) -> [Element] {
+        let v1 = _Vector(elements: self)
+        let v2 = _Vector(elements: other)
         return _Vector.multiply(v1, v2).elements
     }
 }
@@ -84,16 +78,14 @@ public extension Array where Element: FloatingPoint {
     /// ```swift
     /// let values = [10.0, 20.0, 30.0]
     /// let scales = [2.0, 5.0, 10.0]
-    /// values / scales  // [5.0, 4.0, 3.0]
+    /// values.divide(scales)  // [5.0, 4.0, 3.0]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The dividend vector
-    ///   - rhs: The divisor vector (must have the same length as `lhs`, no element may be zero)
+    /// - Parameter other: The divisor vector (must have the same length as `self`, no element may be zero)
     /// - Returns: A new array where each element is the quotient of corresponding elements
-    static func / (lhs: [Element], rhs: [Element]) -> [Element] {
-        let v1 = _Vector(elements: lhs)
-        let v2 = _Vector(elements: rhs)
+    func divide(_ other: [Element]) -> [Element] {
+        let v1 = _Vector(elements: self)
+        let v2 = _Vector(elements: other)
         return _Vector<Element>.divide(v1, v2).elements
     }
 }
@@ -106,19 +98,17 @@ public extension Array where Element == [Double] {
     /// ```swift
     /// let m1 = [[1.0, 2.0], [3.0, 4.0]]
     /// let m2 = [[5.0, 6.0], [7.0, 8.0]]
-    /// m1 + m2  // [[6.0, 8.0], [10.0, 12.0]]
+    /// m1.add(m2)  // [[6.0, 8.0], [10.0, 12.0]]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the sum of corresponding elements
-    static func + (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot add empty matrices")
+    func add(_ other: [[Double]]) -> [[Double]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot add empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 + row2  // Uses vector addition
+        return zip(self, other).map { row1, row2 in
+            row1.add(row2)
         }
     }
 
@@ -127,19 +117,17 @@ public extension Array where Element == [Double] {
     /// ```swift
     /// let actual = [[90.0, 85.0], [78.0, 92.0]]
     /// let predicted = [[88.0, 87.0], [80.0, 90.0]]
-    /// actual - predicted  // [[2.0, -2.0], [-2.0, 2.0]]
+    /// actual.subtract(predicted)  // [[2.0, -2.0], [-2.0, 2.0]]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the difference of corresponding elements
-    static func - (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot subtract empty matrices")
+    func subtract(_ other: [[Double]]) -> [[Double]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot subtract empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 - row2  // Uses vector subtraction
+        return zip(self, other).map { row1, row2 in
+            row1.subtract(row2)
         }
     }
 
@@ -148,19 +136,17 @@ public extension Array where Element == [Double] {
     /// ```swift
     /// let data = [[1.0, 2.0], [3.0, 4.0]]
     /// let mask = [[1.0, 0.0], [0.0, 1.0]]
-    /// data * mask  // [[1.0, 0.0], [0.0, 4.0]]
+    /// data.multiply(mask)  // [[1.0, 0.0], [0.0, 4.0]]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the product of corresponding elements
-    static func * (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot multiply empty matrices")
+    func multiply(_ other: [[Double]]) -> [[Double]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot multiply empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 * row2  // Uses vector multiplication
+        return zip(self, other).map { row1, row2 in
+            row1.multiply(row2)
         }
     }
 
@@ -169,19 +155,17 @@ public extension Array where Element == [Double] {
     /// ```swift
     /// let totals = [[100.0, 200.0], [300.0, 400.0]]
     /// let counts = [[4.0, 5.0], [6.0, 8.0]]
-    /// totals / counts  // [[25.0, 40.0], [50.0, 50.0]]
+    /// totals.divide(counts)  // [[25.0, 40.0], [50.0, 50.0]]
     /// ```
     ///
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the quotient of corresponding elements
-    static func / (lhs: [[Double]], rhs: [[Double]]) -> [[Double]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot divide empty matrices")
+    func divide(_ other: [[Double]]) -> [[Double]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot divide empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 / row2  // Uses vector division
+        return zip(self, other).map { row1, row2 in
+            row1.divide(row2)
         }
     }
 }
@@ -190,58 +174,50 @@ public extension Array where Element == [Double] {
 
 public extension Array where Element == [Float] {
     /// Element-wise addition of two matrices
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the sum of corresponding elements
-    static func + (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot add empty matrices")
+    func add(_ other: [[Float]]) -> [[Float]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot add empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 + row2  // Uses vector addition
+        return zip(self, other).map { row1, row2 in
+            row1.add(row2)
         }
     }
 
     /// Element-wise subtraction of two matrices
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the difference of corresponding elements
-    static func - (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot subtract empty matrices")
+    func subtract(_ other: [[Float]]) -> [[Float]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot subtract empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 - row2  // Uses vector subtraction
+        return zip(self, other).map { row1, row2 in
+            row1.subtract(row2)
         }
     }
 
     /// Element-wise multiplication of two matrices (Hadamard product)
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the product of corresponding elements
-    static func * (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot multiply empty matrices")
+    func multiply(_ other: [[Float]]) -> [[Float]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot multiply empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 * row2  // Uses vector multiplication
+        return zip(self, other).map { row1, row2 in
+            row1.multiply(row2)
         }
     }
 
     /// Element-wise division of two matrices
-    /// - Parameters:
-    ///   - lhs: The first matrix
-    ///   - rhs: The second matrix
+    /// - Parameter other: The second matrix
     /// - Returns: A new matrix where each element is the quotient of corresponding elements
-    static func / (lhs: [[Float]], rhs: [[Float]]) -> [[Float]] {
-        precondition(lhs.count == rhs.count, "Matrices must have same number of rows")
-        precondition(!lhs.isEmpty, "Cannot divide empty matrices")
+    func divide(_ other: [[Float]]) -> [[Float]] {
+        precondition(self.count == other.count, "Matrices must have same number of rows")
+        precondition(!self.isEmpty, "Cannot divide empty matrices")
 
-        return zip(lhs, rhs).map { row1, row2 in
-            row1 / row2  // Uses vector division
+        return zip(self, other).map { row1, row2 in
+            row1.divide(row2)
         }
     }
 }

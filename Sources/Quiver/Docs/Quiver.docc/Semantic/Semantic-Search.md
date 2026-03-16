@@ -47,7 +47,7 @@ let woman  = [0.2, 0.8, 0.2, 0.6]   // Female concept
 let queen  = [0.3, 0.9, 0.8, 0.7]   // Female royalty
 
 // Vector arithmetic: king - man + woman ≈ queen
-let result = (king - man) + woman
+let result = king.subtract(man).add(woman)
 // result = [0.3, 0.9, 0.8, 0.7]
 
 // Confirm the result vector aligns with the expected word
@@ -55,9 +55,9 @@ result.cosineOfAngle(with: queen)  // ~1.0
 result.cosineOfAngle(with: king)   // ~0.79
 ```
 
-The subtraction `king - man` isolates the "royalty" component by removing the "male" direction. Adding `woman` reintroduces a gender direction, landing at "female royalty." This works because word vectors encode semantic properties as geometric directions — the same directions our similarity operations measure.
+The subtraction `king.subtract(man)` isolates the "royalty" component by removing the "male" direction. Adding `woman` reintroduces a gender direction, landing at "female royalty." This works because word vectors encode semantic properties as geometric directions — the same directions our similarity operations measure.
 
-> Tip: The element-wise arithmetic used here (`king - man + woman`) relies on Quiver's vector operators. See <doc:Vector-Operations> for the full set of vector operations available on arrays.
+> Tip: The element-wise arithmetic used here (`king.subtract(man).add(woman)`) relies on Quiver's vector methods. See <doc:Vector-Operations> for the full set of vector operations available on arrays.
 
 ## Tokenizing text
 

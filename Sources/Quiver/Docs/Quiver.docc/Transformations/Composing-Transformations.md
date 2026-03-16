@@ -142,13 +142,13 @@ let rotate90 = [
 ]
 
 // 1. Shift to origin, 2. Rotate, 3. Shift back
-let rotated = (vector - pivot)
+let rotated = vector.subtract(pivot)
     .transformedBy(rotate90)
-    + pivot
-// (vector - pivot) = [1, 0]
+    .add(pivot)
+// vector.subtract(pivot) = [1, 0]
 // Row 1: [0, -1] • [1, 0] = (0×1 + (-1)×0) = 0
 // Row 2: [1,  0] • [1, 0] = (1×1 +   0×0)  = 1
-// Rotated: [0, 1] + [5, 5] = [5.0, 6.0]
+// Rotated: [0, 1].add([5, 5]) = [5.0, 6.0]
 ```
 
 ### Multiple rotations

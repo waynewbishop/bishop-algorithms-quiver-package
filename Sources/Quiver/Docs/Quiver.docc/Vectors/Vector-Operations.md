@@ -71,7 +71,7 @@ This distinction matters throughout Quiver. Cosine similarity divides by both ma
 
 ### Vector arithmetic
 
-Quiver overloads `+`, `-`, `*`, and `/` to work element-wise on arrays. These operators are the foundation that higher-level vector operations build on:
+Quiver provides `add`, `subtract`, `multiply`, and `divide` methods for element-wise array arithmetic. These methods are the foundation that higher-level vector operations build on:
 
 ```swift
 import Quiver
@@ -80,20 +80,20 @@ let a = [1.0, 2.0, 3.0]
 let b = [4.0, 5.0, 6.0]
 
 // Element-wise operations
-let sum = a + b         // [5.0, 7.0, 9.0]
-let difference = a - b  // [-3.0, -3.0, -3.0]
-let product = a * b     // [4.0, 10.0, 18.0]
-let quotient = a / b    // [0.25, 0.4, 0.5]
+let sum = a.add(b)            // [5.0, 7.0, 9.0]
+let difference = a.subtract(b)  // [-3.0, -3.0, -3.0]
+let product = a.multiply(b)     // [4.0, 10.0, 18.0]
+let quotient = a.divide(b)      // [0.25, 0.4, 0.5]
 ```
 
-These operators appear throughout Quiver's ML pipeline. `distance(to:)` is implemented as `(self - other).magnitude` — it subtracts two vectors element-wise, then computes the `magnitude` of the difference. Every time `KNearestNeighbors` finds the closest training example or `KMeans` assigns a point to a cluster, it relies on this subtraction:
+These methods appear throughout Quiver's ML pipeline. `distance(to:)` is implemented as `self.subtract(other).magnitude` — it subtracts two vectors element-wise, then computes the `magnitude` of the difference. Every time `KNearestNeighbors` finds the closest training example or `KMeans` assigns a point to a cluster, it relies on this subtraction:
 
 ```swift
 let sample = [5.2, 3.1]
 let trainingPoint = [4.8, 3.5]
 
 // distance(to:) subtracts, then takes magnitude
-let diff = sample - trainingPoint       // [0.4, -0.4]
+let diff = sample.subtract(trainingPoint)  // [0.4, -0.4]
 diff.magnitude                          // √(0.16 + 0.16) ≈ 0.566
 sample.distance(to: trainingPoint)      // 0.566 (same result)
 ```
@@ -117,9 +117,9 @@ if let documentVector = wordVectors.averaged() {
 
 > Tip: For a complete walkthrough of the embedding-to-search pipeline, see <doc:Semantic-Search>.
 
-Subtraction also gives displacement — the vector from one point to another. A player at `[100, 200]` and an enemy at `[130, 170]` have displacement `[100, 200] - [130, 170] = [-30, 30]`. The `magnitude` of that displacement is the distance between them. Addition combines forces or velocities — a boat moving at `[3, 0]` in a current of `[0, 2]` has actual velocity `[3, 0] + [0, 2] = [3, 2]`.
+Subtraction also gives displacement — the vector from one point to another. A player at `[100, 200]` and an enemy at `[130, 170]` have displacement `[100, 200].subtract([130, 170])` = `[-30, 30]`. The `magnitude` of that displacement is the distance between them. Addition combines forces or velocities — a boat moving at `[3, 0]` in a current of `[0, 2]` has actual velocity `[3, 0].add([0, 2])` = `[3, 2]`.
 
-> Important: The `*` operator performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `multiplyMatrix()`.
+> Important: The `multiply(_:)` method performs element-wise multiplication (Hadamard product), not matrix multiplication. For matrix multiplication, use `multiplyMatrix()`.
 
 ### Matrix-vector operations
 

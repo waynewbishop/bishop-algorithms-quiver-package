@@ -37,7 +37,7 @@ import Foundation
 ///
 /// let model = try LinearRegression.fit(features: features, targets: targets)
 /// let predictions = model.predict([[6.0], [7.0]])
-/// // predictions ≈ [11.8, 13.7]
+/// // predictions ≈ [11.8, 13.8]
 /// ```
 public struct LinearRegression {
 

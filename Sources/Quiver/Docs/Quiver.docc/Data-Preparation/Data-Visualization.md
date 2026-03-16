@@ -6,8 +6,6 @@ Prepare, scale, and reshape data for Swift Charts and other visualization framew
 
 Quiver provides a set of functions that bridge numerical data and chart-ready output. These operations handle the data preparation step — scaling values to a target range, computing frequency distributions, stacking series for area charts, and downsampling large datasets for responsive rendering. Each function returns structured output that maps directly to Swift Charts mark types.
 
-> Tip: Quiver handles the data preparation — scaling, correlation, downsampling — and produces arrays ready for Swift Charts or any visualization framework. See <doc:Usage> for how to get started with the `#Playground` macro.
-
 ### Scaling and normalization
 
 Raw data often needs scaling before visualization. Quiver offers three approaches depending on the use case:
@@ -188,7 +186,7 @@ import Quiver
 let model = try LinearRegression.fit(features: trainX, targets: trainY)
 
 // Generate prediction line across the feature range
-let xValues = Array.linspace(start: 0.0, end: 10.0, count: 50)
+let xValues = [Double].linspace(start: 0.0, end: 10.0, count: 50)
 let yValues = model.predict(xValues)
 
 // trainX/trainY — scatter points

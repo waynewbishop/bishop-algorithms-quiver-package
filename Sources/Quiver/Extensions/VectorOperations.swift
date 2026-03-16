@@ -724,7 +724,7 @@ public extension Array where Element: FloatingPoint {
     /// - Parameter other: The vector to measure distance to (must have the same number of elements)
     /// - Returns: The Euclidean distance between the two vectors
     func distance(to other: [Element]) -> Element {
-        return (self - other).magnitude
+        return self.subtract(other).magnitude
     }
         
     /// Returns the cosine of the angle between two vectors.
@@ -824,7 +824,7 @@ public extension Array where Element: FloatingPoint {
     /// - Returns: A new vector perpendicular to the reference vector
     func orthogonalComponent(to vector: [Element]) -> [Element] {
         let projection = self.vectorProjection(onto: vector)
-        return self - projection
+        return self.subtract(projection)
     }
 }
 
@@ -871,7 +871,7 @@ public extension Array where Element == [Double] {
         
         // Sum all vectors element-wise
         for vector in self {
-            sum = sum + vector
+            sum = sum.add(vector)
         }
         
         // Divide by count to get average

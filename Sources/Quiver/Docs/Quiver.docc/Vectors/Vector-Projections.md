@@ -40,7 +40,7 @@ let parallel = force.vectorProjection(onto: ramp)  // [4.0, 2.0]
 let perpendicular = force.orthogonalComponent(to: ramp)  // [-1.0, 2.0]
 
 // The two components reconstruct the original
-let reconstructed = parallel + perpendicular  // [3.0, 4.0]
+let reconstructed = parallel.add(perpendicular)  // [3.0, 4.0]
 ```
 
 The scalar projection is computed as v·u / |u| — the dot product divided by the magnitude of the reference vector. The vector projection scales the reference direction by that amount: proj_u(v) = (v·u / u·u) × u. The orthogonal component is whatever remains: v − proj_u(v).
@@ -87,7 +87,7 @@ let normal = [0.0, 1.0]
 
 // Reflect: reverse the normal component, keep the surface component
 let normalPart = velocity.vectorProjection(onto: normal)
-let reflected = velocity - normalPart * 2  // [3.0, 4.0]
+let reflected = velocity.subtract(normalPart * 2)  // [3.0, 4.0]
 ```
 
 The formula `v − 2 × proj(v onto n)` works for any surface orientation in any number of dimensions. Game engines and ray tracers use this calculation on every frame.
