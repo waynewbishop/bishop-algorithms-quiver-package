@@ -38,7 +38,7 @@ let general = [[3.0, 1.0],
 general.determinant  // 13.0 = (3 × 5) - (1 × 2)
 ```
 
-The sign matters. A negative determinant means the transformation flips orientation, like looking at space in a mirror. A rotation matrix, which preserves both area and orientation, always has a determinant of `1`:
+The sign matters. A negative determinant means the transformation flips orientation — like looking at space in a mirror. A rotation matrix, which preserves both area and orientation, always has a determinant of `1`:
 
 ```swift
 // 90° counterclockwise rotation
@@ -108,7 +108,7 @@ let maybeInverse = try? matrix.inverted()  // nil for singular matrices
 
 #### Why this matters in practice
 
-Singular matrices appear more often than we might expect. In machine learning, a feature matrix becomes singular when one feature is a perfect linear combination of others. In computer graphics, a transformation that projects 3D objects onto a 2D screen is inherently singular. We lose the depth dimension, and that loss is by design.
+Singular matrices appear more often than we might expect. In machine learning, a feature matrix becomes singular when one feature is a perfect linear combination of others. In computer graphics, a transformation that projects 3D objects onto a 2D screen is inherently singular — we lose the depth dimension, and that loss is by design.
 
 ### Matrix inversion
 
@@ -124,7 +124,7 @@ let identity = A.multiplyMatrix(inv)
 //  [0.0, 1.0]]
 ```
 
-The product A × A⁻¹ always equals the identity matrix, which is the transformation that leaves everything unchanged. The determinant connects directly to inversion: the determinant of the inverse equals the reciprocal of the original determinant:
+The product A × A⁻¹ always equals the identity matrix — the transformation that leaves everything unchanged. The determinant connects directly to inversion: the determinant of the inverse equals the reciprocal of the original determinant:
 
 ```swift
 A.determinant                  // 13.0
@@ -135,7 +135,7 @@ This makes geometric sense. If the original transformation scales area by a fact
 
 #### Fractional display
 
-The decimal result `0.0769...` obscures the underlying relationship. The denominator is `13` because the determinant is `13`. The `asFractions()` method reveals this structure:
+The decimal result `0.0769...` obscures the underlying relationship — the denominator is `13` because the determinant is `13`. The `asFractions()` method reveals this structure:
 
 ```swift
 let A = [[3.0, 1.0],
@@ -169,7 +169,7 @@ This only works when the determinant is non-zero. A zero determinant means the e
 
 ### Condition number
 
-A matrix can have a non-zero determinant and still produce unreliable results when inverted. The **condition number** quantifies this risk by measuring how sensitive the result is to small changes in the input. Think of it like a lever. A well-conditioned matrix amplifies small input changes only slightly, while an ill-conditioned matrix amplifies them enormously.
+A matrix can have a non-zero determinant and still produce unreliable results when inverted. The **condition number** quantifies this risk by measuring how sensitive the result is to small changes in the input — think of it like a lever. A well-conditioned matrix amplifies small input changes only slightly, while an ill-conditioned matrix amplifies them enormously.
 
 ```swift
 let identity = [[1.0, 0.0],
@@ -205,7 +205,7 @@ Quiver computes the condition number by comparing the largest absolute column su
 
 #### When to check the condition number
 
-In production code, checking the condition number before inverting a matrix prevents silent numerical failures. A recommendation engine computing user-item similarity matrices, a physics simulation solving force equations, or a calibration system fitting sensor data. All benefit from knowing whether their matrix is safe to invert before trusting the result.
+In production code, checking the condition number before inverting a matrix prevents silent numerical failures. A recommendation engine computing user-item similarity matrices, a physics simulation solving force equations, or a calibration system fitting sensor data — all benefit from knowing whether their matrix is safe to invert before trusting the result.
 
 ```swift
 let matrix = [[4.0, 1.0],

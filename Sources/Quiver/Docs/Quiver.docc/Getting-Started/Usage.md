@@ -64,7 +64,7 @@ import Quiver
 }
 ```
 
-The dot product multiplies corresponding elements and sums the results. It is the foundation of most similarity and projection operations. Cosine similarity normalizes that dot product by both vectors' magnitudes, producing a value between -1 and 1 that measures how closely two vectors point in the same direction, regardless of their length.
+Both blocks compute cosine similarity — one manually, one with a convenience method. The first block shows the underlying math: compute the dot product, divide by both magnitudes. The second block does the same calculation in a single call with `cosineOfAngle(with:)`. The dot product multiplies corresponding elements and sums the results, and normalizing by both magnitudes produces a value between -1 and 1 that measures how closely two vectors point in the same direction, regardless of their length.
 
 Named blocks are useful for comparing related operations side by side or working through a series of exercises in a single file.
 
