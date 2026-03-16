@@ -54,12 +54,14 @@ let data = [4.0, 7.0, 2.0, 9.0, 3.0]
 let total = data.sum()  // 25.0
 
 // Find the minimum and maximum values
-let smallest = data.min()  // 2.0
-let largest = data.max()  // 9.0
+if let smallest = data.min(), let largest = data.max() {
+    print(smallest, largest)  // 2.0, 9.0
+}
 
 // Find the indices of minimum and maximum values
-let minIndex = data.argMin()  // 2
-let maxIndex = data.argMax()  // 3
+if let minIndex = data.argMin(), let maxIndex = data.argMax() {
+    print(minIndex, maxIndex)  // 2, 3
+}
 ```
 
 > Tip: Use `argMin()` and `argMax()` to find not just the extreme values but also where they occur in the data.
@@ -73,8 +75,10 @@ import Quiver
 
 let responseTimes = [12.0, 15.0, 14.0, 13.0, 16.0, 11.0, 450.0]
 
-let mean = responseTimes.mean()      // 75.86 (pulled up by 450)
-let median = responseTimes.median()  // 14.0  (unaffected)
+if let mean = responseTimes.mean(), let median = responseTimes.median() {
+    print(mean)    // 75.86 (pulled up by 450)
+    print(median)  // 14.0  (unaffected)
+}
 
 // The gap between mean and median signals an outlier
 let outliers = responseTimes.outlierMask(threshold: 2.0)
@@ -91,12 +95,16 @@ import Quiver
 let data = [4.0, 7.0, 2.0, 9.0, 3.0]
 
 // Population statistics (default, ddof: 0)
-let variance = data.variance()  // 6.8
-let std = data.std()            // 2.61
+if let variance = data.variance(), let std = data.std() {
+    print(variance)  // 6.8
+    print(std)       // 2.61
+}
 
 // Sample statistics (ddof: 1) for data representing a subset
-let sampleVar = data.variance(ddof: 1)  // 8.5
-let sampleStd = data.std(ddof: 1)       // 2.92
+if let sampleVar = data.variance(ddof: 1), let sampleStd = data.std(ddof: 1) {
+    print(sampleVar)  // 8.5
+    print(sampleStd)  // 2.92
+}
 ```
 
 > Important: The `ddof` parameter (Delta Degrees of Freedom) controls the denominator. Use `ddof: 0` for population statistics when the data is the complete set. Use `ddof: 1` for sample statistics when the data is a subset of all possible observations.
@@ -149,8 +157,9 @@ let wordEmbeddings = [
     [0.2, 0.5, -0.3, 0.8],   // "swift"
     [0.1, 0.6, 0.2, -0.4]    // "algorithms"
 ]
-let documentVector = wordEmbeddings.meanVector()
-// [0.15, 0.55, -0.05, 0.2]
+if let documentVector = wordEmbeddings.meanVector() {
+    print(documentVector)  // [0.15, 0.55, -0.05, 0.2]
+}
 ```
 
 > Tip: The `meanVector()` method is a key step in building semantic search systems — it combines multiple word vectors into a single document vector for similarity comparison. See <doc:Semantic-Search> for a complete walkthrough.

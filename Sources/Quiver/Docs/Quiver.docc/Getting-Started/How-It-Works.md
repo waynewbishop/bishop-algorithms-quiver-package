@@ -114,7 +114,7 @@ The labels `.rows` and `.columns` are built into the return type. We cannot acci
 let scores = [72.0, 85.0, 91.0, 68.0, 95.0, 88.0, 76.0]
 if let q = scores.quartiles() {
     q.median  // 85.0
-    q.iqr     // 19.0
+    q.iqr     // 15.5
 }
 ```
 

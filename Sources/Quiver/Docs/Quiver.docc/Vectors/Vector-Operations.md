@@ -110,8 +110,9 @@ let wordVectors = [
 ]
 
 // Average into a single document vector
-let documentVector = wordVectors.averaged()
-// [0.55, 0.3, 0.25] — represents the full document
+if let documentVector = wordVectors.averaged() {
+    print(documentVector)  // [0.55, 0.3, 0.25] — represents the full document
+}
 ```
 
 > Tip: For a complete walkthrough of the embedding-to-search pipeline, see <doc:Semantic-Search>.

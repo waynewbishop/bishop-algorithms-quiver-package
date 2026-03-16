@@ -123,8 +123,8 @@ let v1 = [3.0, 4.0]
 let v2 = [5.0, 12.0]
 
 v1.cosineOfAngle(with: v2)    // 0.969 (similarity score)
-v1.angle(with: v2)            // 0.253 radians
-v1.angleInDegrees(with: v2)   // 14.5 degrees
+v1.angle(with: v2)            // 0.248 radians
+v1.angleInDegrees(with: v2)   // 14.25 degrees
 ```
 
 In machine learning and information retrieval, the raw cosine value is typically all that's needed — "document A is 0.92 similar to document B." In physics and graphics, the actual angle matters — "rotate 45 degrees" or "the force acts at 30 degrees." See <doc:Vector-Operations> for more on angle calculations and <doc:Vector-Projections> for decomposing vectors into parallel and perpendicular components.
@@ -243,7 +243,7 @@ let documents = [
 let scores = documents.cosineSimilarities(to: query)
 let results = scores.topIndices(k: 2, labels: ["Athletic Footwear", "Cooking Recipes", "Running Shoes"])
 
-// results: [("Running Shoes", 0.99), ("Athletic Footwear", 0.96)]
+// results: [("Running Shoes", 1.0), ("Athletic Footwear", 0.99)]
 ```
 
 The `topIndices(k:labels:)` method pairs each score with its original label, making it straightforward to map similarity results back to content.

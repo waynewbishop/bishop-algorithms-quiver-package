@@ -113,12 +113,16 @@ Generate datasets with known characteristics to verify Quiver's statistics funct
 ```swift
 // Uniform data — mean should be near the midpoint
 let uniform = [Double].random(100, in: 50.0...70.0)
-let avg = uniform.mean()     // Approximately 60.0
-let std = uniform.std()      // Approximately 5.8
+if let avg = uniform.mean(), let std = uniform.std() {
+    print(avg)  // Approximately 60.0
+    print(std)  // Approximately 5.8
+}
 
 // Normal data — verify the distribution matches expectations
 let normal = [Double].randomNormal(1000, mean: 100.0, std: 15.0)
-let median = normal.median()  // Approximately 100.0
+if let median = normal.median() {
+    print(median)  // Approximately 100.0
+}
 ```
 
 ### Similarity with random embeddings

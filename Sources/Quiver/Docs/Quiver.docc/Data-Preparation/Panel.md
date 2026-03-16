@@ -36,8 +36,12 @@ let results = [[8.5, 2.1], [7.2, 2.4], [9.1, 1.9]]
 
 // Wrap it in a Panel to give columns meaningful names
 let athletes = Panel(matrix: results, columns: ["speed", "jumpHeight"])
-athletes["speed"].mean()        // 8.27
-athletes["jumpHeight"].std()    // 0.25
+if let avgSpeed = athletes["speed"].mean() {
+    print(avgSpeed)  // 8.27
+}
+if let stdJump = athletes["jumpHeight"].std() {
+    print(stdJump)  // 0.21
+}
 ```
 
 ### Column access
@@ -53,8 +57,9 @@ let data = Panel([
 ])
 
 // Access by name — returns a [Double] vector
-data["income"].mean()          // 60000.0
-data["age"].std()              // standard deviation
+if let avgIncome = data["income"].mean() {
+    print(avgIncome)  // 60000.0
+}
 data["income"].standardized()  // z-scores
 ```
 
@@ -104,7 +109,9 @@ let data = Panel([
 
 // Vector — single column as [Double] for regression targets or statistics
 let balances = data["balance"]              // [15000.0, 78000.0, 42000.0, 8000.0]
-balances.mean()                             // 35750.0
+if let avgBalance = balances.mean() {
+    print(avgBalance)  // 35750.0
+}
 
 // Integer labels — single column as [Int] for classification labels
 let labels = data.labels("approved")        // [1, 0, 0, 1]

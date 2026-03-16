@@ -53,6 +53,8 @@ When classes are imbalanced, say 95% approved and 5% denied, a random split migh
 ```swift
 import Quiver
 
+let labels = [1, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+
 let (trainX, testX, trainY, testY) = features.stratifiedSplit(
     labels: labels, testRatio: 0.2, seed: 42
 )

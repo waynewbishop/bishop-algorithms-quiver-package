@@ -12,7 +12,7 @@ A playground is a space for exploration. We write an expression, assign it to a 
 
 ### Writing your first playground
 
-Add a new Swift file to any project that already [depends](<doc:Installation>) on Quiver, import `Playgrounds`, and wrap the code in a `#Playground` block:
+Add a new Swift file to any project that already depends on Quiver, import `Playgrounds`, and wrap the code in a `#Playground` block:
 
 ```swift
 import Playgrounds
@@ -50,7 +50,7 @@ import Quiver
 
     // Normalize by both magnitudes to get cosine similarity
     let cosine = dotProduct / (a.magnitude * b.magnitude)
-    print(cosine)  // 0.975
+    print(cosine)  // 0.97
 }
 
 #Playground("Cosine Similarity") {
@@ -112,8 +112,10 @@ import Quiver
     let zScore = raw.standardized()  // [-1.41, -0.71, 0.0, 0.71, 1.41]
 
     // Compare the two approaches side by side
-    let comparison = minMax.mean() - zScore.mean()
-    print(comparison)  // 0.5
+    if let minMaxMean = minMax.mean(), let zScoreMean = zScore.mean() {
+        let comparison = minMaxMean - zScoreMean
+        print(comparison)  // 0.5
+    }
 }
 ```
 
