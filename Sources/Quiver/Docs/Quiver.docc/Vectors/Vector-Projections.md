@@ -4,19 +4,19 @@ Decompose vectors into parallel and perpendicular components.
 
 ## Overview
 
-Every vector can be split into two parts relative to any direction — the part that points along that direction and the part that points away from it. This decomposition is called projection, and it answers one of the most practical questions in applied mathematics: how much of this thing is going in the direction I care about?
+Every vector can be split into two parts relative to any direction: the part that points along that direction and the part that points away from it. This decomposition is called projection, and it answers one of the most practical questions in applied mathematics: how much of this thing is going in the direction I care about?
 
 ### What projection measures
 
 Imagine standing in sunlight. Your shadow on the ground is a projection — it shows how much of your height falls along the ground plane. A tall person casts a long shadow. A person lying flat casts a shadow equal to their full length. A person standing perpendicular to the ground casts no shadow at all.
 
-Vector projection works the same way. Given a vector and a reference direction, the **scalar projection** measures how far the vector reaches along that direction — the length of the shadow. The **vector projection** gives that shadow as a vector, pointing along the reference direction with the measured length. Together they answer: "how much of this vector is aligned with that direction?"
+Vector projection works the same way. Given a vector and a reference direction, the **scalar projection** measures how far the vector reaches along that direction, which is the length of the shadow. The **vector projection** gives that shadow as a vector, pointing along the reference direction with the measured length. Together they answer: "how much of this vector is aligned with that direction?"
 
 ### What the orthogonal component measures
 
-If the projection is the shadow, the orthogonal component is everything the shadow misses — the part of the vector that points away from the reference direction. "Orthogonal" means perpendicular. The orthogonal component measures how far the vector strays from the direction we care about.
+If the projection is the shadow, the orthogonal component is everything the shadow misses. It captures the part of the vector that points away from the reference direction. "Orthogonal" means perpendicular. The orthogonal component measures how far the vector strays from the direction we care about.
 
-The two parts — parallel and perpendicular — always add back to the original vector. Nothing is lost, nothing is created. Projection is a lossless decomposition.
+The two parts, parallel and perpendicular, always add back to the original vector. Nothing is lost, nothing is created. Projection is a lossless decomposition.
 
 > Tip: Think of projection as asking two questions at once: "How much goes with?" (the projection) and "How much goes against?" (the orthogonal component). Any vector, any direction, any number of dimensions.
 
@@ -72,7 +72,7 @@ let wasted = push.orthogonalComponent(to: ramp)
 let work = useful.magnitude * ramp.magnitude
 ```
 
-This same decomposition applies anywhere a force acts at an angle — wind on a sail, gravity on a slope, thrust on an orbital trajectory.
+This same decomposition applies anywhere a force acts at an angle: wind on a sail, gravity on a slope, thrust on an orbital trajectory.
 
 **Reflecting off a surface.** When a ball bounces off a wall, the component along the surface normal reverses direction while the component along the surface stays the same. The reflection formula uses projection directly:
 

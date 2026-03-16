@@ -4,7 +4,7 @@ Understand the math behind Quiver's vector operations and machine learning model
 
 ## Overview
 
-Quiver treats Swift `Array` types as mathematical objects — computing `magnitude`, measuring angles between them, transforming coordinates with matrices. These operations come from **linear algebra**, the branch of mathematics that deals with vectors and the transformations that act on them.
+Quiver treats Swift `Array` types as mathematical objects, computing `magnitude`, measuring angles between them, and transforming coordinates with matrices. These operations come from **linear algebra**, the branch of mathematics that deals with vectors and the transformations that act on them.
 
 Linear algebra is also the mathematical foundation of machine learning. Quiver's ML models are built from concepts introduced in this primer.
 
@@ -12,13 +12,13 @@ Linear algebra is also the mathematical foundation of machine learning. Quiver's
 
 ### Arrays are vectors
 
-As programmers, we work with `Array` types constantly — storing coordinates, pixel values, sensor readings, feature scores. In linear algebra, these same arrays are called **vectors**. The difference is not in the data structure but in what we can do with it. Once we treat an `Array` as a vector, we gain access to operations that measure its length, its direction, and its relationship to other arrays.
+As programmers, we work with `Array` types constantly, storing coordinates, pixel values, sensor readings, and feature scores. In linear algebra, these same arrays are called **vectors**. The difference is not in the data structure but in what we can do with it. Once we treat an `Array` as a vector, we gain access to operations that measure its length, its direction, and its relationship to other arrays.
 
 > Tip: For details on how Quiver extends the Swift `Array` see <doc:How-It-Works>.
 
 Consider the arrays we already use every day. An array tracking wind speed and bearing captures both "how much" and "which way". An array of RGB values describes a color as a point in three-dimensional space. An array of customer preferences across product features places that customer at a specific location in a multidimensional space. These can all be considered vectors.
 
-Quiver bridges this gap by adding vector operations directly to Swift `Array` types. No new types to learn, no conversion step — the arrays we already have gain mathematical capabilities:
+Quiver bridges this gap by adding vector operations directly to Swift `Array` types. No new types to learn and no conversion step. The arrays we already have gain mathematical capabilities:
 
 ```swift
 import Quiver
@@ -37,7 +37,7 @@ v.normalized.asFractions()  // [3/5, 4/5]
 
 The `magnitude` property is calculated using the Pythagorean theorem extended to any dimension. For a 2D vector `[x, y]`, magnitude equals √(x² + y²). For vector `[3, 4]`, that gives √(9 + 16) = √25 = 5. The same formula works whether the vector has 2 dimensions or 200.
 
-**Normalization** separates "how much" from "which way" by dividing each element by the `magnitude`. The result is a **unit vector** — an `Array` with length 1 that preserves only the direction of the original. This matters when comparing arrays where scale varies but direction is what we care about. Two customer profiles with the same preference ratios but different spending levels point in the same direction — normalization reveals that similarity by removing the magnitude.
+**Normalization** separates "how much" from "which way" by dividing each element by the `magnitude`. The result is a **unit vector** — an `Array` with length 1 that preserves only the direction of the original. This matters when comparing arrays where scale varies but direction is what we care about. Two customer profiles with the same preference ratios but different spending levels point in the same direction. Normalization reveals that similarity by removing the magnitude.
 
 ### Vectors live in space
 
@@ -53,7 +53,7 @@ This is also how semantic search works. Words can be represented as high-dimensi
 
 ### The dot product
 
-The **dot product** is the fundamental building block for measuring similarity. It takes two vectors and produces a single number — the sum of their element-wise products — that reflects how much the vectors agree. When two vectors point in the same direction, the dot product is large and positive. When they are perpendicular, it equals zero. When they point in opposite directions, it is negative.
+The **dot product** is the fundamental building block for measuring similarity. It takes two vectors and produces a single number, the sum of their element-wise products, that reflects how much the vectors agree. When two vectors point in the same direction, the dot product is large and positive. When they are perpendicular, it equals zero. When they point in opposite directions, it is negative.
 
 ```swift
 let v1 = [1.0, 0.0]  // Points right
@@ -81,7 +81,7 @@ let product2 = [3.8, 8.2, 2.9, 9.7]
 product1.cosineOfAngle(with: product2)  // ~0.998 (very similar)
 ```
 
-This separation of direction from magnitude is why cosine similarity powers recommendation engines, search ranking, and duplicate detection. Two customer profiles with identical preferences but different engagement levels point in the same direction — cosine similarity scores them as nearly identical, while the raw dot product would not.
+This separation of direction from magnitude is why cosine similarity powers recommendation engines, search ranking, and duplicate detection. Two customer profiles with identical preferences but different engagement levels point in the same direction. Cosine similarity scores them as nearly identical, while the raw dot product would not.
 
 > Tip: Learn the mathematics behind dot product, cosine similarity, and matrix multiplication in [Swift Algorithms & Data Structures](https://waynewbishop.github.io/swift-algorithms/20-vectors.html).
 

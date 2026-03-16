@@ -20,13 +20,13 @@ let data = Panel([
 ])
 ```
 
-Here, `creditScore` and `balance` are features — the information the model receives as input. `approved` is the label — the outcome we want the model to learn to predict. The model never sees the label at prediction time; it must infer the answer from the features alone.
+Here, `creditScore` and `balance` are features, the information the model receives as input. `approved` is the label, the outcome we want the model to learn to predict. The model never sees the label at prediction time; it must infer the answer from the features alone.
 
 > Tip: A good mental model is features = question, label = answer. We train the model on many question-answer pairs, then ask it new questions and check whether it gives the right answers.
 
 ### Training and test data
 
-If we evaluate a model on the same data it learned from, we get a misleadingly optimistic score — like grading a student on questions they already saw. To get an honest measure of how well the model generalizes, we split the data into two partitions:
+If we evaluate a model on the same data it learned from, we get a misleadingly optimistic score, like grading a student on questions they already saw. To get an honest measure of how well the model generalizes, we split the data into two partitions:
 
 - **Training set** — the examples the model learns from (typically 80% of the data)
 - **Test set** — the examples held back for evaluation (typically 20%)
@@ -44,11 +44,11 @@ let (train, test) = features.trainTestSplit(testRatio: 0.2, seed: 42)
 // test:  2 rows for evaluation
 ```
 
-The `seed` parameter ensures the same split every time, making experiments reproducible. When using a `Panel`, the split is atomic — all columns are partitioned by the same rows, so features and labels stay aligned automatically.
+The `seed` parameter ensures the same split every time, making experiments reproducible. When using a `Panel`, the split is atomic, so all columns are partitioned by the same rows, so features and labels stay aligned automatically.
 
 ### Stratified splitting
 
-When classes are imbalanced — say 95% approved and 5% denied — a random split might leave the test set with no denied examples at all. A **stratified split** preserves class proportions in both partitions:
+When classes are imbalanced, say 95% approved and 5% denied, a random split might leave the test set with no denied examples at all. A **stratified split** preserves class proportions in both partitions:
 
 ```swift
 import Quiver
@@ -61,7 +61,7 @@ let (trainX, testX, trainY, testY) = features.stratifiedSplit(
 
 ### Data leakage
 
-**Data leakage** occurs when information from the test set influences the training process. The most common form is fitting a preprocessor (like a scaler) on the entire dataset before splitting. If the scaler learns the minimum and maximum from all rows — including the test rows — then the training process has indirectly "seen" the test data, and evaluation results will be overly optimistic.
+**Data leakage** occurs when information from the test set influences the training process. The most common form is fitting a preprocessor (like a scaler) on the entire dataset before splitting. If the scaler learns the minimum and maximum from all rows, including the test rows, then the training process has indirectly "seen" the test data, and evaluation results will be overly optimistic.
 
 The fix is simple: fit on training data only, then transform both sets using the same learned statistics:
 
@@ -69,7 +69,7 @@ The fix is simple: fit on training data only, then transform both sets using the
 import Quiver
 
 // Correct: fit on training data, transform both
-let scaler = FeatureScaler.fit(trainFeatures)
+let scaler = FeatureScaler.fit(features: trainFeatures)
 let scaledTrain = scaler.transform(trainFeatures)
 let scaledTest = scaler.transform(testFeatures)
 ```
@@ -86,7 +86,7 @@ Raw data rarely arrives in a form that works well for models. **Feature engineer
 import Quiver
 
 // Min-max scaling: transforms each column to 0–1 range
-let scaler = FeatureScaler.fit(trainFeatures)
+let scaler = FeatureScaler.fit(features: trainFeatures)
 let scaled = scaler.transform(trainFeatures)
 ```
 
@@ -100,29 +100,29 @@ A model can fail in two opposite ways:
 
 **Underfitting** means the model is too simple to capture the pattern in the data. It performs poorly on both training and test data. This can happen when the model lacks the capacity to represent the relationship, or when important features are missing.
 
-The goal is a model that generalizes — one that learns the true pattern well enough to make accurate predictions on data it has never seen. Splitting data into training and test sets (and checking both scores) is the primary tool for detecting these problems.
+The goal is a model that generalizes, one that learns the true pattern well enough to make accurate predictions on data it has never seen. Splitting data into training and test sets (and checking both scores) is the primary tool for detecting these problems.
 
 ### Classification and regression
 
 Supervised learning problems fall into two categories:
 
-**Classification** predicts a discrete category — spam or not spam, approved or denied, which digit (0–9) an image contains. The label is a class identifier, and the model's output is a predicted class (sometimes with a confidence score). Quiver's `GaussianNaiveBayes` is a classification model.
+**Classification** predicts a discrete category: spam or not spam, approved or denied, which digit (0–9) an image contains. The label is a class identifier, and the model's output is a predicted class (sometimes with a confidence score). Quiver's `GaussianNaiveBayes` is a classification model.
 
-**Regression** predicts a continuous value — tomorrow's temperature, a house's sale price, how long a user session will last. The label is a number, and the model's output is a number. Quiver's `LinearRegression` is a regression model.
+**Regression** predicts a continuous value: tomorrow's temperature, a house's sale price, how long a user session will last. The label is a number, and the model's output is a number. Quiver's `LinearRegression` is a regression model.
 
 The distinction matters because evaluation metrics differ. Classification uses accuracy, precision, and recall. Regression uses measures like mean squared error and R².
 
 ### Fit and predict
 
-Every Quiver model follows the same two-step pattern: **fit**, then **predict**. Fitting is the learning phase — the model examines the training data and builds whatever internal representation it needs. For `LinearRegression`, fitting computes the optimal coefficients. For `GaussianNaiveBayes`, it calculates the mean and variance of each feature per class. For `KNearestNeighbors`, fitting simply stores the training data (all the real work happens later). The result of `fit` is always a ready-to-use model.
+Every Quiver model follows the same two-step pattern: **fit**, then **predict**. Fitting is the learning phase where the model examines the training data and builds whatever internal representation it needs. For `LinearRegression`, fitting computes the optimal coefficients. For `GaussianNaiveBayes`, it calculates the mean and variance of each feature per class. For `KNearestNeighbors`, fitting simply stores the training data (all the real work happens later). The result of `fit` is always a ready-to-use model.
 
-Predicting is the application phase — we hand the fitted model new samples it has never seen, and it returns answers. Classification models return class labels; regression models return continuous values. The model uses what it learned during fitting but never modifies itself — calling `predict` twice on the same input always gives the same result. This separation keeps the workflow clear: `fit` looks backward at training data to learn, `predict` looks forward at new data to answer.
+Predicting is the application phase. We hand the fitted model new samples it has never seen, and it returns answers. Classification models return class labels; regression models return continuous values. The model uses what it learned during fitting but never modifies itself. Calling `predict` twice on the same input always gives the same result. This separation keeps the workflow clear: `fit` looks backward at training data to learn, `predict` looks forward at new data to answer.
 
 ### Evaluating models
 
-Accuracy — the fraction of correct predictions — is the most intuitive metric, but it can be misleading. If 95% of loan applications are approved, a model that always predicts "approved" achieves 95% accuracy while providing zero useful information.
+Accuracy, the fraction of correct predictions, is the most intuitive metric, but it can be misleading. If 95% of loan applications are approved, a model that always predicts "approved" achieves 95% accuracy while providing zero useful information.
 
-Better metrics examine the types of errors a model makes. **Precision** measures how many of the model's positive predictions were actually correct — high precision means few false alarms. **Recall** measures how many of the actually positive examples the model caught — high recall means few missed cases. The **F1 score** is the harmonic mean of precision and recall, balancing both concerns into a single number.
+Better metrics examine the types of errors a model makes. **Precision** measures how many of the model's positive predictions were actually correct, so high precision means few false alarms. **Recall** measures how many of the actually positive examples the model caught, so high recall means few missed cases. The **F1 score** is the harmonic mean of precision and recall, balancing both concerns into a single number.
 
 Which metric matters most depends on the cost of each error type. Missing a fraudulent transaction (low recall) is worse than flagging a legitimate one (low precision). For a full treatment of these metrics and the `ConfusionMatrix` type, see <doc:Evaluation-Metrics>.
 
@@ -130,11 +130,11 @@ Which metric matters most depends on the cost of each error type. Missing a frau
 
 **Gaussian Naive Bayes** trains quickly and works well with small datasets, but assumes features are independent of each other. When that assumption roughly holds, it is hard to beat as a starting point. See <doc:Naive-Bayes>.
 
-**K-Nearest Neighbors** makes no assumptions about data distribution — it classifies new points by finding the most similar training examples. The tradeoff is performance: every prediction scans the entire training set, and feature scaling is critical because `distance(to:)` is sensitive to magnitude differences. See <doc:Nearest-Neighbors-Classification>.
+**K-Nearest Neighbors** makes no assumptions about data distribution and classifies new points by finding the most similar training examples. The tradeoff is performance: every prediction scans the entire training set, and feature scaling is critical because `distance(to:)` is sensitive to magnitude differences. See <doc:Nearest-Neighbors-Classification>.
 
-**Linear Regression** predicts continuous values rather than categories. Its coefficients are directly interpretable — "each additional bedroom adds $X to the price" — but it assumes a linear relationship between features and target. See <doc:Linear-Regression>.
+**Linear Regression** predicts continuous values rather than categories. Its coefficients are directly interpretable ("each additional bedroom adds $X to the price"), but it assumes a linear relationship between features and target. See <doc:Linear-Regression>.
 
-**K-Means** is unsupervised — it discovers natural groupings in data that has no labels. Useful for segmentation and anomaly detection, but we must choose the number of clusters in advance. See <doc:KMeans-Clustering>.
+**K-Means** is unsupervised and discovers natural groupings in data that has no labels. Useful for segmentation and anomaly detection, but we must choose the number of clusters in advance. See <doc:KMeans-Clustering>.
 
 Start simple: Naive Bayes for classification, Linear Regression for continuous targets, Nearest Neighbors when the decision boundary is nonlinear, K-Means for unlabeled data. The evaluation techniques in the previous section tell us whether our choice is working.
 

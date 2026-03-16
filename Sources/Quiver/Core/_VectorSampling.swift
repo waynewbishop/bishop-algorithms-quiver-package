@@ -117,12 +117,14 @@ internal enum _Sampling {
         let sortedKeys = groups.keys.sorted { "\($0)" < "\($1)" }
 
         for key in sortedKeys {
-            var indices = groups[key]!
+            guard var indices = groups[key], !indices.isEmpty else {
+                continue
+            }
             indices.shuffle(using: &rng)
 
             // At least 1 in test per class (if class has 2+ samples)
             let testCount = max(1, Int(ceil(Double(indices.count) * testRatio)))
-            let actualTestCount = min(testCount, indices.count - 1)
+            let actualTestCount = indices.count > 1 ? min(testCount, indices.count - 1) : 0
 
             testIndices.append(contentsOf: indices[..<actualTestCount])
             trainIndices.append(contentsOf: indices[actualTestCount...])

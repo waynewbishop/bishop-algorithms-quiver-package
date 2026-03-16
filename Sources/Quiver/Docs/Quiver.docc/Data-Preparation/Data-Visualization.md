@@ -6,7 +6,7 @@ Prepare, scale, and reshape data for Swift Charts and other visualization framew
 
 Quiver provides a set of functions that bridge numerical data and chart-ready output. These operations handle the data preparation step — scaling values to a target range, computing frequency distributions, stacking series for area charts, and downsampling large datasets for responsive rendering. Each function returns structured output that maps directly to Swift Charts mark types.
 
-> Tip: The `#Playground` macro lets us combine Quiver and Swift Charts in a live Canvas — prepare data, build marks, and see the chart update as we type. See <doc:Usage> for how to get started.
+> Tip: Quiver handles the data preparation — scaling, correlation, downsampling — and produces arrays ready for Swift Charts or any visualization framework. See <doc:Usage> for how to get started with the `#Playground` macro.
 
 ### Scaling and normalization
 
@@ -19,11 +19,11 @@ let revenues = [45000.0, 52000.0, 48000.0, 61000.0, 55000.0]
 
 // Min-max scaling to a custom range (e.g., for sizing chart elements)
 let sizes = revenues.scaled(to: 10.0...50.0)
-// [10.0, 17.5, 13.75, 50.0, 32.5]
+// [10.0, 27.5, 17.5, 50.0, 35.0]
 
 // Z-score standardization (mean=0, std=1) for comparing distributions
 let standardized = revenues.standardized()
-// [-1.38, -0.14, -0.85, 1.46, 0.92]
+// [-1.29, -0.04, -0.76, 1.58, 0.50]
 
 // Convert to percentages of total (for pie/donut charts)
 let shares = revenues.asPercentages()
@@ -100,7 +100,7 @@ let hourlyTemps = [
 
 // Reduce to 4 six-hour averages
 let sixHourly = hourlyTemps.downsample(factor: 6, using: .mean)
-// [17.6, 22.6, 26.5, 18.6]
+// [16.9, 22.6, 25.8, 18.6]
 
 // Keep the peak value in each window instead
 let sixHourlyMax = hourlyTemps.downsample(factor: 6, using: .max)
@@ -205,7 +205,7 @@ import Quiver
 // Raw model scores (logits) — higher means more confident
 let scores = [2.1, 0.8, -0.3, 1.5]
 let probs = scores.softMax()
-// [0.48, 0.13, 0.04, 0.26]
+// [0.52, 0.14, 0.05, 0.29]
 
 let classNames = ["cat", "dog", "bird", "fish"]
 // Plot classNames[i] vs probs[i] as BarMark

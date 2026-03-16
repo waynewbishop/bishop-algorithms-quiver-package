@@ -4,7 +4,7 @@ Classify samples by finding the closest training examples.
 
 ## Overview
 
-K-Nearest Neighbors is one of the most intuitive classification algorithms. Given a new sample, it finds the `k` closest points in the training data and predicts the most common label among them. There is no training phase — the model stores the data and does all the work at prediction time. This makes Nearest Neighbors a "lazy learner," in contrast to models like `GaussianNaiveBayes` and `LinearRegression` that compute parameters up front.
+K-Nearest Neighbors is one of the most intuitive classification algorithms. Given a new sample, it finds the `k` closest points in the training data and predicts the most common label among them. There is no training phase. The model stores the data and does all the work at prediction time. This makes Nearest Neighbors a "lazy learner," in contrast to models like `GaussianNaiveBayes` and `LinearRegression` that compute parameters up front.
 
 ### How it works
 
@@ -12,13 +12,13 @@ For each new sample, the algorithm measures the **distance** from that sample to
 
 ### The distance connection
 
-Nearest Neighbors relies on the same `distance(to:)` operation used throughout Quiver's vector mathematics. This is Euclidean distance — the straight-line distance between two points in n-dimensional space, computed as √Σ(aᵢ − bᵢ)². The same function powers centroid assignment in `KMeans` and similarity operations in <doc:Similarity-Operations>. Understanding this single linear algebra concept — that vectors are points in space and distance measures how far apart they are — unlocks classification, clustering, and similarity search simultaneously.
+Nearest Neighbors relies on the same `distance(to:)` operation used throughout Quiver's vector mathematics. This is Euclidean distance — the straight-line distance between two points in n-dimensional space, computed as √Σ(aᵢ − bᵢ)². The same function powers centroid assignment in `KMeans` and similarity operations in <doc:Similarity-Operations>. Understanding this single linear algebra concept, that vectors are points in space and distance measures how far apart they are, unlocks classification, clustering, and similarity search simultaneously.
 
-> Tip: Distance builds on vector subtraction — each (aᵢ − bᵢ) term is one element of the difference vector. For a deeper look at how vector arithmetic works geometrically, see [Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) in Swift Algorithms & Data Structures.
+> Tip: Distance builds on vector subtraction. Each (aᵢ − bᵢ) term is one element of the difference vector. For a deeper look at how vector arithmetic works geometrically, see [Vectors](https://waynewbishop.github.io/swift-algorithms/20-vectors.html) in Swift Algorithms & Data Structures.
 
 ### Fitting a model
 
-The `fit(features:labels:k:metric:weight:)` static method stores the training data and returns a ready-to-use model. Because Nearest Neighbors is a lazy learner, fitting is instantaneous — no computation happens until prediction:
+The `fit(features:labels:k:metric:weight:)` static method stores the training data and returns a ready-to-use model. Because Nearest Neighbors is a lazy learner, fitting is instantaneous, because no computation happens until prediction:
 
 ```swift
 import Quiver
@@ -47,15 +47,15 @@ let predictions = model.predict(newSamples)
 
 ### Choosing k
 
-The parameter `k` determines how many training vectors the algorithm consults when classifying a new point. After measuring the distance from the new sample to every training vector, the algorithm selects the `k` closest ones and uses their labels to vote on the prediction. A higher `k` means more vectors influence the decision; a lower `k` means fewer — potentially just one — determine the outcome.
+The parameter `k` determines how many training vectors the algorithm consults when classifying a new point. After measuring the distance from the new sample to every training vector, the algorithm selects the `k` closest ones and uses their labels to vote on the prediction. A higher `k` means more vectors influence the decision, while a lower `k` means fewer, potentially just one, determine the outcome.
 
-The value of `k` controls the tradeoff between sensitivity and smoothness. A small `k` (e.g., 1 or 3) is sensitive to local patterns — it captures fine-grained boundaries but may overfit to noisy data points. A large `k` (e.g., 15 or 21) produces smoother decision boundaries that are more robust to noise but may miss local structure. Choosing an odd value avoids ties in binary classification: with two classes and `k=4`, a 2-2 split requires a tiebreaker, while `k=3` guarantees one class always wins. A common starting point is `k = √n` where `n` is the number of training samples, rounded to the nearest odd number.
+The value of `k` controls the tradeoff between sensitivity and smoothness. A small `k` (e.g., 1 or 3) is sensitive to local patterns, capturing fine-grained boundaries but may overfit to noisy data points. A large `k` (e.g., 15 or 21) produces smoother decision boundaries that are more robust to noise but may miss local structure. Choosing an odd value avoids ties in binary classification: with two classes and `k=4`, a 2-2 split requires a tiebreaker, while `k=3` guarantees one class always wins. A common starting point is `k = √n` where `n` is the number of training samples, rounded to the nearest odd number.
 
 ### Distance metrics
 
 Quiver supports two distance metrics via the `DistanceMetric` enum:
 
-**Euclidean distance** (default) measures straight-line distance between points. It works well when features have similar scales — but can be dominated by high-magnitude features when scales differ. Use `FeatureScaler` to normalize features before fitting:
+**Euclidean distance** (default) measures straight-line distance between points. It works well when features have similar scales, but can be dominated by high-magnitude features when scales differ. Use `FeatureScaler` to normalize features before fitting:
 
 ```swift
 import Quiver
@@ -88,19 +88,19 @@ let model = KNearestNeighbors.fit(
 )
 ```
 
-> Tip: Cosine similarity measures how closely two vectors point in the same direction — a high score means similar. **Cosine distance** flips this: `1 − similarity`, so a low score means similar. Nearest Neighbors uses the distance form because the algorithm looks for the smallest values to find the closest neighbors. For more on cosine similarity, see <doc:Similarity-Operations>.
+> Tip: Cosine similarity measures how closely two vectors point in the same direction, so a high score means similar. **Cosine distance** flips this: `1 − similarity`, so a low score means similar. Nearest Neighbors uses the distance form because the algorithm looks for the smallest values to find the closest neighbors. For more on cosine similarity, see <doc:Similarity-Operations>.
 
 ### Vote weighting
 
 By default, each neighbor gets one vote (`VoteWeight/uniform`). With `k: 3`, if the three nearest neighbors have labels [0, 1, 1], label 1 wins 2–1 regardless of how close or far each neighbor is.
 
-With `VoteWeight/distance`, closer neighbors get more influence — their vote is weighted by `1 / distance`. Consider a new sample where the three nearest neighbors are:
+With `VoteWeight/distance`, closer neighbors get more influence, so their vote is weighted by `1 / distance`. Consider a new sample where the three nearest neighbors are:
 
 - Label 0 at distance 0.1 → weight 10.0
 - Label 1 at distance 0.8 → weight 1.25
 - Label 1 at distance 0.9 → weight 1.11
 
-Under uniform voting, label 1 wins 2–1. Under distance weighting, label 0 wins 10.0 to 2.36 — the single very close neighbor outweighs two distant ones. This matters near decision boundaries where the closest point should have the strongest say:
+Under uniform voting, label 1 wins 2–1. Under distance weighting, label 0 wins 10.0 to 2.36, because the single very close neighbor outweighs two distant ones. This matters near decision boundaries where the closest point should have the strongest say:
 
 ```swift
 import Quiver
@@ -185,7 +185,7 @@ Nearest Neighbors works best when:
 - The dataset is small to medium (hundreds to low thousands of samples)
 - The decision boundary is irregular and hard to model parametrically
 - There is no strong prior about data distribution
-- Interpretability matters — it is easy to explain "these are the 5 most similar cases"
+- Interpretability matters, because it is easy to explain "these are the 5 most similar cases"
 
 Nearest Neighbors struggles with large datasets (prediction scans every training point), high-dimensional data (the "curse of dimensionality" makes distances less meaningful), and features on different scales (use `FeatureScaler` to mitigate).
 

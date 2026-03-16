@@ -4,7 +4,7 @@ Implementing semantic search through tokenization, embeddings, and cosine simila
 
 ## Overview
 
-Semantic search finds information by comparing **meaning** rather than matching keywords. A traditional keyword search for "running shoes" would miss a document titled "athletic footwear" because the words don't match — even though the concepts are nearly identical. Semantic search solves this by representing words and phrases as numeric vectors, where similar meanings occupy nearby positions in multidimensional space. Comparing those vectors with cosine similarity reveals relationships that keyword matching cannot.
+Semantic search finds information by comparing **meaning** rather than matching keywords. A traditional keyword search for "running shoes" would miss a document titled "athletic footwear" because the words don't match — even though the concepts are nearly identical. Semantic search solves this by representing words and phrases as numeric [vectors](<doc:Linear-Algebra-Primer>), where similar meanings occupy nearby positions in multidimensional space. Comparing those vectors with cosine similarity reveals relationships that keyword matching cannot.
 
 > Tip: This article builds on concepts from <doc:Similarity-Operations> and <doc:Vector-Operations>. Familiarity with cosine similarity and the dot product will help, but the examples are self-contained.
 

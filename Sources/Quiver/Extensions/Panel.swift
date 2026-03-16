@@ -104,7 +104,12 @@ public struct Panel {
     ///
     /// - Parameter columns: A dictionary mapping column names to value arrays.
     public init(_ columns: [String: [Double]]) {
-        let sorted = columns.keys.sorted().map { ($0, columns[$0]!) }
+        let sorted = columns.keys.sorted().map { key in
+            guard let values = columns[key] else {
+                preconditionFailure("Column '\(key)' missing from dictionary")
+            }
+            return (key, values)
+        }
         self.init(sorted)
     }
 
@@ -237,7 +242,7 @@ public struct Panel {
             "Mask length (\(mask.count)) must match row count (\(rowCount))")
 
         let pairs = columnNames.map { name in
-            (name, storage[name]!.masked(by: mask))
+            (name, column(name).masked(by: mask))
         }
 
         // Handle the case where filtering removes all rows
@@ -289,11 +294,11 @@ public struct Panel {
 
         // Build train and test panels by indexing into each column
         let trainPairs = columnNames.map { name in
-            let col = storage[name]!
+            let col = column(name)
             return (name, trainIndices.map { col[$0] })
         }
         let testPairs = columnNames.map { name in
-            let col = storage[name]!
+            let col = column(name)
             return (name, testIndices.map { col[$0] })
         }
 
@@ -313,7 +318,7 @@ public struct Panel {
         lines.append(String(repeating: "-", count: 70))
 
         for name in columnNames {
-            let col = storage[name]!
+            let col = column(name)
             let mean = col.mean() ?? 0.0
             let std = col.std() ?? 0.0
             let minVal = col.min() ?? 0.0
@@ -327,6 +332,14 @@ public struct Panel {
     }
 
     // MARK: - Private
+
+    /// Returns the column values for a known column name, trapping if missing.
+    private func column(_ name: String) -> [Double] {
+        guard let col = storage[name] else {
+            preconditionFailure("Column '\(name)' missing from internal storage")
+        }
+        return col
+    }
 
     /// Creates an empty panel that preserves column names but has zero rows.
     private init(emptyWithColumns names: [String]) {

@@ -213,7 +213,10 @@ public struct KNearestNeighbors {
             let label = trainingLabels[neighbor.index]
             counts[label, default: 0] += 1
         }
-        return counts.max { $0.value < $1.value }!.key
+        guard let winner = counts.max(by: { $0.value < $1.value }) else {
+            preconditionFailure("Vote counts must not be empty")
+        }
+        return winner.key
     }
 
     /// Returns the label with the highest total weight (weight = 1/distance).
@@ -231,6 +234,9 @@ public struct KNearestNeighbors {
             let label = trainingLabels[neighbor.index]
             weights[label, default: 0.0] += 1.0 / neighbor.distance
         }
-        return weights.max { $0.value < $1.value }!.key
+        guard let winner = weights.max(by: { $0.value < $1.value }) else {
+            preconditionFailure("Weighted votes must not be empty")
+        }
+        return winner.key
     }
 }

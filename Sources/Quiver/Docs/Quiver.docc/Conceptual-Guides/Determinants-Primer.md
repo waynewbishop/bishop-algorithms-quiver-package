@@ -20,7 +20,7 @@ let scale = [[3.0, 0.0],
 scale.determinant  // 15.0
 ```
 
-The original `1`×`1` unit square becomes a `3`×`5` rectangle with area `15`. The determinant captures this scaling factor directly — it tells us that every region in the original space is now `15` times larger.
+The original `1`×`1` unit square becomes a `3`×`5` rectangle with area `15`. The determinant captures this scaling factor directly, telling us that every region in the original space is now `15` times larger.
 
 Adding a shear component tilts the rectangle into a parallelogram, but the area does not change. The base-times-height calculation still produces the same result:
 
@@ -38,7 +38,7 @@ let general = [[3.0, 1.0],
 general.determinant  // 13.0 = (3 × 5) - (1 × 2)
 ```
 
-The sign matters. A negative determinant means the transformation flips orientation — like looking at space in a mirror. A rotation matrix, which preserves both area and orientation, always has a determinant of `1`:
+The sign matters. A negative determinant means the transformation flips orientation, like looking at space in a mirror. A rotation matrix, which preserves both area and orientation, always has a determinant of `1`:
 
 ```swift
 // 90° counterclockwise rotation
@@ -62,7 +62,7 @@ matrix3x3.determinant  // 1.0
 
 #### When the determinant is zero
 
-A determinant of zero signals that the matrix is **singular** — it collapses space into a lower dimension. In 2D, the transformation flattens everything onto a line. In 3D, it compresses a volume into a plane or a line.
+A determinant of zero signals that the matrix is **singular**. It collapses space into a lower dimension. In 2D, the transformation flattens everything onto a line. In 3D, it compresses a volume into a plane or a line.
 
 Consider a matrix where both columns point in the same direction:
 
@@ -85,7 +85,7 @@ let dependent = [
 dependent.determinant  // 0.0
 ```
 
-The third equation adds no new information. We have three unknowns but only two independent equations — not enough to find a unique solution.
+The third equation adds no new information. We have three unknowns but only two independent equations, not enough to find a unique solution.
 
 > Important: Calling `.inverted()` on a singular matrix throws a `MatrixError.singular` error. Handle this with `do-catch`, `try?`, or check the determinant first:
 
@@ -108,7 +108,7 @@ let maybeInverse = try? matrix.inverted()  // nil for singular matrices
 
 #### Why this matters in practice
 
-Singular matrices appear more often than we might expect. In machine learning, a feature matrix becomes singular when one feature is a perfect linear combination of others. In computer graphics, a transformation that projects 3D objects onto a 2D screen is inherently singular — we lose the depth dimension, and that loss is by design.
+Singular matrices appear more often than we might expect. In machine learning, a feature matrix becomes singular when one feature is a perfect linear combination of others. In computer graphics, a transformation that projects 3D objects onto a 2D screen is inherently singular. We lose the depth dimension, and that loss is by design.
 
 ### Matrix inversion
 
@@ -124,7 +124,7 @@ let identity = A.multiplyMatrix(inv)
 //  [0.0, 1.0]]
 ```
 
-The product A × A⁻¹ always equals the identity matrix — the transformation that leaves everything unchanged. The determinant connects directly to inversion: the determinant of the inverse equals the reciprocal of the original determinant:
+The product A × A⁻¹ always equals the identity matrix, the transformation that leaves everything unchanged. The determinant connects directly to inversion: the determinant of the inverse equals the reciprocal of the original determinant:
 
 ```swift
 A.determinant                  // 13.0
@@ -135,7 +135,7 @@ This makes geometric sense. If the original transformation scales area by a fact
 
 #### Fractional display
 
-The decimal result `0.0769...` obscures the underlying relationship — the denominator is `13` because the determinant is `13`. The `asFractions()` method reveals this structure:
+The decimal result `0.0769...` obscures the underlying relationship. The denominator is `13` because the determinant is `13`. The `asFractions()` method reveals this structure:
 
 ```swift
 let A = [[3.0, 1.0],
@@ -149,7 +149,7 @@ inverse.asFractions()
 A.determinant.asFraction()  // 13
 ```
 
-Every element shares the determinant as its denominator — a pattern hidden by decimal representation. The `Fraction` type is presentation-only; all operations continue to use standard `Double` values internally. Use `asFractions()` on any `[Double]` or `[[Double]]` result, or `asFraction()` on a single `Double`.
+Every element shares the determinant as its denominator, a pattern hidden by decimal representation. The `Fraction` type is presentation-only; all operations continue to use standard `Double` values internally. Use `asFractions()` on any `[Double]` or `[[Double]]` result, or `asFraction()` on a single `Double`.
 
 ### Solving linear systems
 
@@ -169,7 +169,7 @@ This only works when the determinant is non-zero. A zero determinant means the e
 
 ### Condition number
 
-A matrix can have a non-zero determinant and still produce unreliable results when inverted. The **condition number** quantifies this risk by measuring how sensitive the result is to small changes in the input. Think of it like a lever — a well-conditioned matrix amplifies small input changes only slightly, while an ill-conditioned matrix amplifies them enormously.
+A matrix can have a non-zero determinant and still produce unreliable results when inverted. The **condition number** quantifies this risk by measuring how sensitive the result is to small changes in the input. Think of it like a lever. A well-conditioned matrix amplifies small input changes only slightly, while an ill-conditioned matrix amplifies them enormously.
 
 ```swift
 let identity = [[1.0, 0.0],
@@ -177,7 +177,7 @@ let identity = [[1.0, 0.0],
 identity.conditionNumber  // 1.0 (perfectly conditioned)
 ```
 
-A condition number near `1.0` means the matrix is well-behaved. As the value grows, the matrix becomes increasingly ill-conditioned — small rounding errors in the input get amplified into large errors in the output:
+A condition number near `1.0` means the matrix is well-behaved. As the value grows, the matrix becomes increasingly ill-conditioned, and small rounding errors in the input get amplified into large errors in the output:
 
 ```swift
 let nearSingular = [[1.0, 1.0],
@@ -205,7 +205,7 @@ Quiver computes the condition number by comparing the largest absolute column su
 
 #### When to check the condition number
 
-In production code, checking the condition number before inverting a matrix prevents silent numerical failures. A recommendation engine computing user-item similarity matrices, a physics simulation solving force equations, or a calibration system fitting sensor data — all benefit from knowing whether their matrix is safe to invert before trusting the result.
+In production code, checking the condition number before inverting a matrix prevents silent numerical failures. A recommendation engine computing user-item similarity matrices, a physics simulation solving force equations, or a calibration system fitting sensor data. All benefit from knowing whether their matrix is safe to invert before trusting the result.
 
 ```swift
 let matrix = [[4.0, 1.0],
@@ -267,7 +267,7 @@ ld.logAbsValue  // -infinity
 
 #### Comparing determinants safely
 
-The log form is especially useful when comparing the determinants of multiple matrices. Instead of comparing raw values that might be astronomically large or vanishingly small, we compare their logarithms — which are ordinary, well-behaved numbers:
+The log form is especially useful when comparing the determinants of multiple matrices. Instead of comparing raw values that might be astronomically large or vanishingly small, we compare their logarithms, which are ordinary, well-behaved numbers:
 
 ```swift
 let matrixA = [[10.0, 0.0], [0.0, 10.0]]

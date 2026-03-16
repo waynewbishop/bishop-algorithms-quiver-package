@@ -82,6 +82,12 @@ extension _Vector where Element: Numeric {
         let rows = matrix.count
         let cols = matrix[0].count
 
+        // Validate rectangular structure
+        for row in matrix {
+            precondition(row.count == cols,
+                "Matrix has inconsistent row lengths — expected \(cols) columns, found \(row.count)")
+        }
+
         // Create an empty result matrix with swapped dimensions
         var result = [[Element]]()
         for _ in 0..<cols {

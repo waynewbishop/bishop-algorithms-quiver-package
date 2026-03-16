@@ -101,8 +101,9 @@ public struct Fraction: CustomStringConvertible, Equatable {
         var upperD = 1
 
         while lowerD + upperD <= maxDenominator {
-            let medN = lowerN + upperN
-            let medD = lowerD + upperD
+            let (medN, nOverflow) = lowerN.addingReportingOverflow(upperN)
+            let (medD, dOverflow) = lowerD.addingReportingOverflow(upperD)
+            if nOverflow || dOverflow { break }
             let medValue = Double(medN) / Double(medD)
             let error = abs(absValue - medValue)
 

@@ -4,7 +4,7 @@ Normalize feature columns to a common range before classification.
 
 ## Overview
 
-In real-world datasets, features often exist on vastly different scales. A customer's account balance might range from 0 to 250,000, while a loyalty ratio ranges from 0.0 to 0.56 — almost six orders of magnitude apart. When features are on different scales, the larger values can dominate the model's calculations, causing it to ignore smaller but equally important features.
+In real-world datasets, [features](<doc:Machine-Learning-Primer>) often exist on vastly different scales. A customer's account balance might range from 0 to 250,000, while a loyalty ratio ranges from 0.0 to 0.56 — almost six orders of magnitude apart. When features are on different scales, the larger values can dominate the model's calculations, causing it to ignore smaller but equally important features.
 
 Quiver provides `FeatureScaler`, a column-wise min-max scaler that normalizes each feature independently so every value falls within a target range. The default range is 0 to 1: the column's minimum maps to 0, its maximum maps to 1, and everything else falls proportionally in between.
 

@@ -41,7 +41,7 @@ let cosine = v1.cosineOfAngle(with: v2)
 
 ### Magnitude vs distance
 
-Both magnitude and Euclidean distance use the Pythagorean theorem, but measure different things. `Magnitude` provides an answer to "how far am I from home (origin)" while Euclidean distance solves "how far is the coffee shop from the library".
+Both magnitude and [Euclidean distance](<doc:Linear-Algebra-Primer>) use the Pythagorean theorem, but measure different things. `Magnitude` provides an answer to "how far am I from home (origin)" while Euclidean distance solves "how far is the coffee shop from the library".
 
 ```swift
 // Magnitude: distance from origin 
@@ -151,7 +151,7 @@ let database = [
 
 // Compute all similarities at once
 let similarities = database.cosineSimilarities(to: query)
-// [0.99, 0.42, 0.98]
+// [0.99, 0.88, 0.99]
 ```
 
 **Result preservation:** `similarities[i]` is the similarity between `database[i]` and `query`.
@@ -171,7 +171,7 @@ let items = [[0.7, 0.4, 0.8, 0.3], [0.2, 0.9, 0.1, 0.7]]
 
 // Find similar items
 let scores = items.cosineSimilarities(to: userProfile)
-// [0.95, 0.32] - first item matches user preferences
+// [0.99, 0.45] - first item matches user preferences
 ```
 
 ### Duplicate detection

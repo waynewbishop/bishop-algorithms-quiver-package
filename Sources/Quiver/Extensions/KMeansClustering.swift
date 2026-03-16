@@ -173,9 +173,12 @@ public struct KMeans {
         attempts: Int = 10
     ) -> KMeans {
         precondition(attempts > 0, "attempts must be positive")
-        return (0..<attempts)
+        let results = (0..<attempts)
             .map { fit(data: data, k: k, maxIterations: maxIterations, seed: UInt64($0)) }
-            .min(by: { $0.inertia < $1.inertia })!
+        guard let best = results.min(by: { $0.inertia < $1.inertia }) else {
+            preconditionFailure("bestFit requires at least one attempt")
+        }
+        return best
     }
 
     /// Computes inertia for a range of k values (elbow method).
@@ -332,7 +335,11 @@ public struct KMeans {
             }
         }
 
-        // Divide by count to get the mean; if a cluster is empty, keep at zero
+        // Divide by count to get the mean. If a cluster has no assigned points,
+        // its centroid stays at the origin. This can happen when k exceeds the
+        // number of natural groupings or when initialization places two centroids
+        // in the same dense region. The empty cluster will typically attract points
+        // in subsequent iterations as other centroids shift away.
         for c in 0..<k {
             if counts[c] > 0 {
                 for j in 0..<featureCount {

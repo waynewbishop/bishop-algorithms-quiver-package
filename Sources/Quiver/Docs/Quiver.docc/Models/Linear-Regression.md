@@ -4,17 +4,17 @@ Train an ordinary least squares regression model.
 
 ## Overview
 
-Linear regression finds the best-fit line (or hyperplane) through training data by minimizing the sum of squared residuals. Unlike classification models that predict discrete categories, regression models predict continuous values — prices, temperatures, scores, or any numerical quantity.
+Linear regression finds the best-fit line (or hyperplane) through training data by minimizing the sum of squared residuals. Unlike classification models that predict discrete categories, regression models predict continuous values like prices, temperatures, scores, or any numerical quantity.
 
 ### How it works
 
 Linear regression models the relationship between features and a target as a linear equation: ŷ = θ₀ + θ₁x₁ + θ₂x₂ + ... + θₙxₙ. The goal is to find the coefficients θ that minimize the total squared error between predicted and actual values.
 
-Quiver solves this using the **normal equation** θ = (X'X)⁻¹X'y, which gives an exact closed-form solution. This approach uses the matrix operations already available in Quiver — transposition, multiplication, and inversion — rather than iterative gradient descent. The result is a precise answer computed in a single pass.
+Quiver solves this using the **normal equation** θ = (X'X)⁻¹X'y, which gives an exact closed-form solution. This approach uses the matrix operations already available in Quiver (transposition, multiplication, and inversion) rather than iterative gradient descent. The result is a precise answer computed in a single pass.
 
 ### Fitting a model
 
-The `fit(features:targets:intercept:)` static method computes the optimal coefficients and returns a ready-to-use model. There is no separate unfitted state — the returned struct is immediately usable.
+The `fit(features:targets:intercept:)` static method computes the optimal coefficients and returns a ready-to-use model. There is no separate unfitted state, so the returned struct is immediately usable.
 
 > Tip: Regression models predict continuous `Double` values, so targets are `[Double]`. To predict discrete categories like "approved" or "denied", use a classification model instead. See <doc:Machine-Learning-Primer> for more on the distinction.
 
@@ -44,7 +44,7 @@ import Quiver
 // Each row is one sample with the same features used in training
 let newHomes: [[Double]] = [[1800], [3500]]
 let prices = model.predict(newHomes)
-// prices ≈ [236000, 424000]
+// prices ≈ [236000, 423000]
 ```
 
 For single-feature models, a convenience overload accepts a flat `[Double]` instead of wrapping each value in an array. Combined with `linspace`, this generates a smooth trend line across the feature range:
@@ -83,7 +83,7 @@ print("Features: \(model.featureCount)")  // 3
 
 ### Evaluating the fit
 
-Regression metrics tell us how well the model's predictions match the actual values. R² (coefficient of determination) measures the fraction of variance explained — 1.0 is perfect, 0.0 means the model is no better than predicting the mean:
+Regression metrics tell us how well the model's predictions match the actual values. R² (coefficient of determination) measures the fraction of variance explained, where 1.0 is perfect and 0.0 means the model is no better than predicting the mean:
 
 ```swift
 import Quiver
@@ -168,9 +168,9 @@ print("R²: \(r2)")
 
 ### When the normal equation fails
 
-The normal equation requires inverting the matrix X'X. If the features are linearly dependent — for example, including both temperature in Celsius and Fahrenheit — the matrix is singular and cannot be inverted. In this case, `fit` throws `MatrixError.singular`. The fix is to remove redundant features before fitting.
+The normal equation requires inverting the matrix X'X. If the features are linearly dependent (for example, including both temperature in Celsius and Fahrenheit), the matrix is singular and cannot be inverted. In this case, `fit` throws `MatrixError.singular`. The fix is to remove redundant features before fitting.
 
-> Tip: A singular matrix means the determinant is zero — the features collapse into a lower-dimensional space and the equation has no unique solution. For a deeper look at what determinants measure and why singularity matters, see <doc:Determinants-Primer>.
+> Tip: A singular matrix means the determinant is zero, because the features collapse into a lower-dimensional space and the equation has no unique solution. For a deeper look at what determinants measure and why singularity matters, see <doc:Determinants-Primer>.
 
 ### Safe by design
 

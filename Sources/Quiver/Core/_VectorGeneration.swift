@@ -24,7 +24,7 @@ extension _Vector where Element: Numeric {
         precondition(count >= 0, "Count must be non-negative")
         
         guard let one = Element(exactly: 1) else {
-            fatalError("Could not convert literal 1 to the specified Element type")
+            preconditionFailure("Element type does not support exact conversion from 1")
         }
         return _Vector(elements: [Element](repeating: one, count: count))
     }
@@ -46,7 +46,7 @@ extension _Vector where Element: Numeric {
     static func ones2D(_ rows: Int, _ columns: Int) -> [[Element]] {
         precondition(rows >= 0 && columns >= 0, "Dimensions must be non-negative")
         guard let one = (1 as? Element) else {
-            fatalError("Could not convert literal 1 to the specified Element type")
+            preconditionFailure("Element type does not support exact conversion from 1")
         }
         let row = [Element](repeating: one, count: columns)
         return [[Element]](repeating: row, count: rows)
@@ -73,7 +73,7 @@ extension _Vector where Element: Numeric {
             } else {
                 // Handle types that can't convert from Int
                 // This could be more sophisticated for complex numeric types
-                fatalError("Could not convert literal 1 to the specified Element type")
+                preconditionFailure("Element type does not support exact conversion from 1")
             }
         }
 

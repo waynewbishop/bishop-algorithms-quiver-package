@@ -4,7 +4,7 @@ Measure classifier performance with accuracy, precision, recall, and F1 score.
 
 ## Overview
 
-A classification model is only as useful as its evaluation. Accuracy — the fraction of correct predictions — is the most intuitive metric, but it can be deeply misleading on imbalanced datasets. If 95% of samples belong to one class, a model that always predicts that class achieves 95% accuracy while providing no useful discrimination. Precision, recall, and F1 score give a more complete picture by examining how the model handles the positive class specifically.
+A [classification](<doc:Machine-Learning-Primer>) model is only as useful as its evaluation. Accuracy — the fraction of correct predictions — is the most intuitive metric, but it can be deeply misleading on imbalanced datasets. If 95% of samples belong to one class, a model that always predicts that class achieves 95% accuracy while providing no useful discrimination. Precision, recall, and F1 score give a more complete picture by examining how the model handles the positive class specifically.
 
 Quiver provides these metrics as extensions on `[Int]`, where the calling array represents predicted labels and the `actual:` parameter provides the ground truth.
 

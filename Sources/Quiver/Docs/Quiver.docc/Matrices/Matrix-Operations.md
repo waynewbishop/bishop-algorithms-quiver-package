@@ -4,7 +4,7 @@ Work with two-dimensional arrays (matrices) using element-wise arithmetic and tr
 
 ## Overview
 
-A **matrix** is a rectangular grid of numbers arranged in rows and columns. While a `vector` is a single list of numbers representing a point or direction in space, a matrix is a collection of multiple vectors organized together. Quiver extends Swift's `Array` type to support matrix operations on nested arrays. Matrices represent tabular data, transformations, and multi-dimensional datasets. 
+A **matrix** is a rectangular grid of numbers arranged in rows and columns. While a `vector` is a single list of numbers representing a point or direction in space, a matrix is a collection of multiple vectors organized together. Quiver extends Swift's `Array` type to support matrix operations on nested arrays. Matrices represent tabular data, transformations, and multi-dimensional datasets. For the mathematical foundations, see <doc:Linear-Algebra-Primer>. 
 
 > Tip: For detailed coverage of matrix concepts with visualizations and examples, see [Matrices](https://waynewbishop.github.io/swift-algorithms/21-matrices.html) in Swift Algorithms & Data Structures.
 
@@ -124,7 +124,7 @@ let matrix = [[4.0, 3.0], [6.0, 3.0]]
 let det = matrix.determinant  // -6.0
 ```
 
-The determinant provides important information about a matrix:
+The [determinant](<doc:Determinants-Primer>) provides important information about a matrix:
 - `det = 0`: Matrix is singular (not invertible)
 - `det ≠ 0`: Matrix is invertible
 - Magnitude indicates volume scaling in geometric transformations

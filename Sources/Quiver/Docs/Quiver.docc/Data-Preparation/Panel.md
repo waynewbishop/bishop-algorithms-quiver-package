@@ -4,7 +4,7 @@ A Quiver type that organizes named columns of numeric data into a single contain
 
 ## Overview
 
-Panel takes a matrix of rows and pivots it into named columns. Each column is a `[Double]` — effectively a named vector. The data is the same, just organized by column instead of by row. Without Panel, a feature matrix like `[[619, 15000, 0.08], [502, 78000, 0.04]]` offers no indication of what each column represents, and splitting or filtering requires careful coordination across parallel arrays to keep rows aligned.
+Panel takes a matrix of rows and pivots it into named columns, where each column represents a [feature or label](<doc:Machine-Learning-Primer>). Each column is a `[Double]` — effectively a named vector. The data is the same, just organized by column instead of by row. Without Panel, a feature matrix like `[[619, 15000, 0.08], [502, 78000, 0.04]]` offers no indication of what each column represents, and splitting or filtering requires careful coordination across parallel arrays to keep rows aligned.
 
 With Panel, each column gets a name and all rows stay together as a unit. Developers familiar with Python's pandas `DataFrame` will recognize the concept — Panel serves a similar role for labeled column data, scoped to Quiver's numeric focus.
 
@@ -37,7 +37,7 @@ let results = [[8.5, 2.1], [7.2, 2.4], [9.1, 1.9]]
 // Wrap it in a Panel to give columns meaningful names
 let athletes = Panel(matrix: results, columns: ["speed", "jumpHeight"])
 athletes["speed"].mean()        // 8.27
-athletes["jumpHeight"].std()    // 0.21
+athletes["jumpHeight"].std()    // 0.25
 ```
 
 ### Column access
@@ -187,7 +187,7 @@ let (train, test) = data.trainTestSplit(testRatio: 0.2, seed: 42)
 let featureColumns = ["creditScore", "balance"]
 
 // Scale features using training data only (prevents data leakage)
-let scaler = FeatureScaler.fit(train.toMatrix(columns: featureColumns))
+let scaler = FeatureScaler.fit(features: train.toMatrix(columns: featureColumns))
 let trainScaled = scaler.transform(train.toMatrix(columns: featureColumns))
 let testScaled = scaler.transform(test.toMatrix(columns: featureColumns))
 
