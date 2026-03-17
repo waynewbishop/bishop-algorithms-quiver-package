@@ -576,3 +576,311 @@ let bins = raw.histogram(bins: 5)              // for bar charts
 | `cm.precision` → `Double?` | `standardized()` → `[Double]` |
 | `cm.recall` → `Double?` | `cm.accuracy` → `Double` |
 | `cm.f1Score` → `Double?` | `rSquared(actual:)` → `Double` |
+
+---
+
+## Documentation Guide
+
+The sections below summarize Quiver's full documentation. Each topic explains **when** and **why** to use the APIs, not just how.
+
+### Linear Algebra Primer
+
+Quiver treats Swift arrays as mathematical vectors. A `[Double]` gains `magnitude`, `normalized`, `dot()`, `cosineOfAngle(with:)`, and `distance(to:)` through constrained extensions. Key concepts:
+
+- **Arrays are vectors.** `[3.0, 4.0]` is a point in 2D vector space. `magnitude` = √(3² + 4²) = 5. `normalized` divides each element by magnitude → `[0.6, 0.8]` (unit vector preserving direction).
+- **Vector space.** Every element in the array is a dimension. Two vectors close together = similar items. This is how ML works — flowers, documents, customers become comparable once represented as arrays.
+- **Dot product.** Sum of element-wise products. Positive = same direction, zero = perpendicular, negative = opposite. Foundation for cosine similarity.
+- **Cosine similarity.** Dot product divided by both magnitudes. Cancels length, measures only angle. Range: -1 (opposite) to 1 (identical). Powers recommendation engines, search, duplicate detection.
+- **Matrices** are rectangular grids that transform vectors. `transformedBy()` applies the rule. Matrices can rotate, scale, reflect, shear, and compose transformations.
+- **Distance** connects linear algebra to ML. `magnitude` = distance from origin. `distance(to:)` = distance between any two points. Every Quiver ML model uses distance internally.
+
+### Determinants Primer
+
+The determinant measures how a matrix scales space. For a 2×2 matrix `[[a,b],[c,d]]`, determinant = ad − bc.
+
+- **Geometric meaning:** A determinant of 2 means the matrix doubles area. A determinant of 0 means the matrix collapses space into a lower dimension (singular — not invertible).
+- **Invertibility:** Only matrices with non-zero determinant can be inverted. `try matrix.inverted()` throws `MatrixError.singular` if det = 0.
+- **Condition number:** `matrix.conditionNumber` measures numerical stability. Values near 1 = well-conditioned. Values > 1000 = results may be unreliable. Always check before trusting an inverse.
+- **Log determinant:** `matrix.logDeterminant` returns a `LogDeterminant` struct with `.sign`, `.logAbsValue`, and `.value`. Prevents overflow for large matrices where the raw determinant would exceed `Double.greatestFiniteMagnitude`.
+- **Diagnostic chain:** Check determinant → check condition number → attempt inversion → verify with `matrix.multiplyMatrix(inverse)` ≈ identity.
+
+### Machine Learning Primer
+
+Quiver's ML models follow a consistent pattern: `fit()` → `predict()` → evaluate.
+
+- **Classification vs regression.** Classification predicts discrete categories (`[Int]` labels). Regression predicts continuous values (`[Double]` targets).
+- **Features and labels.** Features are the input measurements (`[[Double]]` matrix, rows = samples, columns = measurements). Labels are what we predict (`[Int]` for classification, `[Double]` for regression).
+- **Train/test split.** Never evaluate on training data. Use `trainTestSplit(testRatio:seed:)` or `stratifiedSplit(labels:testRatio:seed:)` to hold out evaluation data.
+- **Feature scaling.** Use `FeatureScaler.fit(features:)` on training data only. Transform both train and test sets with the same scaler. Prevents features with large ranges from dominating.
+- **Models available:** GaussianNaiveBayes, KNearestNeighbors, KMeans, LinearRegression. All use static `fit()` methods — no unfitted state exists.
+- **Evaluation:** `confusionMatrix(actual:)` for classification (accuracy, precision, recall, F1). `rSquared(actual:)`, `meanSquaredError(actual:)` for regression.
+
+### Vector Operations
+
+Vectors have magnitude (length), direction (normalized), and relationships to other vectors (dot product, angle, distance).
+
+- **Magnitude:** `v.magnitude` — Pythagorean theorem extended to any dimension. `[3.0, 4.0].magnitude` = 5.0.
+- **Normalization:** `v.normalized` — unit vector (length 1) preserving direction. Zero vector returns zero vector.
+- **Dot product:** `v1.dot(v2)` — sum of element-wise products. Zero means perpendicular.
+- **Angle:** `v1.angle(with: v2)` (radians), `v1.angleInDegrees(with: v2)` (degrees), `v1.cosineOfAngle(with: v2)` (raw cosine value).
+- **Distance:** `v1.distance(to: v2)` — Euclidean distance. Used internally by KNN and KMeans.
+- **Arithmetic:** `.add()`, `.subtract()`, `.multiply()` (Hadamard), `.divide()`. Named methods, not operators.
+- **Matrix-vector:** `vector.transformedBy(matrix)` or `matrix.transform(vector)` — two syntaxes, same result.
+- **Averaging:** `vectors.averaged()` and `vectors.meanVector()` — both return optionals. Key for building document vectors from word embeddings.
+
+### Vector Projections
+
+Decompose any vector into parallel and perpendicular components relative to a reference direction.
+
+- **Scalar projection:** `v.scalarProjection(onto: ref)` — how far v reaches along ref (a number).
+- **Vector projection:** `v.vectorProjection(onto: ref)` — the component of v parallel to ref (a vector).
+- **Orthogonal component:** `v.orthogonalComponent(to: ref)` — the perpendicular remainder.
+- **Reconstruction:** `parallel.add(perpendicular)` always equals the original vector.
+- **Use cases:** Force decomposition on ramps, ball reflection off surfaces (`v − 2 × proj(v onto normal)`), course correction (groundspeed vs crosswind).
+- **Connection to regression:** The normal equation projects the target vector onto the feature column space. The prediction is the parallel component; the residual error is the orthogonal component.
+
+### Boolean Masking
+
+Filter and select array elements using comparisons, logical conditions, and boolean masks.
+
+- **Comparisons return `[Bool]`:** `isGreaterThan()`, `isLessThan()`, `isGreaterThanOrEqual()`, `isLessThanOrEqual()`, `isEqual(to:)` (takes array, not scalar).
+- **Combine masks:** `.and()`, `.or()`, `.not` (computed property).
+- **Apply masks:** `data.masked(by: mask)` extracts matching elements. `mask.trueIndices` returns positions.
+- **Conditional selection:** `data.choose(where: mask, otherwise: otherArray)` — picks from first array where true, second where false. Both parameters are arrays.
+- **Panel integration:** `panel.filtered(where: mask)` applies the same mask to all columns simultaneously.
+
+### Statistical Operations
+
+Three questions about any dataset: where is the center, how spread out, and which values are unusual.
+
+- **Aggregation:** `sum()`, `product()` (non-optional). `argMin()`, `argMax()` (optional — return indices).
+- **Central tendency:** `mean()`, `median()` — both optional. When they diverge, data is skewed.
+- **Dispersion:** `variance(ddof:)`, `std(ddof:)` — both optional. `ddof: 0` for population, `ddof: 1` for sample.
+- **Cumulative:** `cumulativeSum()`, `cumulativeProduct()` — non-optional. Running totals.
+- **Outlier detection:** `outlierMask(threshold:)` — z-score method, returns `[Bool]`. Default std of 1.0 when all values identical.
+- **Vector averaging:** `meanVector()` — element-wise mean across multiple vectors. Returns optional.
+- **Info:** `.info()` — quick summary (count, mean, std, min, max; adds shape/size for matrices).
+
+### Matrix Operations
+
+Work with 2D arrays using element-wise arithmetic and linear algebra.
+
+- **Element-wise:** `.add()`, `.subtract()`, `.multiply()` (Hadamard), `.divide()` — same as vectors but for matrices.
+- **Scalar broadcast:** `matrix * 2.0`, `matrix + 10.0` — operators work for scalar-matrix.
+- **Transpose:** `.transpose()` or `.transposed()` — flip rows and columns.
+- **Matrix multiply:** `.multiplyMatrix(other)` — true matrix multiplication (dot products of rows × columns). Inner dimensions must match.
+- **Column access:** `.column(at: index)` — extract a column as `[Double]`.
+- **Determinant:** `.determinant` — non-optional. Zero means singular.
+- **Inverse:** `try .inverted()` — throws `MatrixError.singular` or `.notSquare`.
+- **Fractions:** `.asFractions()` on inverted matrices reveals rational structure behind decimal results.
+
+### Shape and Size
+
+Inspect matrix dimensions before operations.
+
+- `.shape` returns `(rows: Int, columns: Int)` named tuple — only on `[[Numeric]]`.
+- `.size` returns total element count (rows × columns). Differs from `.count` which returns row count only.
+- Supports tuple destructuring: `let (stores, days) = sales.shape`.
+- Compile-time safety: calling `.shape` on `[Double]` or `[String]` is a compile-time error.
+
+### Reshape and Flatten
+
+Convert between 1D vectors and 2D matrices without altering data.
+
+- `flat.reshaped(rows:columns:)` — 1D → 2D, fills row-major. Total elements must equal rows × columns.
+- `matrix.flattened()` — 2D → 1D, concatenates rows.
+- `matrix.reshaped(rows:columns:)` — 2D → different 2D, flattens internally then reshapes.
+- Round-trip: `matrix.flattened().reshaped(rows:columns:)` restores original.
+
+### Array Generation
+
+Static methods on `[Double]` (or `[Int]`) to create arrays with specific patterns.
+
+- **1D:** `[Double].zeros(5)`, `.ones(5)`, `.full(5, value: 3.14)`.
+- **2D:** `[Double].zeros(2, 3)`, `.ones(2, 3)`, `.full(2, 3, value: 7.0)` — called on `[Double]`, returns `[[Double]]`.
+- **Special:** `[Double].identity(3)` (3×3 identity), `[Double].diag([1,2,3])` (diagonal matrix).
+- **Sequences:** `[Double].linspace(start: 0, end: 1, count: 5)` — includes both endpoints. `[Double].arange(0, 10, step: 2.5)` — excludes end.
+
+### Random Number Generation
+
+Generate random arrays for testing, simulation, and initialization.
+
+- **Uniform:** `[Double].random(5)` (0–1), `[Double].random(5, in: -1.0...1.0)`, `[Double].random(2, 3)` (2D).
+- **Normal:** `[Double].randomNormal(5, mean: 0.0, std: 1.0)`, `[Double].randomNormal(2, 3, mean: 5.0, std: 2.0)` — uses Box-Muller transform.
+- **Integer:** `[Int].random(5, in: 0..<100)` — half-open range.
+- Works with both `Float` and `Double`.
+
+### Broadcasting Operations
+
+Apply operations between arrays and scalars or between arrays of different dimensions.
+
+- **Scalar methods:** `.broadcast(adding:)`, `.broadcast(subtracting:)`, `.broadcast(multiplyingBy:)`, `.broadcast(dividingBy:)`.
+- **Scalar operators:** `array + 2.0`, `2.0 * array`, `matrix * 0.5` — commutative.
+- **Matrix-vector:** `.broadcast(addingToEachRow:)`, `.broadcast(addingToEachColumn:)`, `.broadcast(multiplyingEachRowBy:)`, `.broadcast(multiplyingEachColumnBy:)`.
+- **Custom:** `.broadcast(with: value, operation: { $0 + $1 })`, `.broadcast(withRowVector:operation:)`.
+- **When to use:** Broadcasting for scalar math on arrays (reads like math notation). `map` for custom/non-numeric transformations.
+
+### Matrix Transformations
+
+Matrices transform vectors through multiplication. Each row produces one element of the result via dot product.
+
+- **Basic usage:** `vector.transformedBy(matrix)` or `matrix.transform(vector)`.
+- **Basis vectors:** Column 1 = where i-hat [1,0] lands. Column 2 = where j-hat [0,1] lands. The result is a linear combination of columns weighted by the vector.
+- **Identity:** `[Double].identity(2)` — leaves vectors unchanged. Starting point for building transformations.
+- **Diagonal:** `[Double].diag([2.0, 3.0])` — scales each axis independently.
+- **Dimension rule:** Matrix columns must match vector length.
+
+### Common Transformations
+
+Specific transformation matrices for geometric operations.
+
+- **Rotation:** `[[cos θ, -sin θ], [sin θ, cos θ]]`. 90° = `[[0,-1],[1,0]]`. Preserves magnitude.
+- **Scaling:** Diagonal matrix. Uniform = same factor all axes. Non-uniform = different per axis.
+- **Reflection:** Negate one axis. `reflectX = [[1,0],[0,-1]]`, `reflectY = [[-1,0],[0,1]]`. Preserves distances.
+- **Shear:** Off-diagonal element. Horizontal shear `[[1,k],[0,1]]` shifts x proportionally to y.
+
+### Composing Transformations
+
+Combine multiple transformations via matrix multiplication.
+
+- `A.multiplyMatrix(B)` means "first apply B, then apply A" (right-to-left order).
+- **Two approaches:** Compose first then apply once (efficient for many vectors), or apply sequentially (simpler for single vectors).
+- **Order matters:** `rotate.multiplyMatrix(scale) ≠ scale.multiplyMatrix(rotate)`.
+- **Rotate around a point:** Translate to origin → rotate → translate back.
+- **Performance:** Precompute composed matrix when applying to many vectors. Matrix multiplication is O(n³); matrix-vector is O(n²).
+- **Inverse transformations:** Rotation inverse is the negative angle. Scaling inverse is the reciprocal. `try matrix.inverted()` for general inverse.
+
+### Similarity Operations
+
+Measure how related two vectors are using cosine similarity and distance metrics.
+
+- **Dot product:** `v1.dot(v2)` — foundation for cosine similarity. Mixes alignment with magnitude.
+- **Cosine similarity:** `v1.cosineOfAngle(with: v2)` — normalized dot product. Range -1 to 1. Direction only, magnitude ignored.
+- **Magnitude vs distance:** Magnitude = "how far from origin." Distance = "how far between two points." Both use Pythagorean theorem.
+- **Normalization:** `v.normalized` creates unit vector. For normalized vectors, dot product equals cosine similarity.
+- **Angle:** `angle(with:)` applies acos to cosine value → radians. `angleInDegrees(with:)` → degrees.
+- **Batch:** `database.cosineSimilarities(to: query)` — compare one vector against many.
+- **Duplicate detection:** `documents.findDuplicates(threshold: 0.95)` — returns `[(index1, index2, similarity)]` sorted by similarity.
+- **Cluster validation:** `cluster.clusterCohesion()` — average pairwise similarity within a group (0 to 1).
+
+### Semantic Search
+
+Find information by meaning, not keywords. Full pipeline: tokenize → embed → average → compare.
+
+1. **Tokenize:** `"Running Shoes".tokenize()` → `["running", "shoes"]`. Lowercases and splits on whitespace.
+2. **Embed:** `tokens.embed(using: embeddings)` → `[[Double]]`. Looks up each token in a `[String: [Double]]` dictionary. Unknown words silently skipped.
+3. **Average:** `vectors.meanVector()` → `[Double]?`. Combines word vectors into one document vector.
+4. **Compare:** `docVectors.cosineSimilarities(to: queryVector)` → `[Double]`. Rank by similarity.
+5. **Top results:** `scores.topIndices(k: 3, labels: docNames)` → `[(label, score)]`.
+- **Vector arithmetic captures relationships:** `king - man + woman ≈ queen` in vector space.
+- **Pre-compute:** Store document vectors; only build query vector at search time.
+
+### Panel
+
+Organizes named columns of numeric data. Similar to Python's pandas DataFrame but focused on numeric ML workflows.
+
+- **Create:** `Panel([("age", [25.0, 30.0]), ("income", [50000.0, 60000.0])])` or `Panel(matrix:columns:)`.
+- **Access:** `panel["age"]` → `[Double]`. `panel.labels("age")` → `[Int]`. `panel.toMatrix(columns:)` → `[[Double]]`.
+- **Properties:** `.columnNames`, `.rowCount`.
+- **Filter:** `panel.filtered(where: boolMask)` — applies mask to all columns simultaneously.
+- **Split:** `panel.trainTestSplit(testRatio:seed:)` — splits all columns atomically by the same rows.
+- **Describe:** `panel.describe()` — per-column summary statistics.
+- **Design:** Value type, fixed schema, all `Double` columns. Models accept `[[Double]]` and `[Int]` directly — Panel organizes data, models consume raw arrays.
+
+### Train-Test Split
+
+Split data into training and testing subsets for honest evaluation.
+
+- **Basic:** `data.trainTestSplit(testRatio: 0.2, seed: 42)` → `(train, test)` named tuple. Works on any array type.
+- **Paired arrays:** Use same seed for features and labels to keep rows aligned.
+- **Reproducible:** Same seed + same data = same split every time.
+- **Stratified:** `features.stratifiedSplit(labels:testRatio:seed:)` preserves class proportions. Returns 4-tuple: `(trainFeatures, testFeatures, trainLabels, testLabels)`.
+- **Choosing ratio:** 0.2 is standard. 0.1 for small datasets. 0.3 for large datasets.
+
+### Feature Scaling
+
+Normalize features to a common range so no single feature dominates.
+
+- **Fit:** `FeatureScaler.fit(features: trainX)` or `FeatureScaler.fit(features: trainX, range: -1.0...1.0)`.
+- **Transform:** `scaler.transform(data)` — applies the learned min/max statistics.
+- **Rule:** Fit on training data only. Transform both train and test with the same scaler. Prevents data leakage.
+- **Constant columns:** Mapped to lower bound of target range (no division by zero).
+- **Properties:** `.minimums`, `.maximums`, `.range`, `.featureCount`.
+- **Immutable:** Once fitted, statistics cannot change. Safe to reuse on production data.
+
+### Data Visualization
+
+Prepare data for Swift Charts and other visualization frameworks.
+
+- **Scaling:** `scaled(to: range)` (min-max), `standardized()` (z-score), `asPercentages()` (share of total).
+- **Stacking:** `series.stackedCumulative()` (absolute stacked area), `series.stackedPercentage()` (100% stacked bars).
+- **Heatmap:** `vectors.correlationMatrix()` → `[[Double]]`. `vectors.heatmapData(labels:)` → `[(x, y, value)]` for `RectangleMark`.
+- **Downsampling:** `data.downsample(factor:using:)` with `AggregationMethod`: `.mean`, `.max`, `.min`, `.sum`, `.count`.
+- **Grouping:** `data.groupBy(categories, using: .sum)` → `[String: Double]`. `data.groupedData(by:using:)` → `[(category, value)]`.
+- **Boolean filtering:** Split data into series using `.masked(by:)` for normal vs outlier chart layers.
+- **ML visualization:** Confusion matrix → heatmap, KMeans elbow → line chart, regression → scatter + fitted line overlay, softMax → bar chart.
+
+### Gaussian Naive Bayes
+
+Simplest effective classifier. Assumes features are conditionally independent given the class label.
+
+- **Fit:** `GaussianNaiveBayes.fit(features: trainX, labels: trainY)` — learns per-class means, variances, and priors.
+- **Predict:** `model.predict(testX)` → `[Int]`.
+- **Log probabilities:** `model.predictLogProbabilities(testX)` → `[[Double]]` — one row per sample, one column per class.
+- **Inspect:** `model.classes` → `[ClassStats]` with `.label`, `.prior`, `.means`, `.variances`, `.count`.
+- **When to use:** Baseline classifier. Fast training. Works well with small datasets. Good first model before trying more complex approaches.
+
+### K-Nearest Neighbors
+
+Classifies by finding the k closest training examples and voting on their labels.
+
+- **Fit:** `KNearestNeighbors.fit(features:labels:k:metric:weight:)`.
+- **Metrics:** `.euclidean` (default), `.cosine` (for high-dimensional text/embeddings).
+- **Weights:** `.uniform` (majority vote), `.distance` (closer neighbors have more influence).
+- **Predict:** `model.predict(testX)` → `[Int]`.
+- **Properties:** `.k`, `.metric`, `.featureCount`.
+- **When to use:** Non-linear decision boundaries. When similar items should be classified similarly. Feature scaling recommended.
+
+### K-Means Clustering
+
+Unsupervised grouping of data into k clusters.
+
+- **Fit:** `KMeans.fit(data:k:seed:)` — assigns each point to nearest centroid, iterates until stable.
+- **Properties:** `.centroids`, `.labels`, `.inertia` (total within-cluster distance), `.iterations`, `.featureCount`.
+- **Predict:** `model.predict(newData)` → `[Int]` — assigns new points to existing clusters.
+- **Best fit:** `KMeans.bestFit(data:k:attempts:)` — runs multiple times, returns lowest inertia.
+- **Elbow method:** `KMeans.elbowMethod(data:kRange:seed:)` → `[Double]` inertias. Plot against k to find the "elbow."
+
+### Linear Regression
+
+Fits a line (or hyperplane) to continuous data using the normal equation.
+
+- **Fit:** `try LinearRegression.fit(features: trainX, targets: trainY)` — throws `MatrixError.singular` if features are linearly dependent.
+- **Predict:** `model.predict(testX)` → `[Double]` for `[[Double]]` input. `model.predict(xValues)` → `[Double]` for single-feature `[Double]` input.
+- **Properties:** `.coefficients` (includes intercept as first element), `.featureCount`, `.hasIntercept`.
+- **Evaluation:** `predicted.rSquared(actual:)`, `predicted.meanSquaredError(actual:)`, `predicted.rootMeanSquaredError(actual:)`.
+
+### Evaluation Metrics
+
+Measure model performance after prediction.
+
+- **Classification:** `predictions.confusionMatrix(actual: truth)` → `ConfusionMatrix` with `.truePositives`, `.falsePositives`, `.trueNegatives`, `.falseNegatives`, `.accuracy` (non-optional), `.precision` (optional), `.recall` (optional), `.f1Score` (optional).
+- **Standalone:** `predictions.accuracy(actual:)`, `.precision(actual:)`, `.recall(actual:)`, `.f1Score(actual:)`.
+- **Regression:** `predicted.rSquared(actual:)` (1.0 = perfect), `.meanSquaredError(actual:)`, `.rootMeanSquaredError(actual:)`.
+
+### Activation Functions
+
+Convert raw scores (logits) into probabilities.
+
+- **SoftMax:** `logits.softMax()` → `[Double]` summing to 1.0. For multi-class classification. Uses numerically stable variant (subtracts max before exp). Handles large values like `[1000, 1001, 1002]` without overflow.
+- **Sigmoid:** `logits.sigmoid()` → `[Double]` each in (0,1). For binary classification. Element-wise, independent. Property: σ(x) + σ(−x) = 1.0.
+- **When to use:** SoftMax for "which one?" (exactly one label). Sigmoid for "yes or no?" (per-element binary).
+- **With Quiver models:** Built-in models handle probability conversion internally. These functions are most useful for external model output or custom scoring systems.
+
+### Installation
+
+Add via SPM: `.package(url: "https://github.com/waynewbishop/quiver", from: "1.0.0")`. Or use Xcode → File → Add Package Dependencies. Zero external dependencies. Verify with `[1.0, 2.0, 3.0].dot([4.0, 5.0, 6.0])` → 32.0.
+
+### Usage (Xcode Playground Macro)
+
+The `#Playground` macro (Xcode 26+) enables interactive exploration of Quiver APIs. Unlike `.playground` files, `#Playground` compiles as part of the project and can import SPM dependencies. Use `import Playgrounds` and `import Quiver`, wrap code in `#Playground { ... }`. Named blocks like `#Playground("Dot Product") { ... }` organize multiple experiments in one file. The Canvas shows each variable's value inline — no build-and-run cycle needed.
