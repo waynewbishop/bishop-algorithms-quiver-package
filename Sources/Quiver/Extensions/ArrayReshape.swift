@@ -15,7 +15,7 @@ import Foundation
 
 // MARK: - 1D Reshape (Vector → Matrix)
 
-extension Array where Element: Numeric {
+public extension Array where Element: Numeric {
 
     /// Reshapes a one-dimensional array into a two-dimensional matrix with the specified
     /// dimensions using row-major order.
@@ -56,7 +56,7 @@ extension Array where Element: Numeric {
 
 // MARK: - 2D Reshape and Flatten (Matrix → Vector, Matrix → Matrix)
 
-extension Array where Element: Collection, Element.Element: Numeric {
+public extension Array where Element: Collection, Element.Element: Numeric {
 
     /// Returns the shape of a two-dimensional array as a `(rows, columns)` tuple.
     ///

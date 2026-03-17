@@ -168,7 +168,7 @@ public extension Array where Element: Numeric {
     }
 }
 
-extension Array where Element: Collection, Element.Element: Numeric {
+public extension Array where Element: Collection, Element.Element: Numeric {
     /// Returns the transpose of a matrix
     ///
     /// This method is only available on 2D arrays (arrays of collections) where the inner elements
