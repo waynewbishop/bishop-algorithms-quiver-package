@@ -78,7 +78,7 @@ let product1 = [4.2, 7.8, 3.1, 9.5]
 let product2 = [3.8, 8.2, 2.9, 9.7]
 
 // Cosine similarity: direction only, magnitude ignored
-product1.cosineOfAngle(with: product2)  // ~0.998 (very similar)
+product1.cosineOfAngle(with: product2)  // ~0.999 (very similar)
 ```
 
 This separation of direction from magnitude is why cosine similarity powers recommendation engines, search ranking, and duplicate detection. Two customer profiles with identical preferences but different engagement levels point in the same direction. Cosine similarity scores them as nearly identical, while the raw dot product would not.

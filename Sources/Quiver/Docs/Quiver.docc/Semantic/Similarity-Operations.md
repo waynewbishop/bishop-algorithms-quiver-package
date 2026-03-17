@@ -124,7 +124,7 @@ let v2 = [5.0, 12.0]
 
 v1.cosineOfAngle(with: v2)    // 0.969 (similarity score)
 v1.angle(with: v2)            // 0.248 radians
-v1.angleInDegrees(with: v2)   // 14.25 degrees
+v1.angleInDegrees(with: v2)   // 14.23 degrees
 ```
 
 In machine learning and information retrieval, the raw cosine value is typically all that's needed — "document A is 0.92 similar to document B." In physics and graphics, the actual angle matters — "rotate 45 degrees" or "the force acts at 30 degrees." See <doc:Vector-Operations> for more on angle calculations and <doc:Vector-Projections> for decomposing vectors into parallel and perpendicular components.

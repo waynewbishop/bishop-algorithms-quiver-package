@@ -70,7 +70,7 @@ let b: [[Double]] = [[5.0, 6.0], [7.0, 8.0]]
 guard a.shape == b.shape else {
     fatalError("Dimension mismatch")
 }
-let sum = a + b
+let sum = a.add(b)
 ```
 
 **Inspect dimensions before processing:**
