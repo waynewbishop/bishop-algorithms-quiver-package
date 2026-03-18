@@ -110,6 +110,10 @@ import Quiver
     grades.std()        // 7.31
     grades.median()     // 88.5
 
+    // Organise data with labeled columns
+    let panel = Panel([("Math", grades), ("Science", [91.0, 85.0, 79.0, 93.0, 88.0, 90.0, 82.0, 87.0])])
+    panel["Math"]       // [88.0, 92.0, 76.0, 95.0, 84.0, 91.0, 73.0, 89.0]
+
     // Linear algebra on plain arrays
     let a = [2.0, 3.0, 4.0]
     let b = [1.0, 5.0, 2.0]
@@ -123,14 +127,3 @@ import Quiver
 - Complete course assignments using `#Playground` with `import Quiver`
 - Test data pipelines before moving code into an app target
 - Visualise computed results with Swift Charts in the same project
-
-### See also
-
-- <doc:Installation>
-- <doc:Usage>
-- <doc:Machine-Learning-Primer>
-- <doc:Feature-Scaling>
-- <doc:KMeans-Clustering>
-- <doc:Panel>
-- <doc:Similarity-Operations>
-- <doc:Semantic-Search>
