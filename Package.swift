@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Quiver",
+    name: "quiver",
     platforms: [
         .macOS(.v12),
         .iOS(.v15),

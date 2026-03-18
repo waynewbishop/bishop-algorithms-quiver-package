@@ -48,17 +48,19 @@ Consider a user on a run. As heart rate samples stream in every few seconds, Qui
 ```swift
 import Quiver
 
-// Live heart rate samples collected during a workout
-let samples: [[Double]] = recentSamples
+// Rolling window of biometric samples — [heartRate, cadence, elapsedMinutes]
+let samples: [[Double]] = [
+    [142.0, 82.0, 1.0], [148.0, 84.0, 2.0], [155.0, 86.0, 3.0],
+    [160.0, 88.0, 4.0], [158.0, 85.0, 5.0], [145.0, 80.0, 6.0]
+]
 
 // Scale features and cluster into intensity zones
 let scaler = FeatureScaler.fit(features: samples)
 let scaled = scaler.transform(samples)
 let model  = KMeans.fit(data: scaled, k: 3, seed: 42)
 
-// Each label represents a detected zone
-print(model.labels)     // [0, 0, 1, 2, 2, 1, 0, ...]
-print(model.centroids)  // centre of each zone
+// Each label is a detected zone — adapted to this user's physiology
+print(model.labels)
 ```
 
 **What watchOS enables:**
@@ -110,7 +112,7 @@ import Quiver
     grades.std()        // 7.31
     grades.median()     // 88.5
 
-    // Organise data with labeled columns
+    // Organize data with labeled columns
     let panel = Panel([("Math", grades), ("Science", [91.0, 85.0, 79.0, 93.0, 88.0, 90.0, 82.0, 87.0])])
     panel["Math"]       // [88.0, 92.0, 76.0, 95.0, 84.0, 91.0, 73.0, 89.0]
 
