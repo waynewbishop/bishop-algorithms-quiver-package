@@ -35,6 +35,7 @@ This framework is companion to [Swift Algorithms & Data Structures](https://wayn
 ### Getting Started
 - <doc:Installation>
 - <doc:How-It-Works>
+- <doc:Platform-Guide>
 - <doc:Usage>
 
 ### Conceptual Guides
