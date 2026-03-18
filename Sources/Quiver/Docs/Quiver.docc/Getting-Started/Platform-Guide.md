@@ -12,12 +12,12 @@ This is a starting point for developers who want to understand what's possible w
 
 ### iOS — the primary deployment target
 
-iOS is where the majority of Swift developers ship code, and where Quiver's capabilities integrate most naturally with existing app architectures. Examples include training models on a user's own data, computing similarity across local content, and classifying behaviour patterns without a network round-trip.
+iOS is where the majority of Swift developers ship code, and where Quiver's capabilities integrate most naturally with existing app architectures. Examples include training models on a user's own data, computing similarity across local content, and classifying behavior patterns without a network round-trip.
 
 ```swift
 import Quiver
 
-// Tokenise and embed the search query
+// Tokenize and embed the search query
 let tokens = "Swift performance tips".tokenize()
 let embedded = tokens.embed(using: noteEmbeddings)
 
@@ -33,11 +33,11 @@ let results = scores.topIndices(k: 5, labels: noteTitles)
 **What iOS enables:**
 
 - On-device semantic search over notes, emails, or documents without a server
-- Personalised recommendations computed locally from user preference vectors
-- Behaviour clustering to identify distinct usage patterns across app sessions
+- Personalized recommendations computed locally from user preference vectors
+- Behavior clustering to identify distinct usage patterns across app sessions
 - Classification of user-generated content without sending data off-device
 
-> Tip: See <doc:Similarity-Operations> for batch comparison patterns and <doc:Semantic-Search> for the full tokenise → embed → rank pipeline.
+> Tip: See <doc:Similarity-Operations> for batch comparison patterns and <doc:Semantic-Search> for the full tokenize → embed → rank pipeline.
 
 ### watchOS — live, on-device intelligence
 
@@ -91,7 +91,7 @@ let results = scores.topIndices(k: 5, labels: labels)
 **What Swift server and Vapor enable:**
 
 - A vector search API built entirely in Swift 
-- A semantic search endpoint that tokenises queries, looks up embeddings, and ranks results
+- A semantic search endpoint that tokenizes queries, looks up embeddings, and ranks results
 - A clustering microservice that accepts feature vectors and returns K-Means assignments on demand
 - A duplicate detection pipeline that identifies near-identical content before it reaches persistent storage
 
@@ -99,33 +99,35 @@ let results = scores.topIndices(k: 5, labels: labels)
 
 ### Swift Playgrounds — interactive learning
 
-Xcode 26 introduces the `#Playground` macro — an interactive environment that works directly with SPM packages. This makes Quiver the natural first import for students and developers exploring numerical computing interactively. 
+Xcode 26 introduces the `#Playground` macro — an interactive environment that works directly with SPM packages. This makes Quiver a great option for students and developers exploring numerical computing interactively.
+
+Quiver can generate realistic test data using built-in random distributions — normal for naturally distributed measurements like height and weight, uniform for evenly spread values like age. A `Panel` organizes columns into a lightweight named container that feeds directly into Quiver's ML pipeline. It holds named `[Double]` columns, keeps rows aligned, and provides `trainTestSplit`, `filtered`, and `toMatrix` for model preparation.
 
 ```swift
 import Quiver
 
 #Playground {
-    // Generate sample data and explore it immediately
-    let grades = [88.0, 92.0, 76.0, 95.0, 84.0, 91.0, 73.0, 89.0]
+    // Generate a test dataset with random distributions
+    let data = Panel([
+        ("height", [Double].randomNormal(100, mean: 170.0, std: 10.0)),
+        ("weight", [Double].randomNormal(100, mean: 75.0, std: 12.0)),
+        ("age",    [Double].random(100, in: 18.0...65.0))
+    ])
 
-    grades.mean()       // 86.0
-    grades.std()        // 7.31
-    grades.median()     // 88.5
+    // Explore per-column statistics
+    data["height"].mean()
+    data["weight"].std()
+    data.describe()
 
-    // Organize data with labeled columns
-    let panel = Panel([("Math", grades), ("Science", [91.0, 85.0, 79.0, 93.0, 88.0, 90.0, 82.0, 87.0])])
-    panel["Math"]       // [88.0, 92.0, 76.0, 95.0, 84.0, 91.0, 73.0, 89.0]
-
-    // Linear algebra on plain arrays
-    let a = [2.0, 3.0, 4.0]
-    let b = [1.0, 5.0, 2.0]
-    a.dot(b)            // 25.0
+    // Split and feed into a model
+    let (train, test) = data.trainTestSplit(testRatio: 0.2, seed: 42)
+    let features = train.toMatrix(columns: ["height", "weight"])
 }
 ```
 
 **What Swift Playgrounds enables:**
 
+- Generate test datasets with built-in random distributions
 - Explore Quiver's full API interactively — statistics, linear algebra, similarity, and ML models
 - Complete course assignments using `#Playground` with `import Quiver`
-- Test data pipelines before moving code into an app target
-- Visualise computed results with Swift Charts in the same project
+- Visualize computed results with Swift Charts in the same project
