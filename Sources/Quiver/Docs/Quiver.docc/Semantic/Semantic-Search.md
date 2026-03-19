@@ -61,7 +61,7 @@ The subtraction `king.subtract(man)` isolates the "royalty" component by removin
 
 ## Tokenizing text
 
-The first step in any text pipeline converts raw text into individual words. Quiver's `tokenize()` method lowercases and splits on whitespace, producing clean tokens:
+The first step in any text pipeline converts raw text into individual words. Quiver's `tokenize()` method lowercases, splits on whitespace, and strips punctuation — producing clean tokens that match embedding dictionary keys:
 
 ```swift
 import Quiver
@@ -70,12 +70,19 @@ let query = "Comfortable Running Shoes"
 let tokens = query.tokenize()
 // ["comfortable", "running", "shoes"]
 
-let description = "Lightweight Trail Sneakers for Outdoor Training"
-let descTokens = description.tokenize()
-// ["lightweight", "trail", "sneakers", "for", "outdoor", "training"]
+let review = "Great shoes! Lightweight, comfortable, and fast."
+let reviewTokens = review.tokenize()
+// ["great", "shoes", "lightweight", "comfortable", "and", "fast"]
 ```
 
-Lowercasing ensures that "Running" and "running" map to the same vector. This normalization step prevents case differences from fragmenting the vocabulary.
+Lowercasing ensures that "Running" and "running" map to the same vector. Punctuation stripping ensures that "shoes!" and "shoes," both match the dictionary key "shoes" — without this, punctuated words would silently miss their embeddings. Contractions like "don't" preserve their interior apostrophe.
+
+To keep punctuation attached to tokens (for example, when token boundaries carry meaning), pass `strippingPunctuation: false`:
+
+```swift
+let raw = "Hello, world!".tokenize(strippingPunctuation: false)
+// ["hello,", "world!"]
+```
 
 ## Looking up embeddings
 
@@ -103,7 +110,7 @@ let queryVectors = queryTokens.embed(using: embeddings)
 //  [0.6, 0.9, 0.4, 0.1]]   shoes
 ```
 
-Words like "for" that don't appear in the dictionary are silently skipped. Common words like "the," "for," and "is" often carry little semantic weight, so filtering them out can improve results.
+Words like "for" that don't appear in the dictionary are silently skipped. Common words like "the," "for," and "is" often carry little semantic weight, so filtering them out can improve results. Because `tokenize()` strips punctuation by default, input like "Comfortable, Running Shoes!" produces clean tokens that match dictionary keys directly — no manual cleanup required.
 
 > Note: The `embed(using:)` method accepts any `[String: [Double]]` dictionary. How that dictionary is built — whether from a pre-trained model, a custom training pipeline, or a server-side API — is entirely up to the developer.
 

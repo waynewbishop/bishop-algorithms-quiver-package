@@ -19,19 +19,42 @@ public extension String {
     /// Tokenizes text into individual words for text analysis and embedding workflows.
     ///
     /// This method converts text to lowercase, splits on whitespace and newlines,
-    /// and filters out empty strings. It provides basic tokenization suitable for
-    /// word embeddings, semantic search, and natural language processing tasks.
+    /// and filters out empty strings. By default, punctuation is stripped from each
+    /// token so that words like "running!" match their embedding key "running".
+    ///
+    /// Punctuation stripping removes leading and trailing characters from the
+    /// Unicode general categories for punctuation (e.g., periods, commas, quotes,
+    /// exclamation marks, question marks, hyphens, brackets, and other symbols
+    /// classified as punctuation). Interior punctuation in contractions like
+    /// "don't" is preserved because the apostrophe is not at the boundary after
+    /// the first trim pass.
     ///
     /// Example:
     /// ```swift
-    /// let text = "Comfortable Running Shoes"
-    /// let words = text.tokenize()  // ["comfortable", "running", "shoes"]
+    /// // Default: punctuation stripped for clean embedding lookups
+    /// let text = "Hello, world! How are you?"
+    /// let words = text.tokenize()  // ["hello", "world", "how", "are", "you"]
+    ///
+    /// // Preserve punctuation when token boundaries matter
+    /// let raw = text.tokenize(strippingPunctuation: false)
+    /// // ["hello,", "world!", "how", "are", "you?"]
     /// ```
     ///
+    /// - Parameter strippingPunctuation: When `true` (the default), leading and
+    ///   trailing punctuation characters are removed from each token. Set to `false`
+    ///   to preserve punctuation as part of the token.
     /// - Returns: An array of lowercase word tokens with empty strings removed
-    func tokenize() -> [String] {
-        return self.lowercased()
+    func tokenize(strippingPunctuation: Bool = true) -> [String] {
+        let tokens = self.lowercased()
             .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+
+        guard strippingPunctuation else {
+            return tokens
+        }
+
+        return tokens
+            .map { $0.trimmingCharacters(in: .punctuationCharacters) }
             .filter { !$0.isEmpty }
     }
 }

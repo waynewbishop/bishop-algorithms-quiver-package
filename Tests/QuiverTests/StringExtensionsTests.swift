@@ -49,11 +49,78 @@ final class StringExtensionsTests: XCTestCase {
         XCTAssertEqual("word".tokenize(), ["word"])
     }
 
-    func testTokenizeWithPunctuation() {
+    // MARK: - Punctuation stripping (default behavior)
+
+    func testTokenizeStripsPunctuationByDefault() {
         let text = "Hello, world! How are you?"
         let tokens = text.tokenize()
 
+        XCTAssertEqual(tokens, ["hello", "world", "how", "are", "you"])
+    }
+
+    func testTokenizeStripsTrailingPeriods() {
+        let text = "end of sentence. next sentence."
+        let tokens = text.tokenize()
+
+        XCTAssertEqual(tokens, ["end", "of", "sentence", "next", "sentence"])
+    }
+
+    func testTokenizeStripsQuotesAndBrackets() {
+        let text = "\"quoted\" [bracketed] (parenthesized)"
+        let tokens = text.tokenize()
+
+        XCTAssertEqual(tokens, ["quoted", "bracketed", "parenthesized"])
+    }
+
+    func testTokenizePreservesInteriorPunctuation() {
+        let text = "don't can't it's"
+        let tokens = text.tokenize()
+
+        XCTAssertEqual(tokens, ["don't", "can't", "it's"])
+    }
+
+    func testTokenizePunctuationOnlyTokensRemoved() {
+        let text = "hello ... world !!! done"
+        let tokens = text.tokenize()
+
+        XCTAssertEqual(tokens, ["hello", "world", "done"])
+    }
+
+    func testTokenizeHyphensStripped() {
+        let text = "--flag -option"
+        let tokens = text.tokenize()
+
+        XCTAssertEqual(tokens, ["flag", "option"])
+    }
+
+    // MARK: - Punctuation preservation (opt-in)
+
+    func testTokenizePreservesPunctuationWhenRequested() {
+        let text = "Hello, world! How are you?"
+        let tokens = text.tokenize(strippingPunctuation: false)
+
         XCTAssertEqual(tokens, ["hello,", "world!", "how", "are", "you?"])
+    }
+
+    func testTokenizePreservesPunctuationEdgeCases() {
+        XCTAssertEqual("...".tokenize(strippingPunctuation: false), ["..."])
+        XCTAssertEqual("!!!".tokenize(strippingPunctuation: false), ["!!!"])
+    }
+
+    // MARK: - Embedding integration
+
+    func testTokenizeProducesCleanKeysForEmbeddings() {
+        let text = "running, shoes!"
+        let embeddings = [
+            "running": [0.8, 0.7, 0.9],
+            "shoes": [0.1, 0.9, 0.2]
+        ]
+
+        let vectors = text.tokenize().embed(using: embeddings)
+
+        XCTAssertEqual(vectors.count, 2)
+        XCTAssertEqual(vectors[0], [0.8, 0.7, 0.9])
+        XCTAssertEqual(vectors[1], [0.1, 0.9, 0.2])
     }
 
     func testTokenizeSemanticSearchExample() {
