@@ -101,6 +101,27 @@ final class LinearRegressionTests: XCTestCase {
         XCTAssertEqual(convenience[1], 21.0, accuracy: 1e-9)
     }
 
+    // Single-feature convenience fit accepts [Double] instead of [[Double]]
+    func testSingleFeatureFit() throws {
+        let features = [1.0, 2.0, 3.0, 4.0]
+        let targets  = [3.0, 5.0, 7.0, 9.0]  // y = 2x + 1
+
+        // Convenience overload
+        let convenience = try LinearRegression.fit(features: features, targets: targets)
+        // Standard overload
+        let standard = try LinearRegression.fit(features: features.map { [$0] }, targets: targets)
+
+        // Both should produce the same coefficients
+        XCTAssertEqual(convenience.coefficients, standard.coefficients)
+        XCTAssertEqual(convenience.featureCount, 1)
+
+        // Predictions should match
+        let convPred = convenience.predict([5.0, 10.0])
+        let stdPred  = standard.predict([5.0, 10.0])
+        XCTAssertEqual(convPred, stdPred)
+        XCTAssertEqual(convPred[0], 11.0, accuracy: 1e-9)
+    }
+
     // Full pipeline: trainTestSplit → fit → predict → evaluate
     func testFullPipeline() throws {
         // Generate noisy linear data: y ≈ 3x + 2

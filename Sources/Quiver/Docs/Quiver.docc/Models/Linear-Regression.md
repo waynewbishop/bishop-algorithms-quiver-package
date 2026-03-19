@@ -22,17 +22,17 @@ The `fit(features:targets:intercept:)` static method computes the optimal coeffi
 import Quiver
 
 // Training data: square footage → price
-let features: [[Double]] = [
-    [1000], [1500], [2000], [2500], [3000]
-]
-let targets = [150000.0, 200000.0, 260000.0, 310000.0, 370000.0]
+let sqft   = [1000.0, 1500.0, 2000.0, 2500.0, 3000.0]
+let prices = [150000.0, 200000.0, 260000.0, 310000.0, 370000.0]
 
-let model = try LinearRegression.fit(features: features, targets: targets)
+let model = try LinearRegression.fit(features: sqft, targets: prices)
 
 // Inspect the coefficients
 print("Intercept: \(model.coefficients[0])")   // bias term
 print("Slope: \(model.coefficients[1])")        // price per sqft
 ```
+
+For single-feature regression, `fit` accepts a flat `[Double]` array directly — no need to wrap each value in `[[Double]]`. Multi-feature regression uses the standard `fit(features: [[Double]], targets:)` form shown below.
 
 ### Making predictions
 
@@ -182,7 +182,8 @@ The normal equation requires inverting the matrix X'X. If the features are linea
 - ``LinearRegression``
 
 ### Training
-- ``LinearRegression/fit(features:targets:intercept:)``
+- ``LinearRegression/fit(features:targets:intercept:)-8lsme``
+- ``LinearRegression/fit(features:targets:intercept:)-20bry``
 
 ### Evaluation
 - ``Swift/Array/rSquared(actual:)``

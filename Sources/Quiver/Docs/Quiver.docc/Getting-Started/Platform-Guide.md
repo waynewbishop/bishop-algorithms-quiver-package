@@ -12,32 +12,35 @@ This is a starting point for developers who want to understand what's possible w
 
 ### iOS — the primary deployment target
 
-iOS is where the majority of Swift developers ship code, and where Quiver's capabilities integrate most naturally with existing app architectures. Examples include training models on a user's own data, computing similarity across local content, and classifying behavior patterns without a network round-trip.
+iOS is where the majority of Swift developers ship code, and where Quiver's capabilities integrate most naturally with existing app architectures. A common pattern is preparing data for Swift Charts — computing the statistics, trends, and distributions that charts display.
 
 ```swift
 import Quiver
 
-// Tokenize and embed the search query
-let tokens = "Swift performance tips".tokenize()
-let embedded = tokens.embed(using: noteEmbeddings)
+// Median home prices by month in your neighborhood
+let prices = [485_000.0, 492_000.0, 510_000.0, 525_000.0, 540_000.0, 568_000.0]
 
-guard let query = embedded.meanVector() else {
-    return
-}
+// Smooth the trend for a line chart
+let trend = prices.rollingMean(window: 3)
 
-// Rank all notes by similarity — fully offline
-let scores  = noteVectors.cosineSimilarities(to: query)
-let results = scores.topIndices(k: 5, labels: noteTitles)
+// Month-over-month price changes for a bar chart
+let changes = prices.percentChange(lag: 1)
+
+// Summary statistics for a dashboard
+let avg = prices.mean()       // average price
+let spread = prices.std()     // price variability
+let mid = prices.median()     // middle value
 ```
 
 **What iOS enables:**
 
-- On-device semantic search over notes, emails, or documents without a server
-- Personalized recommendations computed locally from user preference vectors
-- Behavior clustering to identify distinct usage patterns across app sessions
-- Classification of user-generated content without sending data off-device
+- Smooth noisy data with `rollingMean()` for trend lines in Swift Charts
+- Calculate growth rates with `percentChange()` for bar and area charts
+- Compute statistics with `mean()`, `std()`, and `median()` for dashboard summaries
+- Build distributions with `histogram()` for frequency charts
+- Train models on local data with linear regression, KNN, or Naive Bayes
 
-> Tip: See <doc:Similarity-Operations> for batch comparison patterns and <doc:Semantic-Search> for the full tokenize → embed → rank pipeline.
+> Tip: Quiver computes the data. Swift Charts renders it. See <doc:Statistical-Operations> for the full set of statistical operations and <doc:Data-Visualization> for charting patterns.
 
 ### watchOS — live, on-device intelligence
 
@@ -80,54 +83,64 @@ Quiver runs on Linux and integrates naturally with Vapor, enabling a class of se
 import Vapor
 import Quiver
 
-// Stored embeddings — loaded from any persistence layer
-let vectors: [[Double]] = loadStoredVectors()
+// Word embeddings — loaded from any source (GloVe, Word2Vec, custom)
+let embeddings: [String: [Double]] = loadEmbeddings()
 
-// Rank by cosine similarity to the incoming query
-let scores  = vectors.cosineSimilarities(to: queryVector)
-let results = scores.topIndices(k: 5, labels: labels)
+// Convert a search query to a vector
+let query = "comfortable running shoes"
+let tokens  = query.tokenize()                  // ["comfortable", "running", "shoes"]
+let vectors = tokens.embed(using: embeddings)   // look up each word's vector
+let queryVec = vectors.meanVector()             // average into a single vector
+
+// Rank stored documents by similarity to the query
+guard let queryVec else { return }
+let scores  = docVectors.cosineSimilarities(to: queryVec)
+let results = scores.topIndices(k: 5, labels: docTitles)
 ```
 
 **What Swift server and Vapor enable:**
 
-- A vector search API built entirely in Swift 
 - A semantic search endpoint that tokenizes queries, looks up embeddings, and ranks results
 - A clustering microservice that accepts feature vectors and returns K-Means assignments on demand
 - A duplicate detection pipeline that identifies near-identical content before it reaches persistent storage
+- A vector search API built entirely in Swift
 
-> Tip: Embeddings still need to come from a model. Quiver owns everything after that: similarity search, clustering, and ranking. See <doc:Similarity-Operations> and <doc:Semantic-Search>.
+> Tip: The `tokenize()` → `embed(using:)` → `meanVector()` pipeline converts raw text into a single vector in three chained calls. See <doc:Semantic-Search> for the full walkthrough and <doc:Similarity-Operations> for batch comparison patterns.
 
 ### Swift Playgrounds — interactive learning
 
 Xcode 26 introduces the `#Playground` macro — an interactive environment that works directly with SPM packages. This makes Quiver a great option for students and developers exploring numerical computing interactively.
 
-Quiver can generate realistic test data using built-in random distributions — normal for naturally distributed measurements like height and weight, uniform for evenly spread values like age. A `Panel` organizes columns into a lightweight named container that feeds directly into Quiver's ML pipeline. It holds named `[Double]` columns, keeps rows aligned, and provides `trainTestSplit`, `filtered`, and `toMatrix` for model preparation.
+Quiver can generate realistic test data, split it for training, and fit a model — all interactively. This example uses linear regression to predict weight from height, a classic first ML exercise:
 
 ```swift
+import Playgrounds
 import Quiver
 
 #Playground {
-    // Generate a test dataset with random distributions
-    let data = Panel([
-        ("height", [Double].randomNormal(100, mean: 170.0, std: 10.0)),
-        ("weight", [Double].randomNormal(100, mean: 75.0, std: 12.0)),
-        ("age",    [Double].random(100, in: 18.0...65.0))
-    ])
+    // Generate 100 people with random height and weight
+    let height = [Double].randomNormal(100, mean: 170.0, std: 10.0)
+    let weight = [Double].randomNormal(100, mean: 75.0, std: 12.0)
 
-    // Explore per-column statistics
-    data["height"].mean()
-    data["weight"].std()
-    data.describe()
+    // Split into training (80%) and testing (20%)
+    let (trainH, testH) = height.trainTestSplit(testRatio: 0.2, seed: 42)
+    let (trainW, testW) = weight.trainTestSplit(testRatio: 0.2, seed: 42)
 
-    // Split and feed into a model
-    let (train, test) = data.trainTestSplit(testRatio: 0.2, seed: 42)
-    let features = train.toMatrix(columns: ["height", "weight"])
+    // Train: learn the relationship between height and weight
+    let model = try LinearRegression.fit(features: trainH, targets: trainW)
+
+    // Predict weight for the test heights
+    let predictions = model.predict(testH)
+
+    // How accurate? R² of 1.0 = perfect, 0.0 = no relationship
+    let r2 = predictions.rSquared(actual: testW)
+    print("R² = \(r2)")
 }
 ```
 
 **What Swift Playgrounds enables:**
 
 - Generate test datasets with built-in random distributions
-- Explore Quiver's full API interactively — statistics, linear algebra, similarity, and ML models
+- Explore Quiver's full API interactively — statistics, linear algebra, similarity, and ML models including Linear Regression, K-Nearest Neighbors, K-Means Clustering, and Gaussian Naive Bayes
 - Complete course assignments using `#Playground` with `import Quiver`
 - Visualize computed results with Swift Charts in the same project

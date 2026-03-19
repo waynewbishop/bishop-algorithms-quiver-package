@@ -22,7 +22,7 @@ import Foundation
 /// equation θ = (X'X)⁻¹X'y, which gives an exact closed-form solution without
 /// iterative optimization.
 ///
-/// This is a value type — once created via ``fit(features:targets:intercept:)``,
+/// This is a value type — once created via one of the fit methods,
 /// the model is immutable. There is no separate "unfitted" state, which eliminates
 /// the common bug of calling predict before fit.
 ///
@@ -87,6 +87,34 @@ public struct LinearRegression {
             featureCount: featureCount,
             hasIntercept: intercept
         )
+    }
+
+    /// Fits a linear regression model from a single feature array.
+    ///
+    /// A convenience overload that accepts a flat `[Double]` instead of `[[Double]]`
+    /// when training on a single feature. Each element is treated as one sample
+    /// with one feature.
+    ///
+    /// ```swift
+    /// let sqft   = [1200.0, 1500.0, 1800.0, 2100.0]
+    /// let prices = [250_000.0, 320_000.0, 380_000.0, 440_000.0]
+    ///
+    /// let model = try LinearRegression.fit(features: sqft, targets: prices)
+    /// let predicted = model.predict([2000.0])
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - features: 1D array of feature values, one per sample.
+    ///   - targets: 1D array of target values, one per sample.
+    ///   - intercept: Whether to include a bias term. Defaults to `true`.
+    /// - Returns: A trained ``LinearRegression`` model with `featureCount` of 1.
+    /// - Throws: `MatrixError.singular` if the features are constant.
+    public static func fit(
+        features: [Double],
+        targets: [Double],
+        intercept: Bool = true
+    ) throws -> LinearRegression {
+        return try fit(features: features.map { [$0] }, targets: targets, intercept: intercept)
     }
 
     /// Predicts target values for one or more samples.
