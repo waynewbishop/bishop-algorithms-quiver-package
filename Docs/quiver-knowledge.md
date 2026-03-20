@@ -1,4 +1,4 @@
-# Quiver — Swift Numerical Computing Library
+# Quiver — A Swift package for vector mathematics, numerical computing, and machine learning.
 
 Complete reference for the Quiver Swift package. Upload this file to a Claude Project or conversation to get accurate assistance with Quiver code.
 
@@ -337,6 +337,7 @@ vectors.heatmapData(labels:)   // [(x, y, value)] for RectangleMark
 
 ```swift
 "Hello World! This is a test.".tokenize()   // ["hello", "world", "this", "is", "a", "test"]
+"Hello, World!".tokenize(strippingPunctuation: false)  // ["hello,", "world!"]
 
 let embeddings: [String: [Double]] = ["hello": [0.1, 0.2], ...]
 tokens.embed(using: embeddings)   // [[Double]] — vectors for known words
@@ -559,6 +560,24 @@ let bins = raw.histogram(bins: 5)              // for bar charts
 
 ---
 
+## Performance Characteristics
+
+92% of Quiver's API surface is O(n) or better. The remaining 8% are operations where higher complexity is mathematically inherent. All public APIs with complexity greater than O(n) include `/// - Complexity:` documentation in the source.
+
+### O(n³) — Matrix algebra
+`determinant`, `inverted()`, `logDeterminant`, `conditionNumber` — perform well for matrices up to a few hundred rows.
+
+### O(n²) — Pairwise operations
+`findDuplicates(threshold:)`, `clusterCohesion()` — perform well for collections up to low thousands. `multiplyMatrix(_:)` is O(n·m·p). `correlationMatrix()`, `heatmapData(labels:)` are O(n²·m).
+
+### O(n·k·d) — ML model training and prediction
+`KMeans.fit`, `bestFit`, `elbowMethod`, `clusters(from:)`, `predict` — scale with samples × clusters × features × iterations. `KNearestNeighbors.predict` — scales with queries × training samples × features. `LinearRegression.fit` — O(n·f² + f³) where f is feature count.
+
+### O(n log n) — Sorting-based
+`median()`, `percentile(_:)`, `quartiles()`, `percentileRanks()`, `topIndices(k:)`, `sortedIndices()` — sort internally. When computing multiple percentiles, `quartiles()` sorts once.
+
+---
+
 ## Quick Reference: What Returns Optional?
 
 | Returns Optional | Returns Non-Optional |
@@ -767,7 +786,7 @@ Measure how related two vectors are using cosine similarity and distance metrics
 
 Find information by meaning, not keywords. Full pipeline: tokenize → embed → average → compare.
 
-1. **Tokenize:** `"Running Shoes".tokenize()` → `["running", "shoes"]`. Lowercases and splits on whitespace.
+1. **Tokenize:** `"Running Shoes".tokenize()` → `["running", "shoes"]`. Lowercases, splits on whitespace, and strips punctuation by default. Pass `strippingPunctuation: false` to keep punctuation.
 2. **Embed:** `tokens.embed(using: embeddings)` → `[[Double]]`. Looks up each token in a `[String: [Double]]` dictionary. Unknown words silently skipped.
 3. **Average:** `vectors.meanVector()` → `[Double]?`. Combines word vectors into one document vector.
 4. **Compare:** `docVectors.cosineSimilarities(to: queryVector)` → `[Double]`. Rank by similarity.
@@ -850,6 +869,7 @@ Unsupervised grouping of data into k clusters.
 - **Predict:** `model.predict(newData)` → `[Int]` — assigns new points to existing clusters.
 - **Best fit:** `KMeans.bestFit(data:k:attempts:)` — runs multiple times, returns lowest inertia.
 - **Elbow method:** `KMeans.elbowMethod(data:kRange:seed:)` → `[Double]` inertias. Plot against k to find the "elbow."
+- **Clusters:** `model.clusters(from: data)` → `[Cluster]`. Each `Cluster` has `.centroid` (`[Double]`), `.points` (`[[Double]]`), `.count` (`Int`), and conforms to `Sequence`.
 
 ### Linear Regression
 
@@ -887,128 +907,6 @@ The `#Playground` macro (Xcode 26+) enables interactive exploration of Quiver AP
 
 ---
 
-## Companion Book: Swift Algorithms & Data Structures (5th Edition)
+## Companion Book
 
-Quiver is the companion framework for the book *Swift Algorithms & Data Structures* by Wayne Bishop. Chapters 20–23 cover Quiver in depth. Chapters 1–19 cover classical algorithms and data structures implemented in Swift using the **Structures** package. The book is available at https://waynewbishop.github.io/swift-algorithms/
-
-### Chapter 1 — Introduction
-
-Sets the stage: algorithms are the mathematical backbone of modern technology (AI, search engines, social media, Face ID). Swift is a full-stack language enabling shared algorithm implementations across iOS, backend, and server. The book covers searching, sorting, data structures, dynamic programming, PageRank, and numerical computing with Quiver.
-
-### Chapter 2 — Measuring Performance (Big O Notation)
-
-How to classify algorithm efficiency without implementation details. Key complexities:
-- `O(1)` — Constant: array index access, hash table lookup
-- `O(log n)` — Logarithmic: binary search (1M items = 20 comparisons)
-- `O(n)` — Linear: examine each element once
-- `O(n log n)` — Linearithmic: quicksort, merge sort
-- `O(n²)` — Quadratic: nested loops (bubble, insertion, selection sort)
-- `O(2^n)` — Exponential: naive Fibonacci
-
-Pattern recognition: single loop → `O(n)`, nested loops → `O(n²)`, halving → `O(log n)`, branching recursion → exponential.
-
-### Chapter 3 — Basic Searching
-
-**Linear search** — `O(n)`, checks every element, works on unsorted data. **Binary search** — `O(log n)`, eliminates half the data per comparison, requires sorted input. For 1M items: linear = 1M comparisons worst case; binary = 20. Both implemented as generic Array extensions using `Equatable` and `Comparable` protocols.
-
-### Chapter 4 — Basic Sorting
-
-Three foundational `O(n²)` algorithms, all implemented as Array extensions:
-- **Insertion sort** — Best `O(n)` for nearly-sorted data. Divides into sorted/unsorted halves. Stable, in-place.
-- **Bubble sort** — Adjacent pair swaps, largest bubbles to end each pass. Stable, in-place.
-- **Selection sort** — Find minimum, swap to front. Minimizes total swaps `O(n)`. Not stable.
-
-### Chapter 5 — Advanced Sorting
-
-**Quicksort** — Average `O(n log n)`, worst `O(n²)` (rare with good pivot). Partitions around pivot, recursively sorts segments. In-place with minimal memory. Swift's standard library uses Introsort (quicksort + heapsort hybrid). Production standard for memory-constrained environments like iOS.
-
-### Chapter 6 — Recursion
-
-Recursive structure: base case (stopping condition) + recursive case (self-call with smaller problem). Key examples:
-- Factorial: `O(n)` time, `O(n)` stack space
-- Fibonacci naive: `O(2^n)` — catastrophic branching
-- Fibonacci memoized: `O(n)` — cache eliminates redundant calls
-- Fibonacci iterative: `O(n)` time, `O(n)` space
-
-Recursion powers tree traversals, graph DFS, and divide-and-conquer algorithms throughout the book.
-
-### Chapter 7 — Generics
-
-Swift generics and protocols enable type-safe, reusable algorithm implementations. Type parameters (`<T>`) get replaced with actual types. Key protocols: `Equatable` (equality), `Comparable` (ordering), `Hashable` (dictionary keys). Constrained extensions (`where Element: Comparable`) make methods appear only on qualifying types — the same pattern Quiver uses for `FloatingPoint`-constrained operations.
-
-### Chapter 8 — Analyzing Algorithms
-
-Applies Big O to real code. Pattern recognition guide: single loop → `O(n)`, nested loops → `O(n²)`, halving → `O(log n)`. Analyzes best/average/worst cases. Demonstrates optimization choices: insertion sort `O(n²)` with `O(1)` space vs. merge sort `O(n log n)` with `O(n)` space.
-
-### Chapter 9 — Linked Lists
-
-Doubly-linked list with generic nodes (`LLNode<T>`). Trade-offs vs arrays: `O(1)` insertion/deletion once position found, but `O(n)` random access. Key operations: append, insert at index, remove. Use when frequent mid-list insertions/deletions needed and sequential access is acceptable.
-
-### Chapter 10 — Stacks and Queues
-
-**Stack (LIFO)** — Push/pop/peek all `O(1)`. Used for undo systems, navigation history, call stacks, backtracking.
-**Queue (FIFO)** — Dequeue `O(1)`, enqueue `O(n)` in basic implementation. Used for task scheduling, BFS traversal, network request buffering. Foundation's `DispatchQueue` and `OperationQueue` are production examples.
-
-### Chapter 11 — Binary Search Trees
-
-Hierarchical structure: left children smaller, right children larger. Search/insert `O(log n)` average. Three traversal orders: in-order (sorted output), pre-order (serialization), post-order (deletion). Critical limitation: degrades to `O(n)` with sorted input. Solved by tree balancing in Chapter 12.
-
-### Chapter 12 — Tree Balancing (AVL Trees)
-
-Height tracking + rotations guarantee `O(log n)` for all operations regardless of insertion order. Right rotation fixes left-heavy, left rotation fixes right-heavy. Uses stack to track insertion path for efficient rebalancing. Trades small rotation overhead for guaranteed performance — essential for databases and real-time systems.
-
-### Chapter 13 — Graphs
-
-Model relationships with vertices and edges. **BFS** — level-by-level exploration using queue, `O(V + E)`. **Topological sort** — dependency ordering with cycle detection using DFS. Adjacency list representation. Supports directed/undirected, weighted/unweighted. Applications: social networks, maps, route planning, recommendation systems.
-
-### Chapter 14 — Tries
-
-Hierarchical string storage for prefix operations. Insert `O(m)` where m = word length. Prefix search `O(p + k)`. Each node stores accumulated string, children array, and `isFinal` flag. Applications: autocomplete, spell checking, dictionary lookups, IP routing.
-
-### Chapter 15 — Hash Tables
-
-`O(1)` average lookups via key-to-index mapping. Hash function: modulo-based. Collision resolution: separate chaining with linked lists. Load factor < 0.75 maintains performance. Worst case `O(n)` when all keys collide. Applications: caching, deduplication, grouping, HTTP headers, UserDefaults.
-
-### Chapter 16 — Shortest Paths (Dijkstra's Algorithm)
-
-Greedy traversal finding minimum-cost routes through weighted directed graphs. Array-based frontier: `O(V²)`. Heap-based frontier: `O((V + E) log V)`. Path objects chain to preserve complete traversal history. Handles non-negative weights only. Applications: GPS navigation, network routing, LinkedIn connections.
-
-### Chapter 17 — Heaps
-
-Binary tree stored as array with index formulas: parent `(i-1)/2`, left child `2i+1`, right child `2i+2`. Insert `O(log n)` via bubble-up. Peek `O(1)`. Supports min-heap and max-heap. Used to optimize Dijkstra's frontier from `O(V²)` to `O((V+E) log V)`. Applications: priority queues, event scheduling, top-K problems.
-
-### Chapter 18 — Dynamic Programming
-
-Combines recursion with memoization to eliminate redundant computation. Three-phase approach: recurse → cache → reuse. Transforms naive Fibonacci from `O(2^n)` (330M calls for fib(40)) to `O(n)` (79 calls). Pattern appears throughout the book: Dijkstra's path tracking, BST rebalancing stacks, PageRank iteration history.
-
-### Chapter 19 — PageRank
-
-Google's original ranking algorithm. Random surfer model: page importance = landing probability. Each page distributes rank equally to outgoing links. Damping factor (0.85) handles random jumps. Iterative convergence using Markov chains. `O(k(V+E))` for k iterations. Handles sink nodes (pages with no outgoing links). Applications: web search, academic citations, social network influence, protein interaction networks.
-
-### Chapter 20 — Vectors (Quiver)
-
-Establishes vectors as mathematical objects with magnitude and direction. Key progression: magnitude (`[3,4]` → 5.0) → normalization (unit vectors) → dot product (directional agreement) → cosine similarity (scale-independent comparison). Unique examples: wind as a vector, boat in current (velocity addition), game character movement (normalize then scale), word embeddings ("running" and "jogging" similarity ~0.98). Covers Quiver APIs: `.magnitude`, `.normalized`, `.dot()`, `.cosineOfAngle(with:)`, `.averaged()`.
-
-### Chapter 21 — Matrices (Quiver)
-
-Extends vectors to 2D grids. Dual nature: data containers (athletes × metrics) and transformation operators. Covers shape/size inspection, reshaping, flattening, array generation (`zeros`, `ones`, `identity`, `diag`), transpose, element-wise arithmetic (`.add()`, `.subtract()`), scalar broadcasting (`matrix * 2.0`), and column extraction. Z-score standardization example: `(matrix - mean) / std`.
-
-### Chapter 22 — Matrix Transformations (Quiver)
-
-Matrices as operators that transform vectors. Column-based perspective: matrix columns show where basis vectors (i-hat, j-hat) land after transformation. Identity matrix = reference frame. Covers scaling (diagonal matrices), rotation (90°: `[[0,-1],[1,0]]`), matrix-vector multiplication (dot products of rows × vector), matrix multiplication (composition of transformations — order matters), and determinants (area/volume scaling factor; zero = singular).
-
-### Chapter 23 — Similarity Operations (Quiver)
-
-Applies vectors and matrices to measuring relationships. Cosine similarity normalizes dot product to isolate direction. Scales from pairwise to batch operations (`.cosineSimilarities(to:)`), cluster analysis (`.clusterCohesion()`), duplicate detection (`.findDuplicates(threshold:)`). Introduces word embeddings and vector arithmetic for semantic meaning: `king - man + woman ≈ queen`. Top-k optimization: heap-based `O(n log k)` vs sort `O(n log n)`.
-
-### Cross-Chapter Connections
-
-The book forms an integrated progression where later chapters build on earlier concepts:
-- **Searching → Sorting:** Sorted data enables binary search
-- **Recursion → Trees:** Recursive structure mirrors tree structure
-- **Stacks/Queues → Graph traversal:** BFS uses queues, DFS uses stacks
-- **Hash tables → O(1) lookups** everywhere: caching, deduplication, memoization
-- **Heaps → Dijkstra optimization:** Priority queue reduces `O(V²)` to `O((V+E) log V)`
-- **Dynamic programming → Memoization** pattern appears in Fibonacci, Dijkstra paths, tree balancing
-- **Generics → Quiver:** Same constrained extension pattern (`where Element: FloatingPoint`) powers both Structures and Quiver
-- **Vectors → Matrices → Transformations → Similarity:** Each Quiver chapter builds on the previous, culminating in practical ML applications
+Quiver is the companion framework for *Swift Algorithms & Data Structures* (5th Edition) by Wayne Bishop. Chapters 20–23 cover Quiver in depth. The book is available at https://waynewbishop.github.io/swift-algorithms/
