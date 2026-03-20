@@ -145,6 +145,10 @@ public struct KNearestNeighbors {
     /// the `k` nearest neighbors, and returns the most common label among them.
     /// With distance weighting, closer neighbors contribute more to the vote.
     ///
+    /// - Complexity: O(*q*·*t*·*d*) where *q* is the number of query samples,
+    ///   *t* is the number of training samples, and *d* is the feature count.
+    ///   Scale the training set to the most relevant samples when working with
+    ///   large datasets.
     /// - Parameter features: 2D array where each row is a sample to classify.
     /// - Returns: An array of predicted class labels, one per sample.
     public func predict(_ features: [[Double]]) -> [Int] {

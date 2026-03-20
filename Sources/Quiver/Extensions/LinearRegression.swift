@@ -64,6 +64,9 @@ public struct LinearRegression {
     ///   - features: 2D array where each row is a sample and each column is a feature.
     ///   - targets: 1D array of target values, one per sample.
     ///   - intercept: Whether to include a bias term. Defaults to `true`.
+    /// - Complexity: O(*n*·*f*² + *f*³) where *n* is the number of samples and
+    ///   *f* is the feature count. The *f*³ term comes from matrix inversion.
+    ///   Performs well for feature counts up to a few hundred.
     /// - Returns: A trained ``LinearRegression`` model.
     /// - Throws: `MatrixError.singular` if the features are linearly dependent.
     public static func fit(

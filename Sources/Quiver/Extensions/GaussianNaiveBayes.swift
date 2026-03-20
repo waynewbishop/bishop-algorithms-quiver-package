@@ -74,6 +74,8 @@ public struct GaussianNaiveBayes {
     /// - Parameters:
     ///   - features: 2D array where each row is a sample and each column is a feature.
     ///   - labels: 1D array of integer class labels, one per sample.
+    /// - Complexity: O(*n*·*f*) where *n* is the number of samples and *f* is
+    ///   the feature count. Computes per-class statistics in a single pass.
     /// - Returns: A trained ``GaussianNaiveBayes`` model.
     public static func fit(features: [[Double]], labels: [Int]) -> GaussianNaiveBayes {
         precondition(!features.isEmpty, "Features array must not be empty")
@@ -135,6 +137,8 @@ public struct GaussianNaiveBayes {
     /// in log-space avoids the floating-point underflow that occurs when multiplying
     /// many small probabilities together.
     ///
+    /// - Complexity: O(*q*·*c*·*f*) where *q* is the number of query samples,
+    ///   *c* is the number of classes, and *f* is the feature count.
     /// - Parameter features: 2D array where each row is a sample to classify.
     /// - Returns: An array of predicted class labels, one per sample.
     public func predict(_ features: [[Double]]) -> [Int] {
@@ -151,6 +155,8 @@ public struct GaussianNaiveBayes {
     /// the unnormalized log-probability for each class (in the same order
     /// as the ``classes`` array).
     ///
+    /// - Complexity: O(*q*·*c*·*f*) where *q* is the number of query samples,
+    ///   *c* is the number of classes, and *f* is the feature count.
     /// - Parameter features: 2D array where each row is a sample to classify.
     /// - Returns: 2D array of log-probabilities, shape [samples × classes].
     public func predictLogProbabilities(_ features: [[Double]]) -> [[Double]] {

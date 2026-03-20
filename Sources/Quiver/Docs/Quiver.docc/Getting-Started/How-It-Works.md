@@ -137,4 +137,4 @@ Quiver is designed for educational use, on-device ML features, and data science 
 
 The design prioritizes clarity and portability — the same code runs identically on macOS, iOS, watchOS, visionOS, and Linux. Most operations — vector arithmetic, statistics, broadcasting, boolean masking, element-wise math — are linear and scale predictably to millions of elements.
 
-The operations worth thinking about are matrix multiplication, matrix inversion, and pairwise comparisons like `findDuplicates(threshold:)` and `clusterCohesion()`. These grow quadratically or cubically with input size, so they perform well for the hundreds-to-low-thousands range typical in educational and on-device use cases.
+> Important: The operations worth thinking about are matrix multiplication, matrix inversion, and pairwise comparisons like `findDuplicates(threshold:)` and `clusterCohesion()`. These grow quadratically or cubically with input size, so they perform well for the hundreds-to-low-thousands range typical in educational and on-device use cases.

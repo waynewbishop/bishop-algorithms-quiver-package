@@ -102,6 +102,10 @@ public struct KMeans {
     ///   - k: Number of clusters to form.
     ///   - maxIterations: Maximum number of assign-update cycles. Defaults to 100.
     ///   - seed: Random seed for reproducible centroid initialization. Defaults to nil (random).
+    /// - Complexity: O(*n*·*k*·*d*·*i*) where *n* is the number of samples,
+    ///   *k* is the cluster count, *d* is the feature count, and *i* is the
+    ///   number of iterations until convergence. Performs well for datasets
+    ///   up to low tens of thousands.
     /// - Returns: A trained ``KMeans`` model with final centroids and cluster assignments.
     public static func fit(
         data: [[Double]],
@@ -165,6 +169,10 @@ public struct KMeans {
     ///   - k: Number of clusters to form.
     ///   - maxIterations: Maximum number of assign-update cycles per attempt. Defaults to 100.
     ///   - attempts: Number of times to run the algorithm with different seeds. Defaults to 10.
+    /// - Complexity: O(*a*·*n*·*k*·*d*·*i*) where *a* is the number of attempts.
+    ///   Runs ``fit(data:k:maxIterations:seed:)`` multiple times and returns the
+    ///   model with lowest inertia. Reduce `attempts` for faster results on
+    ///   large datasets.
     /// - Returns: The ``KMeans`` model with the lowest inertia across all attempts.
     public static func bestFit(
         data: [[Double]],
@@ -203,6 +211,8 @@ public struct KMeans {
     ///   - kRange: The k values to evaluate.
     ///   - maxIterations: Maximum iterations per fit. Defaults to 100.
     ///   - seed: Random seed for reproducible results. Defaults to nil.
+    /// - Complexity: O(|*kRange*|·*n*·*k*·*d*·*i*). Runs ``fit(data:k:maxIterations:seed:)``
+    ///   once per value in `kRange`. Use a narrow range when dataset size is large.
     /// - Returns: An array of inertia values, one per k value.
     public static func elbowMethod(
         data: [[Double]],
@@ -230,6 +240,8 @@ public struct KMeans {
     /// }
     /// ```
     ///
+    /// - Complexity: O(*n*·*k*·*d*) where *n* is the number of samples, *k* is
+    ///   the cluster count, and *d* is the feature count.
     /// - Parameter data: The same data used for fitting (or any data with matching feature count).
     /// - Returns: An array of ``Cluster`` values, one per centroid, in centroid order.
     public func clusters(from data: [[Double]]) -> [Cluster] {
@@ -247,6 +259,8 @@ public struct KMeans {
     /// For each sample, computes the distance to every centroid and assigns the
     /// label of the nearest one. The centroids are not updated.
     ///
+    /// - Complexity: O(*n*·*k*·*d*) where *n* is the number of samples, *k* is
+    ///   the cluster count, and *d* is the feature count.
     /// - Parameter data: 2D array where each row is a sample to assign.
     /// - Returns: An array of cluster labels (0 to k-1), one per sample.
     public func predict(_ data: [[Double]]) -> [Int] {

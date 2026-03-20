@@ -253,6 +253,7 @@ public extension Array where Element: FloatingPoint {
     /// }
     /// ```
     ///
+    /// - Complexity: O(*n* log *n*) where *n* is the number of elements.
     /// - Returns: A tuple containing the five-number summary and IQR, or nil if the array is empty
     func quartiles() -> (min: Element, q1: Element, median: Element, q3: Element, max: Element, iqr: Element)? where Element: BinaryFloatingPoint {
         guard !isEmpty else { return nil }
@@ -290,6 +291,9 @@ public extension Array where Element: FloatingPoint {
     /// let p99 = responseTimes.percentile(99.0)   // 115.15
     /// ```
     ///
+    /// - Complexity: O(*n* log *n*) where *n* is the number of elements.
+    ///   Sorts the array internally. When computing multiple percentiles,
+    ///   consider ``quartiles()`` which sorts once.
     /// - Parameter p: The percentile to calculate, between 0 and 100 inclusive
     /// - Returns: The interpolated value at the given percentile, or nil if the array is empty
     ///   or `p` is outside the valid range
@@ -360,6 +364,7 @@ public extension Array where Element: FloatingPoint {
     /// // Both 92s share the same rank; 78 is at the 10th percentile
     /// ```
     ///
+    /// - Complexity: O(*n* log *n*) where *n* is the number of elements.
     /// - Returns: Array of percentile ranks (0-100) corresponding to each element
     func percentileRanks() -> [Element] {
         guard !isEmpty else { return [] }
@@ -707,6 +712,8 @@ public extension Array where Element == [Double] {
     /// //  [-0.99, -0.98, 1.0]]    // hot cocoa
     /// ```
     ///
+    /// - Complexity: O(*n*²·*m*) where *n* is the number of series and *m* is
+    ///   the series length. Performs well for up to a few hundred series.
     /// - Returns: A 2D array of Pearson correlation coefficients between all series pairs
     func correlationMatrix() -> [[Double]] {
         guard !isEmpty else { return [] }
@@ -776,6 +783,8 @@ public extension Array where Element == [Double] {
     /// // [("Temp", "Temp", 1.0), ("Temp", "Ice Cream", 0.99), ...]
     /// ```
     ///
+    /// - Complexity: O(*n*²·*m*) where *n* is the number of series and *m* is
+    ///   the series length. Computes the full correlation matrix internally.
     /// - Parameter labels: Array of labels for each series, matching the number of inner arrays
     /// - Returns: Array of `(x, y, value)` tuples suitable for heatmap visualization
     func heatmapData(labels: [String]) -> [(x: String, y: String, value: Double)] {

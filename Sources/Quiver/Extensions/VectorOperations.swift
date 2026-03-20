@@ -179,6 +179,8 @@ public extension Array where Element: Collection, Element.Element: Numeric {
     /// - For a matrix with dimensions m×n, the result will have dimensions n×m
     /// - Each element at position (i,j) in the original matrix will be at position (j,i) in the transposed matrix
     ///
+    /// - Complexity: O(*n*·*m*) where *n* is the number of rows and *m* is the
+    ///   number of columns.
     /// - Returns: A new matrix where rows become columns and columns become rows
     func transpose() -> [[Element.Element]] {
         guard !self.isEmpty, !self[0].isEmpty else { return [] }
@@ -304,6 +306,8 @@ public extension Array where Element: Collection, Element.Element: Numeric {
     /// // Rotation: [2, 0] → [0, 2]
     /// ```
     ///
+    /// - Complexity: O(*n*·*m*·*p*) for an (*n*×*m*) times (*m*×*p*) multiplication.
+    ///   Performs well for matrices up to a few hundred rows and columns.
     /// - Parameter other: The matrix to multiply with (must have compatible dimensions: this.columns == other.rows)
     /// - Returns: The resulting composed transformation matrix
     func multiplyMatrix(_ other: [[Element.Element]]) -> [[Element.Element]] {
@@ -333,6 +337,8 @@ public extension Array where Element: Collection, Element.Element: FloatingPoint
     /// let det = matrix.determinant  // -6.0
     /// ```
     ///
+    /// - Complexity: O(*n*³) where *n* is the matrix dimension. Performs well
+    ///   for matrices up to a few hundred rows.
     /// - Returns: The determinant value
     var determinant: Element.Element {
         let matrix = self.map { $0.map { $0 } }
@@ -400,6 +406,9 @@ public extension Array where Element: Collection, Element.Element: FloatingPoint
     /// // [[0.6, -0.7], [-0.2, 0.4]]
     /// ```
     ///
+    /// - Complexity: O(*n*³) where *n* is the matrix dimension. Performs well
+    ///   for matrices up to a few hundred rows. Check ``conditionNumber``
+    ///   first if numerical stability is a concern.
     /// - Returns: The inverted matrix
     /// - Throws: `MatrixError.notSquare` if the matrix is not square,
     ///           `MatrixError.singular` if the matrix is singular.
@@ -485,6 +494,9 @@ public extension Array where Element == [Double] {
     /// // ld.value == -6.0 (reconstructed)
     /// ```
     ///
+    /// - Complexity: O(*n*³) where *n* is the matrix dimension. Preferred
+    ///   over ``determinant`` for large matrices where the raw value may
+    ///   overflow or underflow.
     /// - Returns: A `LogDeterminant` containing the sign (-1, 0, or 1) and log of the absolute determinant
     var logDeterminant: LogDeterminant {
         precondition(!self.isEmpty && self.count == self[0].count,
@@ -574,6 +586,9 @@ public extension Array where Element == [Double] {
     /// illConditioned.conditionNumber  // Very large (near-singular)
     /// ```
     ///
+    /// - Complexity: O(*n*³) where *n* is the matrix dimension. Computes the
+    ///   matrix inverse internally. Performs well for matrices up to a few
+    ///   hundred rows.
     /// - Returns: The 1-norm condition number, or `.infinity` for singular matrices
     var conditionNumber: Double {
         precondition(!self.isEmpty && self.count == self[0].count,
@@ -906,6 +921,9 @@ public extension Array where Element == [Double] {
     /// // Returns: [(index1: 0, index2: 1, similarity: 1.0)]
     /// ```
     ///
+    /// - Complexity: O(*n*²) where *n* is the number of vectors. Performs well
+    ///   for collections up to low thousands. For larger datasets, consider
+    ///   partitioning by category first, then comparing within each partition.
     /// - Parameter threshold: Minimum cosine similarity (0.0 to 1.0). Default is 0.95.
     /// - Returns: Array of tuples containing pair indices and similarity scores, sorted by similarity (highest first)
     func findDuplicates(threshold: Double = 0.95) -> [(index1: Int, index2: Int, similarity: Double)] {
@@ -959,6 +977,9 @@ public extension Array where Element == [Double] {
     /// // Returns value between 0.0 (unrelated) and 1.0 (identical)
     /// ```
     ///
+    /// - Complexity: O(*n*²) where *n* is the number of vectors. Performs well
+    ///   for clusters up to low thousands. Use on individual cluster groups
+    ///   rather than the full dataset.
     /// - Returns: Average pairwise similarity (0.0 to 1.0), or 0.0 if fewer than 2 vectors
     func clusterCohesion() -> Double {
         let n = self.count
@@ -1010,6 +1031,7 @@ public extension Array where Element == Double {
     /// // Returns: [(index: 1, score: 0.9), (index: 3, score: 0.7), (index: 4, score: 0.5)]
     /// ```
     ///
+    /// - Complexity: O(*n* log *n*) where *n* is the number of elements.
     /// - Parameter k: Number of top elements to return
     /// - Returns: Array of tuples containing index and score, sorted by score (highest first)
     func topIndices(k: Int) -> [(index: Int, score: Double)] {
@@ -1038,6 +1060,7 @@ public extension Array where Element == Double {
     /// - Parameters:
     ///   - k: Number of top elements to return
     ///   - labels: Array of labels corresponding to each score
+    /// - Complexity: O(*n* log *n*) where *n* is the number of elements.
     /// - Returns: Array of tuples containing label and score, sorted by score (highest first)
     func topIndices<T>(k: Int, labels: [T]) -> [(label: T, score: Double)] {
         precondition(self.count == labels.count, "Scores and labels must have the same count")
@@ -1064,6 +1087,7 @@ public extension Array where Element == Double {
     /// // [10.0, 20.0, 30.0, 40.0]
     /// ```
     ///
+    /// - Complexity: O(*n* log *n*) where *n* is the number of elements.
     /// - Returns: Array of indices representing the sorted order
     func sortedIndices() -> [Int] {
         return self.enumerated()

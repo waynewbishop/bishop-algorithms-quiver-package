@@ -180,6 +180,8 @@ public extension Array where Element: FloatingPoint {
     /// let mean = responseTimes.mean()      // 100.8 (pulled up by the outlier)
     /// ```
     ///
+    /// - Complexity: O(*n* log *n*) where *n* is the number of elements.
+    ///   Sorts the array internally.
     /// - Returns: The median value, or nil if the array is empty
     func median() -> Element? {
         let vector = _Vector(elements: self)
