@@ -138,7 +138,7 @@ Which metric matters most depends on the cost of each error type. Missing a frau
 
 **K-Means** is unsupervised and discovers natural groupings in data that has no labels. Useful for segmentation and anomaly detection, but we must choose the number of clusters in advance. See <doc:KMeans-Clustering>.
 
-Start simple: Naive Bayes for classification, Linear Regression for continuous targets, Nearest Neighbors when the decision boundary is nonlinear, K-Means for unlabeled data. The evaluation techniques in the previous section tell us whether our choice is working.
+> Tip: Start simple: Naive Bayes for classification, Linear Regression for continuous targets, Nearest Neighbors when the decision boundary is nonlinear, K-Means for unlabeled data. The evaluation techniques in the previous section tell us whether our choice is working.
 
 ### See also
 

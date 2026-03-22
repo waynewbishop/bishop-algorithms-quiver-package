@@ -144,6 +144,39 @@ public extension Array where Element == Int {
         let cm = _Metrics.confusionMatrix(predicted: self, actual: actual, positiveLabel: positiveLabel)
         return cm.f1Score
     }
+
+    /// Returns a formatted summary of classification metrics comparing these predictions
+    /// against actual labels.
+    ///
+    /// Computes accuracy, precision, recall, and F1 score in one call and returns them
+    /// as a readable multi-line string. Metrics that are undefined (e.g., precision when
+    /// no positives were predicted) display as "N/A".
+    ///
+    /// Example:
+    /// ```swift
+    /// import Quiver
+    ///
+    /// let predictions = [1, 0, 1, 1, 0, 0, 1, 0]
+    /// let actual      = [1, 0, 0, 1, 0, 1, 1, 0]
+    /// print(predictions.classificationReport(actual: actual))
+    /// // Accuracy:  75.0%
+    /// // Precision: 0.75
+    /// // Recall:    0.75
+    /// // F1 Score:  0.75
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - actual: The ground truth class labels, one per sample.
+    ///   - positiveLabel: The label value representing the positive class. Defaults to `1`.
+    /// - Returns: A formatted string containing accuracy, precision, recall, and F1 score.
+    func classificationReport(actual: [Int], positiveLabel: Int = 1) -> String {
+        let cm = _Metrics.confusionMatrix(predicted: self, actual: actual, positiveLabel: positiveLabel)
+        let accLine = "Accuracy:  \(String(format: "%.1f", cm.accuracy * 100))%"
+        let precLine = "Precision: \(cm.precision.map { String(format: "%.2f", $0) } ?? "N/A")"
+        let recLine = "Recall:    \(cm.recall.map { String(format: "%.2f", $0) } ?? "N/A")"
+        let f1Line = "F1 Score:  \(cm.f1Score.map { String(format: "%.2f", $0) } ?? "N/A")"
+        return [accLine, precLine, recLine, f1Line].joined(separator: "\n")
+    }
 }
 
 // MARK: - Regression Metrics

@@ -95,6 +95,34 @@ final class ArrayMetricsTests: XCTestCase {
         XCTAssertEqual(r, 0.5)
     }
 
+    // MARK: - Classification Report
+
+    // classificationReport produces a formatted multi-line summary
+    func testClassificationReport() {
+        let predictions = [1, 0, 1, 1, 0, 0, 1, 0]
+        let actual      = [1, 0, 0, 1, 0, 1, 1, 0]
+
+        let report = predictions.classificationReport(actual: actual)
+
+        XCTAssertTrue(report.contains("Accuracy:"))
+        XCTAssertTrue(report.contains("Precision:"))
+        XCTAssertTrue(report.contains("Recall:"))
+        XCTAssertTrue(report.contains("F1 Score:"))
+        XCTAssertTrue(report.contains("75.0%"))
+        XCTAssertTrue(report.contains("0.75"))
+    }
+
+    // classificationReport shows N/A when metrics are undefined
+    func testClassificationReportUndefined() {
+        let predictions = [0, 0, 0, 0]
+        let actual      = [1, 1, 0, 0]
+
+        let report = predictions.classificationReport(actual: actual)
+
+        XCTAssertTrue(report.contains("N/A"), "Precision should show N/A when no positives predicted")
+        XCTAssertTrue(report.contains("Accuracy:"))
+    }
+
     // MARK: - Regression Metrics
 
     // Perfect predictions — R² is 1.0, MSE and RMSE are 0.0

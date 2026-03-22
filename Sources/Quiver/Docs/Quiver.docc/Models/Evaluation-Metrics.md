@@ -80,6 +80,25 @@ In positional APIs, swapping the two arguments silently produces wrong results w
 
 The right metric depends on the cost of errors in the specific domain. In recall-first scenarios — malware detection, medical screening, customer churn — missing a positive case is expensive, so we optimize for catching every true positive even at the cost of some false alarms. In precision-first scenarios — spam filtering, content moderation, fraud alerts — false positives are expensive because flagging a legitimate email or freezing a valid transaction has real consequences for the user. When neither error type clearly dominates, the F1 score provides a single balanced metric. It is the harmonic mean of precision and recall, which penalizes extreme imbalances more heavily than an arithmetic mean would.
 
+### Classification report
+
+When evaluating a model, computing each metric individually and formatting the output is repetitive. The `classificationReport(actual:)` method computes accuracy, precision, recall, and F1 in one call and returns a formatted summary:
+
+```swift
+import Quiver
+
+let predictions = [1, 0, 1, 1, 0, 0, 1, 0]
+let actual      = [1, 0, 0, 1, 0, 1, 1, 0]
+
+print(predictions.classificationReport(actual: actual))
+// Accuracy:  75.0%
+// Precision: 0.75
+// Recall:    0.75
+// F1 Score:  0.75
+```
+
+Metrics that are undefined (e.g., precision when no positives were predicted) display as "N/A" rather than a misleading zero.
+
 ### The full pipeline
 
 A typical workflow fits a model, predicts on held-out data, and evaluates the results:
@@ -109,11 +128,7 @@ let model = GaussianNaiveBayes.fit(
 let predictions = model.predict(scaler.transform(testX))
 
 // Evaluate on data the model never saw during training
-let cm = predictions.confusionMatrix(actual: testY)
-print("Accuracy: \(cm.accuracy)")
-print("Precision: \(cm.precision ?? 0)")
-print("Recall: \(cm.recall ?? 0)")
-print("F1: \(cm.f1Score ?? 0)")
+print(predictions.classificationReport(actual: testY))
 ```
 
 ## Topics
@@ -127,6 +142,7 @@ print("F1: \(cm.f1Score ?? 0)")
 - ``Swift/Array/precision(actual:positiveLabel:)``
 - ``Swift/Array/recall(actual:positiveLabel:)``
 - ``Swift/Array/f1Score(actual:positiveLabel:)``
+- ``Swift/Array/classificationReport(actual:positiveLabel:)``
 
 ### Related
 - <doc:Machine-Learning-Primer>
